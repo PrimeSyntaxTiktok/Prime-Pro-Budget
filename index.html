@@ -157,7 +157,7 @@
   manifestLink.href=murl;
 
   if('serviceWorker' in navigator && location.protocol.startsWith('http')){
-    const sw=`const CACHE='primebudget-v13';self.addEventListener('install',e=>{self.skipWaiting()});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('primebudget-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});self.addEventListener('fetch',e=>{const req=e.request;if(req.method!=='GET')return;if(req.mode==='navigate'){e.respondWith(fetch(req).then(res=>{const copy=res.clone();caches.open(CACHE).then(c=>c.put('./',copy)).catch(()=>{});return res}).catch(()=>caches.match('./')));return}e.respondWith(fetch(req).catch(()=>caches.match(req)))})`;
+    const sw=`const CACHE='primebudget-v15';self.addEventListener('install',e=>{self.skipWaiting()});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('primebudget-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});self.addEventListener('fetch',e=>{const req=e.request;if(req.method!=='GET')return;if(req.mode==='navigate'){e.respondWith(fetch(req).then(res=>{const copy=res.clone();caches.open(CACHE).then(c=>c.put('./',copy)).catch(()=>{});return res}).catch(()=>caches.match('./')));return}e.respondWith(fetch(req).catch(()=>caches.match(req)))})`;
     const swurl=URL.createObjectURL(new Blob([sw],{type:'text/javascript'}));
     navigator.serviceWorker.register(swurl).catch(()=>{});
   }
@@ -262,29 +262,111 @@ function ChartLine({rows,month,version}){const ref=useRef(null);useEffect(()=>{i
 function ChartDonut({rows,version}){const ref=useRef(null);useEffect(()=>{if(!ref.current)return; const map={};rows.filter(t=>t.type==='expense').forEach(t=>map[t.category.name]=(map[t.category.name]||0)+ +t.amount);const labels=Object.keys(map), data=Object.values(map), colors=labels.map(l=>cats.find(c=>c.name===l)?.color||'#999');const c=new Chart(ref.current,{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:colors,borderColor:'#101017',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}});return()=>c.destroy()},[rows,version]);return <canvas ref={ref}/>}
 
 const isStandaloneMode=()=>!!(window.matchMedia?.('(display-mode: standalone)')?.matches||window.navigator?.standalone===true||document.referrer.startsWith('android-app://'));
+const isIosDevice=()=>/iphone|ipad|ipod/i.test(navigator.userAgent||'');
+const checkPwaInstalled=async()=>{
+  if(isStandaloneMode())return true;
+  if(navigator.getInstalledRelatedApps){
+    try{
+      const apps=await navigator.getInstalledRelatedApps();
+      return Array.isArray(apps)&&apps.some(app=>app?.platform==='webapp'||String(app?.url||'').startsWith(location.origin)||String(app?.id||'').includes('PrimeBudget'));
+    }catch(e){}
+  }
+  return false;
+};
 
 function LongPressRow({tx,onEdit,onDelete,children,as='div',className='',style}){const timer=useRef(null), fired=useRef(false); const [pressing,setPressing]=useState(false); const Tag=as;const clear=()=>{if(timer.current)clearTimeout(timer.current);timer.current=null;setPressing(false);setTimeout(()=>{fired.current=false},0)};const start=()=>{if(!matchMedia('(max-width:1050px)').matches)return;fired.current=false;setPressing(true);timer.current=setTimeout(()=>{fired.current=true;setPressing(false);onDelete(tx.id)},650)};const click=e=>{if(fired.current){e.preventDefault();e.stopPropagation();return} if(onEdit && matchMedia('(max-width:1050px)').matches && as!=='tr')onEdit(tx)};return <Tag className={`${className} ${pressing?'longPressing':''}`} style={style} onPointerDown={start} onPointerUp={clear} onPointerCancel={clear} onPointerLeave={clear} onClick={click}>{children}</Tag>}
 
 function App(){
  const{tx,setTx,budgets,setBudgets,goals,setGoals,remoteVersion,sync}=useStore();
- const [view,setView]=useState('home'),[month,setMonth]=useState(keyOf(today())),[modal,setModal]=useState(null),[dialog,setDialog]=useState(null),[install,setInstall]=useState(null),[query,setQuery]=useState(''),[shareCode,setShareCode]=useState(''),[refreshKey,setRefreshKey]=useState(0),[isInstalled,setIsInstalled]=useState(()=>isStandaloneMode()||localStorage.getItem('primebudget_pwa_installed')==='1');
+ const [view,setView]=useState('home'),[month,setMonth]=useState(keyOf(today())),[modal,setModal]=useState(null),[dialog,setDialog]=useState(null),[install,setInstall]=useState(null),[query,setQuery]=useState(''),[shareCode,setShareCode]=useState(''),[refreshKey,setRefreshKey]=useState(0),[isInstalled,setIsInstalled]=useState(()=>isStandaloneMode()),[installVisible,setInstallVisible]=useState(false);
+ const installRef=useRef(null);
  const closeDialog=()=>setDialog(null);
  const notify=(title,message,kind='info')=>setDialog({kind,title,message,actions:[{label:'OK',className:'primary',onClick:()=>setDialog(null)}]});
  const ask=({title,message,confirmLabel='Confirmer',cancelLabel='Annuler',danger=false,onConfirm})=>setDialog({kind:danger?'danger':'confirm',title,message,actions:[{label:cancelLabel,className:'ghost',onClick:()=>setDialog(null)},{label:confirmLabel,className:danger?'danger':'primary',onClick:()=>{setDialog(null);requestAnimationFrame(()=>onConfirm?.())}}]});
  useEffect(()=>{setMonth(keyOf(today()))},[]);
  useEffect(()=>{
+  let mounted=true;
+  localStorage.removeItem('primebudget_pwa_installed');
   const media=window.matchMedia?.('(display-mode: standalone)');
-  const updateInstalled=()=>setIsInstalled(isStandaloneMode()||localStorage.getItem('primebudget_pwa_installed')==='1');
-  const beforeInstall=e=>{if(isStandaloneMode()||localStorage.getItem('primebudget_pwa_installed')==='1')return;e.preventDefault();setInstall(e)};
-  const appInstalled=()=>{localStorage.setItem('primebudget_pwa_installed','1');setIsInstalled(true);setInstall(null)};
-  updateInstalled();
+  const refreshInstallState=async()=>{
+    const installed=await checkPwaInstalled();
+    if(!mounted)return;
+    setIsInstalled(installed);
+    if(installed){
+      installRef.current=null;
+      setInstall(null);
+      setInstallVisible(false);
+    }else{
+      setInstallVisible(!!installRef.current||isIosDevice());
+    }
+  };
+  const beforeInstall=e=>{
+    e.preventDefault();
+    installRef.current=e;
+    setInstall(e);
+    setIsInstalled(false);
+    setInstallVisible(true);
+  };
+  const appInstalled=()=>{
+    installRef.current=null;
+    setInstall(null);
+    setIsInstalled(true);
+    setInstallVisible(false);
+  };
+  const onFocus=()=>setTimeout(refreshInstallState,250);
+  const onVisibility=()=>{if(!document.hidden)onFocus()};
+  refreshInstallState();
+  setTimeout(refreshInstallState,1200);
   window.addEventListener('beforeinstallprompt',beforeInstall);
   window.addEventListener('appinstalled',appInstalled);
-  media?.addEventListener?.('change',updateInstalled);
-  media?.addListener?.(updateInstalled);
-  return()=>{window.removeEventListener('beforeinstallprompt',beforeInstall);window.removeEventListener('appinstalled',appInstalled);media?.removeEventListener?.('change',updateInstalled);media?.removeListener?.(updateInstalled)};
+  window.addEventListener('focus',onFocus);
+  window.addEventListener('pageshow',onFocus);
+  document.addEventListener('visibilitychange',onVisibility);
+  media?.addEventListener?.('change',refreshInstallState);
+  media?.addListener?.(refreshInstallState);
+  return()=>{
+    mounted=false;
+    window.removeEventListener('beforeinstallprompt',beforeInstall);
+    window.removeEventListener('appinstalled',appInstalled);
+    window.removeEventListener('focus',onFocus);
+    window.removeEventListener('pageshow',onFocus);
+    document.removeEventListener('visibilitychange',onVisibility);
+    media?.removeEventListener?.('change',refreshInstallState);
+    media?.removeListener?.(refreshInstallState);
+  };
  },[]);
- const promptInstall=async()=>{if(!install||isInstalled)return;try{await install.prompt();const choice=await install.userChoice.catch(()=>null);if(choice?.outcome==='accepted'){localStorage.setItem('primebudget_pwa_installed','1');setIsInstalled(true)}setInstall(null)}catch{setInstall(null)}};
+ const promptInstall=async()=>{
+  const installed=await checkPwaInstalled();
+  if(installed){
+    setIsInstalled(true);
+    setInstallVisible(false);
+    notify('Application déjà installée','PrimeBudget est déjà installé sur cet appareil.','success');
+    return;
+  }
+  const promptEvent=installRef.current||install;
+  if(promptEvent){
+    try{
+      await promptEvent.prompt();
+      const choice=await promptEvent.userChoice.catch(()=>null);
+      installRef.current=null;
+      setInstall(null);
+      if(choice?.outcome==='accepted'){
+        setIsInstalled(true);
+        setInstallVisible(false);
+        notify('Installation lancée','PrimeBudget est en cours d’installation sur cet appareil.','success');
+      }else{
+        setInstallVisible(true);
+      }
+    }catch{
+      installRef.current=null;
+      setInstall(null);
+      setInstallVisible(!isStandaloneMode());
+      notify('Installation indisponible','Recharge la page puis réessaie. Sur iPhone ou iPad, utilise Partager puis Ajouter à l’écran d’accueil.','info');
+    }
+    return;
+  }
+  notify('Installer PrimeBudget',isIosDevice()?'Sur iPhone ou iPad, appuie sur le bouton Partager de Safari, puis choisis Ajouter à l’écran d’accueil.':'Recharge la page puis appuie à nouveau sur Installer. Le navigateur proposera l’installation dès que la PWA sera disponible.','info');
+ };
  const months=useMemo(()=>{const s=[...new Set(tx.map(t=>keyOf(t.date)).concat([keyOf(today())]))];return s.sort((a,b)=>b.localeCompare(a))},[tx]);
  useEffect(()=>{if(!months.includes(month))setMonth(keyOf(today()))},[months.join('|')]);
  const rows=useMemo(()=>sortTxByAmountDesc(tx.filter(t=>keyOf(t.date)===month)),[tx,month,remoteVersion]);
@@ -305,8 +387,8 @@ function App(){
  const generateShare=async()=>{try{const result=await sync.generateShareCode(month,rows);setShareCode(result.code);await copyText(result.code);notify('Code de partage généré',`Le code ${result.code} a été enregistré dans Firebase et copié. Il partage ${result.count} transaction(s) du mois ${labelMonth(result.monthKey)}.`,'success');return result}catch(err){notify('Partage impossible',err?.message||'Impossible de générer le code de partage.','danger');throw err}};
  const importShare=async(code)=>{try{const shared=await sync.readShareCode(code);const checked=uniqueSharedTransactions(tx,shared.transactions);if(!checked.unique.length){notify('Aucune nouvelle transaction',`Ce code contient ${checked.total} transaction(s), mais elles existent déjà dans ton compte. Aucun doublon n’a été importé.`,'success');return {...shared,imported:0,skipped:checked.skipped}}setTx(x=>sortTx([...checked.unique,...x]));setMonth(shared.monthKey);setQuery('');refreshUI();const skippedText=checked.skipped?` ${checked.skipped} doublon(s) ignoré(s).`:'';notify('Mois partagé importé',`${checked.unique.length} transaction(s) copiée(s) dans ${labelMonth(shared.monthKey)} sur ton compte Google.${skippedText}`,'success');return {...shared,imported:checked.unique.length,skipped:checked.skipped}}catch(err){notify('Import du partage impossible',err?.message||'Le code de partage est invalide ou inaccessible.','danger');throw err}};
  const title={home:'Vue globale',transactions:'Transactions',settings:'Réglages'}[view]||'Vue globale';
- return <div className="app"><aside className="sidebar"><Brand/><Nav view={view} setView={setView}/><div className="sideCard"><b>Synchronisation</b><div className="syncLine"><i className={`dot ${sync.user?'online':sync.configured?'warn':''}`}></i>{sync.status}</div>{sync.user&&<p className="mini">Connecté : {sync.user.email}</p>}</div></aside><main className="content">{install&&!isInstalled&&<div className="installBanner" style={{display:'flex'}}><div><b>Installer PrimeBudget</b><div className="mini">Ajoute l’app sur téléphone ou PC.</div></div><button className="btn primary" onClick={promptInstall}>Installer</button></div>}<div className="topbar"><div className="title"><h2>{title}</h2><div className="syncLine"><i className={`dot ${sync.user?'online':sync.configured?'warn':''}`}></i>{sync.status}{sync.lastSync?` • ${sync.lastSync.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}`:''}</div></div><div className="toolbar"><select value={month} onChange={e=>setMonth(e.target.value)}>{months.map(m=><option key={m} value={m}>{labelMonth(m)}</option>)}</select><button className="btn" onClick={exportAll}><ion-icon name="download-outline"/><span className="btnText">Exporter</span></button><AuthBar sync={sync} notify={notify}/><label className="btn"><ion-icon name="cloud-upload-outline"/><span className="btnText">Importer</span><input type="file" accept=".json" onChange={importAll} hidden/></label>{view==='transactions'&&<button className="btn primary hideMobile" onClick={()=>setModal({type:'tx'})}><ion-icon name="add-outline"/>Transaction</button>}</div></div>
- <div className="kpis grid"><Kpi label="Solde" value={money(balance)} icon="wallet-outline" cls={balance>=0?'green':'red'} sub={balance>=0?'Mois positif':'À surveiller'}/><Kpi label="Revenus" value={money(income)} icon="trending-up-outline" cls="green" sub="Entrées du mois"/><Kpi label="Dépenses" value={money(expense)} icon="trending-down-outline" cls="red" sub={`${money(burn)} / jour`}/><Kpi label="Santé budget" value={`${health}%`} icon="pulse-outline" cls={health>=20?'green':health>=0?'gold':'red'} sub={`Épargne: ${money(saving)}`}/></div>
+ return <div className="app"><aside className="sidebar"><Brand/><Nav view={view} setView={setView}/><div className="sideCard"><b>Synchronisation</b><div className="syncLine"><i className={`dot ${sync.user?'online':sync.configured?'warn':''}`}></i>{sync.status}</div>{sync.user&&<p className="mini">Connecté : {sync.user.email}</p>}</div></aside><main className="content">{installVisible&&!isInstalled&&<div className="installBanner" style={{display:'flex'}}><div><b>Installer PrimeBudget</b><div className="mini">Ajoute l’app sur téléphone ou PC.</div></div><button className="btn primary" onClick={promptInstall}>Installer</button></div>}<div className="topbar"><div className="title"><h2>{title}</h2><div className="syncLine"><i className={`dot ${sync.user?'online':sync.configured?'warn':''}`}></i>{sync.status}{sync.lastSync?` • ${sync.lastSync.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}`:''}</div></div><div className="toolbar"><select value={month} onChange={e=>setMonth(e.target.value)}>{months.map(m=><option key={m} value={m}>{labelMonth(m)}</option>)}</select><button className="btn" onClick={exportAll}><ion-icon name="download-outline"/><span className="btnText">Exporter</span></button><AuthBar sync={sync} notify={notify}/><label className="btn"><ion-icon name="cloud-upload-outline"/><span className="btnText">Importer</span><input type="file" accept=".json" onChange={importAll} hidden/></label>{view==='transactions'&&<button className="btn primary hideMobile" onClick={()=>setModal({type:'tx'})}><ion-icon name="add-outline"/>Transaction</button>}</div></div>
+ <div className="kpis grid"><Kpi label="Solde" value={money(balance)} icon="wallet-outline" cls={balance>=0?'green':'red'} sub={balance>=0?'Mois positif':'À surveiller'}/><Kpi label="Revenus" value={money(income)} icon="trending-up-outline" cls="green" sub="Entrées du mois"/><Kpi label="Dépenses" value={money(expense)} icon="trending-down-outline" cls="red" sub={`${money(burn)} / jour`}/><Kpi label="Épargne" value={money(saving)} icon="leaf-outline" cls={saving>0?'green':'gold'} sub=""/></div>
  {view==='home'&&<Home rows={rows} month={month} refreshKey={refreshKey+remoteVersion} setModal={setModal} duplicate={duplicate}/>} {view==='transactions'&&<Transactions rows={filtered} query={query} setQuery={setQuery} setModal={setModal} del={del}/>} {view==='settings'&&<Settings duplicate={duplicate} exportAll={exportAll} importAll={importAll} clear={clearAll} sync={sync} month={month} rows={rows} shareCode={shareCode} setShareCode={setShareCode} generateShare={generateShare} importShare={importShare} notify={notify}/>} </main>{view==='transactions'&&<button className="fab" onClick={()=>setModal({type:'tx'})}><ion-icon name="add-outline"/></button>}<Bottom view={view} setView={setView}/>{modal&&<TxModal modal={modal} close={()=>setModal(null)} save={d=>{modal.edit?updateTx(d):addTx(d);setModal(null)}}/>}{dialog&&<AppDialog dialog={dialog} close={closeDialog}/>}</div>}
 
 function AuthBar({sync,notify}){
@@ -317,7 +399,7 @@ function AuthBar({sync,notify}){
 function Brand(){return <div className="brand"><img src={APP_LOGO} alt="Logo PrimeBudget"/><div><h1>PrimeBudget</h1><p>Budget intelligent</p></div></div>}
 function Nav({view,setView}){return <nav className="nav">{[['home','analytics-outline','Tableau de bord'],['transactions','swap-horizontal-outline','Transactions'],['settings','settings-outline','Réglages']].map(i=><button key={i[0]} onClick={()=>setView(i[0])} className={view===i[0]?'active':''}><ion-icon name={i[1]}/>{i[2]}</button>)}</nav>}
 function Bottom(p){return <div className="bottomNav">{[['home','analytics-outline','Accueil'],['transactions','list-outline','Lignes'],['settings','settings-outline','Plus']].map(i=><button key={i[0]} className={p.view===i[0]?'active':''} onClick={()=>p.setView(i[0])}><ion-icon name={i[1]}/>{i[2]}</button>)}</div>}
-function Kpi({label,value,icon,cls,sub}){return <div className="card kpi"><ion-icon name={icon}/><small>{label}</small><strong className={cls}>{value}</strong><span>{sub}</span></div>}
+function Kpi({label,value,icon,cls,sub}){return <div className="card kpi"><ion-icon name={icon}/><small>{label}</small><strong className={cls}>{value}</strong>{sub&&<span>{sub}</span>}</div>}
 function Home({rows,month,refreshKey,setModal,duplicate}){return <div className="mainGrid grid"><div className="card"><div className="sectionTitle"><h3>Évolution du solde</h3><button className="btn" onClick={duplicate}><ion-icon name="copy-outline"/>Dupliquer le mois</button></div><div className="chartBox"><ChartLine rows={rows} month={month} version={refreshKey}/></div></div><div className="card"><div className="sectionTitle"><h3>Répartition des dépenses</h3></div><div className="chartBox"><ChartDonut rows={rows} version={refreshKey}/></div></div></div>}
 function Transactions({rows,query,setQuery,setModal,del}){return <div className="card"><div className="sectionTitle"><h3>Toutes les transactions</h3><button className="btn primary" onClick={()=>setModal({type:'tx'})}>Ajouter</button></div><input placeholder="Rechercher une transaction, catégorie, note..." value={query} onChange={e=>setQuery(e.target.value)} style={{marginBottom:14}}/><div className="mobileDeleteHint">Sur téléphone : reste appuyé sur une ligne pour la supprimer avec confirmation.</div><div className="tableWrap"><table><thead><tr><th>Titre</th><th>Catégorie</th><th>Date</th><th>Type</th><th>Montant</th><th>Actions</th></tr></thead><tbody>{rows.map(t=><LongPressRow as="tr" key={t.id} tx={t} onDelete={del}><td><b>{t.title}</b><div className="mini">{t.note}</div></td><td><span className="pill"><ion-icon name={t.category.icon} style={{color:t.category.color}}/>{t.category.name}</span></td><td>{new Date(t.date).toLocaleDateString('fr-FR')}</td><td>{t.type==='income'?'Revenu':'Dépense'}</td><td className={t.type==='income'?'green amount':'red amount'}>{t.type==='income'?'+':'-'} {money(t.amount)}</td><td><button className="btn" onClick={()=>setModal({type:'tx',edit:t})}>Modifier</button> <button className="btn danger" onClick={()=>del(t.id)}>Supprimer</button></td></LongPressRow>)}{!rows.length&&<tr><td colSpan="6"><div className="empty">Aucune transaction.</div></td></tr>}</tbody></table></div></div>}
 function TxList({rows,setModal,del}){return <div className="list">{rows.length?<><div className="mobileDeleteHint">Reste appuyé sur une ligne pour la supprimer.</div>{rows.map(t=><LongPressRow className="tx" key={t.id} tx={t} onEdit={(tx)=>setModal({type:'tx',edit:tx})} onDelete={del}><Icon cat={t.category}/><div><div className="txTitle">{t.title}</div><div className="txMeta">{t.category.name} • {new Date(t.date).toLocaleDateString('fr-FR')}</div></div><div className={t.type==='income'?'amount green':'amount red'}>{t.type==='income'?'+':'-'} {money(t.amount)}</div><div className="txActions"><button className="btn" onClick={(e)=>{e.stopPropagation();setModal({type:'tx',edit:t})}}>Modifier</button></div></LongPressRow>)}</>:<div className="empty">Aucune transaction pour ce mois.</div>}</div>}
