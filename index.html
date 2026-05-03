@@ -66,6 +66,253 @@
     .shareSteps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}.shareStep{border:1px solid var(--line);background:rgba(255,255,255,.045);border-radius:18px;padding:12px}.shareStep b{display:block;margin-bottom:5px}.shareStep span{font-size:12px;color:var(--muted);line-height:1.45}.rulesMini{border:1px dashed rgba(245,200,75,.30);background:rgba(245,200,75,.055);border-radius:18px;padding:12px}.rulesMini .btn{margin-top:10px}
     @media(max-width:560px){.shareCodeRow{grid-template-columns:1fr}.shareCodeDisplay{font-size:16px}.shareHeader{display:block}.shareHeader .syncBadge{margin-top:10px}}
 
+
+    /* Affichage mobile type application : plus grand, plus lisible, sans effet "page desktop réduite" */
+    @media(max-width:700px){
+      html{font-size:16px}
+      body{font-size:16px;overflow:hidden}
+      .app{height:100svh;min-height:100svh}
+      .content{
+        padding:calc(18px + var(--safe-top)) 14px calc(118px + var(--safe-bottom));
+        scroll-padding-bottom:calc(118px + var(--safe-bottom));
+      }
+      .topbar{gap:14px;margin-bottom:16px}
+      .title h2{font-size:30px;line-height:1.05;letter-spacing:-.045em}
+      .syncLine{font-size:13px;margin-top:8px}
+      .toolbar{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+        align-items:stretch;
+        justify-content:stretch;
+        width:100%;
+      }
+      .toolbar select{
+        grid-column:1 / -1;
+        min-width:0!important;
+        min-height:52px;
+        font-size:16px;
+        border-radius:18px;
+        padding:0 14px;
+      }
+      .toolbar .btn,
+      .toolbar label.btn,
+      .googleBtn{
+        min-height:52px;
+        width:100%;
+        font-size:15px;
+        border-radius:18px;
+        padding:13px 12px;
+        white-space:nowrap;
+      }
+      .toolbar ion-icon{font-size:19px}
+      .btnText{display:inline}
+      .kpis{
+        grid-template-columns:1fr;
+        gap:12px;
+        margin-bottom:14px;
+      }
+      .card{
+        border-radius:24px;
+        padding:18px;
+      }
+      .kpi{
+        min-height:122px;
+        padding:20px;
+      }
+      .kpi small{
+        font-size:12px;
+        letter-spacing:.09em;
+      }
+      .kpi strong{
+        font-size:31px;
+        line-height:1.05;
+        margin-top:12px;
+      }
+      .kpi span{
+        font-size:15px;
+        line-height:1.35;
+      }
+      .kpi ion-icon{
+        font-size:34px;
+        right:18px;
+        top:18px;
+      }
+      .sectionTitle{
+        align-items:flex-start;
+        margin-bottom:16px;
+      }
+      .sectionTitle h3{
+        font-size:20px;
+        line-height:1.15;
+      }
+      .sectionTitle .btn{
+        min-height:46px;
+        font-size:14px;
+        padding:12px 14px;
+      }
+      .mainGrid{gap:14px}
+      .chartBox{height:285px}
+      .modal{padding:0;align-items:end}
+      .modalBox{
+        width:100%;
+        max-height:92svh;
+        border-radius:28px 28px 0 0;
+        padding:20px;
+      }
+      .modalHead h3{font-size:23px}
+      input,select,textarea{
+        min-height:52px;
+        font-size:16px;
+        border-radius:18px;
+      }
+      textarea{min-height:110px}
+      .field label{font-size:12px}
+      .catBtn{
+        min-height:72px;
+        font-size:12px;
+        border-radius:18px;
+      }
+      .installBanner{
+        padding:14px;
+        border-radius:20px;
+        font-size:15px;
+      }
+      .installBanner .btn{min-height:48px}
+
+      /* Transactions mobiles en cartes, au lieu d'un tableau miniature */
+      .tableWrap{
+        overflow:visible;
+        border:0;
+        border-radius:0;
+      }
+      table{
+        width:100%;
+        min-width:0;
+        border-collapse:separate;
+        border-spacing:0;
+      }
+      thead{display:none}
+      tbody{
+        display:grid;
+        gap:12px;
+      }
+      tbody tr{
+        display:grid;
+        border:1px solid var(--line);
+        border-radius:22px;
+        background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));
+        padding:14px;
+        box-shadow:0 16px 45px rgba(0,0,0,.28);
+      }
+      tbody td{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:12px;
+        border:0;
+        padding:7px 0;
+        font-size:15px;
+      }
+      tbody td::before{
+        color:var(--muted);
+        font-size:11px;
+        font-weight:900;
+        text-transform:uppercase;
+        letter-spacing:.08em;
+        flex:0 0 auto;
+      }
+      tbody td:nth-child(1){
+        display:block;
+        padding:0 0 10px;
+      }
+      tbody td:nth-child(1)::before{content:none}
+      tbody td:nth-child(1) b{
+        display:block;
+        font-size:18px;
+        line-height:1.2;
+      }
+      tbody td:nth-child(1) .mini{
+        margin-top:5px;
+        font-size:13px;
+      }
+      tbody td:nth-child(2)::before{content:"Catégorie"}
+      tbody td:nth-child(3)::before{content:"Date"}
+      tbody td:nth-child(4)::before{content:"Type"}
+      tbody td:nth-child(5)::before{content:"Montant"}
+      tbody td:nth-child(6)::before{content:none}
+      tbody td:nth-child(5){
+        font-size:19px;
+        padding-top:10px;
+      }
+      tbody td:nth-child(6){
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+        padding-top:12px;
+      }
+      tbody td:nth-child(6) .btn{
+        width:100%;
+        min-height:48px;
+        font-size:14px;
+        border-radius:16px;
+      }
+      .pill{
+        font-size:13px;
+        padding:8px 11px;
+      }
+      .mobileDeleteHint{
+        display:block;
+        font-size:13px;
+        line-height:1.4;
+        margin:10px 0 14px;
+      }
+      .bottomNav{
+        grid-template-columns:repeat(3,1fr);
+        padding:10px 10px calc(10px + var(--safe-bottom));
+        min-height:76px;
+      }
+      .bottomNav button{
+        min-height:54px;
+        font-size:12px;
+        gap:5px;
+        border-radius:20px;
+      }
+      .bottomNav ion-icon{font-size:24px}
+      .fab{
+        width:64px;
+        height:64px;
+        right:16px;
+        bottom:calc(90px + var(--safe-bottom));
+        border-radius:24px;
+        font-size:31px;
+      }
+      .sharePanel{gap:16px}
+      .shareCodeRow{
+        grid-template-columns:1fr;
+        gap:10px;
+      }
+      .shareCodeDisplay{
+        font-size:19px;
+        padding:15px;
+        border-radius:20px;
+      }
+      .shareStep{
+        padding:14px;
+        border-radius:20px;
+      }
+      .shareStep b{font-size:15px}
+      .shareStep span{font-size:13px}
+    }
+
+    @media(max-width:380px){
+      .content{padding-left:12px;padding-right:12px}
+      .title h2{font-size:28px}
+      .toolbar .btn,.toolbar label.btn,.googleBtn{font-size:14px;padding-left:10px;padding-right:10px}
+      .kpi strong{font-size:28px}
+      .chartBox{height:255px}
+    }
+
   </style>
 </head>
 <body>
@@ -157,7 +404,7 @@
   manifestLink.href=murl;
 
   if('serviceWorker' in navigator && location.protocol.startsWith('http')){
-    const sw=`const CACHE='primebudget-v15';self.addEventListener('install',e=>{self.skipWaiting()});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('primebudget-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});self.addEventListener('fetch',e=>{const req=e.request;if(req.method!=='GET')return;if(req.mode==='navigate'){e.respondWith(fetch(req).then(res=>{const copy=res.clone();caches.open(CACHE).then(c=>c.put('./',copy)).catch(()=>{});return res}).catch(()=>caches.match('./')));return}e.respondWith(fetch(req).catch(()=>caches.match(req)))})`;
+    const sw=`const CACHE='primebudget-v16';self.addEventListener('install',e=>{self.skipWaiting()});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('primebudget-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});self.addEventListener('fetch',e=>{const req=e.request;if(req.method!=='GET')return;if(req.mode==='navigate'){e.respondWith(fetch(req).then(res=>{const copy=res.clone();caches.open(CACHE).then(c=>c.put('./',copy)).catch(()=>{});return res}).catch(()=>caches.match('./')));return}e.respondWith(fetch(req).catch(()=>caches.match(req)))})`;
     const swurl=URL.createObjectURL(new Blob([sw],{type:'text/javascript'}));
     navigator.serviceWorker.register(swurl).catch(()=>{});
   }
