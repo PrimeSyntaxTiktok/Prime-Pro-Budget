@@ -71,12 +71,69 @@
 <body>
 <div id="root"></div>
 <script>
-(function(){
+(async function(){
   const APP_NAME='PrimeBudget';
-  const icon='https://i.ibb.co/zWQXGQK0/a471dbe4979d.png';
+  const iconSource='https://i.ibb.co/zWQXGQK0/a471dbe4979d.png';
   const cleanUrl=location.href.split('#')[0];
   const currentUrl=cleanUrl.split('?')[0];
   const currentScope=currentUrl.slice(0,currentUrl.lastIndexOf('/')+1)||'./';
+
+  const ensureLink=(rel,href,sizes='')=>{
+    let el=document.head.querySelector(`link[rel="${rel}"]`);
+    if(!el){el=document.createElement('link');el.rel=rel;document.head.appendChild(el)}
+    if(sizes)el.sizes=sizes;
+    el.href=href;
+    return el;
+  };
+  const ensureMeta=(name,content)=>{
+    let el=document.head.querySelector(`meta[name="${name}"]`);
+    if(!el){el=document.createElement('meta');el.name=name;document.head.appendChild(el)}
+    el.content=content;
+    return el;
+  };
+  const loadImage=(src)=>new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.crossOrigin='anonymous';
+    img.onload=()=>resolve(img);
+    img.onerror=reject;
+    img.src=src;
+  });
+  const buildTransparentIcon=(img,size,paddingRatio=.1)=>{
+    const canvas=document.createElement('canvas');
+    canvas.width=size;
+    canvas.height=size;
+    const ctx=canvas.getContext('2d');
+    ctx.clearRect(0,0,size,size);
+    const padding=Math.round(size*paddingRatio);
+    const max=size-padding*2;
+    const ratio=Math.min(max/img.width,max/img.height);
+    const w=Math.round(img.width*ratio);
+    const h=Math.round(img.height*ratio);
+    const x=Math.round((size-w)/2);
+    const y=Math.round((size-h)/2);
+    ctx.imageSmoothingEnabled=true;
+    ctx.imageSmoothingQuality='high';
+    ctx.drawImage(img,x,y,w,h);
+    return canvas.toDataURL('image/png');
+  };
+
+  let icon192=iconSource;
+  let icon512=iconSource;
+  let icon180=iconSource;
+  try{
+    const img=await loadImage(iconSource);
+    icon192=buildTransparentIcon(img,192,.08);
+    icon512=buildTransparentIcon(img,512,.08);
+    icon180=buildTransparentIcon(img,180,.08);
+  }catch(err){
+    console.warn('Icône transparente PWA non générée, utilisation du logo source.', err);
+  }
+
+  ensureLink('icon',icon192,'192x192');
+  ensureLink('shortcut icon',icon192);
+  ensureLink('apple-touch-icon',icon180,'180x180');
+  ensureMeta('msapplication-TileImage',icon192);
+
   const manifest={
     id:currentUrl,
     name:APP_NAME,
@@ -90,15 +147,17 @@
     background_color:'#07070a',
     theme_color:'#07070a',
     icons:[
-      {src:icon,sizes:'192x192',type:'image/png',purpose:'any'},
-      {src:icon,sizes:'512x512',type:'image/png',purpose:'any'},
-      {src:icon,sizes:'512x512',type:'image/png',purpose:'maskable'}
+      {src:icon192,sizes:'192x192',type:'image/png',purpose:'any'},
+      {src:icon512,sizes:'512x512',type:'image/png',purpose:'any'}
     ]
   };
   const murl=URL.createObjectURL(new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'}));
-  const link=document.createElement('link');link.rel='manifest';link.href=murl;document.head.appendChild(link);
+  let manifestLink=document.head.querySelector('link[rel="manifest"]');
+  if(!manifestLink){manifestLink=document.createElement('link');manifestLink.rel='manifest';document.head.appendChild(manifestLink)}
+  manifestLink.href=murl;
+
   if('serviceWorker' in navigator && location.protocol.startsWith('http')){
-    const sw=`const CACHE='primebudget-v12';self.addEventListener('install',e=>{self.skipWaiting()});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('primebudget-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});self.addEventListener('fetch',e=>{const req=e.request;if(req.method!=='GET')return;if(req.mode==='navigate'){e.respondWith(fetch(req).then(res=>{const copy=res.clone();caches.open(CACHE).then(c=>c.put('./',copy)).catch(()=>{});return res}).catch(()=>caches.match('./')));return}e.respondWith(fetch(req).catch(()=>caches.match(req)))})`;
+    const sw=`const CACHE='primebudget-v13';self.addEventListener('install',e=>{self.skipWaiting()});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('primebudget-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});self.addEventListener('fetch',e=>{const req=e.request;if(req.method!=='GET')return;if(req.mode==='navigate'){e.respondWith(fetch(req).then(res=>{const copy=res.clone();caches.open(CACHE).then(c=>c.put('./',copy)).catch(()=>{});return res}).catch(()=>caches.match('./')));return}e.respondWith(fetch(req).catch(()=>caches.match(req)))})`;
     const swurl=URL.createObjectURL(new Blob([sw],{type:'text/javascript'}));
     navigator.serviceWorker.register(swurl).catch(()=>{});
   }
