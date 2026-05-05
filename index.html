@@ -540,7 +540,7 @@ const txPaidAmount=t=>{const total=txTotal(t),paid=txPaidRaw(t);return txIsPaid(
 const txRemaining=t=>Math.max(0,txTotal(t)-txPaidAmount(t));
 const txShowsPayment=t=>t?.type==='expense'&&(txPaymentUses(t).length>0||txPaidRaw(t)>0||txIsPaid(t));
 const cleanInitialTx=(value)=>{if(!Array.isArray(value))return [];const demo=value.length===3&&value.some(t=>t.title==='Salaire')&&value.some(t=>t.title==='Courses')&&value.some(t=>t.title==='Épargne automatique');return demo?[]:value};
-const sortTxByAmountDesc=list=>[...list].sort((a,b)=>Number(b.amount||0)-Number(a.amount||0)||new Date(b.date)-new Date(a.date)||String(a.title||'').localeCompare(String(b.title||''),'fr'));
+const sortTxByAmountDesc=list=>[...list].sort((a,b)=>{const typePriority=(b.type==='income'?1:0)-(a.type==='income'?1:0);return typePriority||Number(b.amount||0)-Number(a.amount||0)||new Date(b.date)-new Date(a.date)||String(a.title||'').localeCompare(String(b.title||''),'fr')});
 const safeTx=list=>sortTxByAmountDesc(cleanInitialTx(Array.isArray(list)?list:[]).map(t=>({...t,category:t.category&&t.category.name?t.category:cats.find(c=>c.name===t.category)||cats[18]})));
 const safeBudgets=obj=>obj&&typeof obj==='object'&&!Array.isArray(obj)?obj:{};
 const safeGoals=list=>Array.isArray(list)?list:[];
