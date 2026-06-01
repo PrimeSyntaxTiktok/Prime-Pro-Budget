@@ -760,6 +760,46 @@ service cloud.firestore {
     }
   }
 }`;
+const txId=t=>String(t&&t.id||'');
+const goalId=g=>String(g&&g.id||'');
+const nowStamp=()=>Date.now();
+const TOMBSTONE_MAX_AGE=1000*60*60*24*30;
+const liveTx=list=>safeTx(list).filter(t=>t&&!t._deleted);
+const liveGoals=list=>safeGoals(list).filter(g=>g&&!g._deleted);
+const sameContent=(a,b)=>{try{return JSON.stringify(a)===JSON.stringify(b)}catch{return false}};
+const mergeById=(getId,remoteArr,baseArr,localArr)=>{
+  const now=nowStamp();
+  const baseMap=new Map(safeTx(baseArr).filter(x=>getId(x)).map(x=>[getId(x),x]));
+  const localMap=new Map(safeTx(localArr).filter(x=>getId(x)).map(x=>[getId(x),x]));
+  const remoteMap=new Map(safeTx(remoteArr).filter(x=>getId(x)).map(x=>[getId(x),x]));
+  const result=new Map();
+  remoteMap.forEach((v,k)=>result.set(k,v));
+  localMap.forEach((lv,k)=>{
+    const base=baseMap.get(k),rem=remoteMap.get(k);
+    const changed=!base||!sameContent(base,lv);
+    const localT=changed?now:(Number(lv.updatedAt)||Number(rem&&rem.updatedAt)||0);
+    const stamped=changed?{...lv,updatedAt:now}:{...lv,updatedAt:localT};
+    if(!rem){result.set(k,stamped);return}
+    const remT=Number(rem.updatedAt)||0;
+    result.set(k,localT>=remT?stamped:rem);
+  });
+  baseMap.forEach((bv,k)=>{
+    if(localMap.has(k))return;
+    const rem=remoteMap.get(k);
+    const tomb={id:k,_deleted:true,updatedAt:now};
+    if(!rem){result.set(k,tomb);return}
+    const remT=Number(rem.updatedAt)||0;
+    result.set(k,now>=remT?tomb:rem);
+  });
+  return Array.from(result.values()).filter(x=>!(x&&x._deleted&&(now-(Number(x.updatedAt)||0))>TOMBSTONE_MAX_AGE));
+};
+const mergeBudgets=(remoteB,baseB,localB)=>{
+  const remote=safeBudgets(remoteB),base=safeBudgets(baseB),local=safeBudgets(localB);
+  const result={...remote};
+  Object.keys(local).forEach(k=>{if(!(k in base)||!sameContent(base[k],local[k]))result[k]=local[k]});
+  Object.keys(base).forEach(k=>{if(!(k in local))delete result[k]});
+  return result;
+};
 function loadFirebaseConfig(){return hasFirebaseConfig(EMBEDDED_FIREBASE_CONFIG)?EMBEDDED_FIREBASE_CONFIG:readLocal('primebudget_firebase_config',null)}
 
 function useStore(){
@@ -780,6 +820,8 @@ function useStore(){
   const [remoteVersion,setRemoteVersion]=useState(0);
   const authRef=useRef(null), dbRef=useRef(null), docRef=useRef(null), unsubDocRef=useRef(null), saveTimerRef=useRef(null), unsubAuthRef=useRef(null);
   const remoteReadyRef=useRef(false), applyingRemoteRef=useRef(false);
+  const baseTxRef=useRef([]), baseGoalsRef=useRef([]), baseBudgetsRef=useRef({});
+  const accountStateLoadedRef=useRef(false);
   const dataRef=useRef({transactions:txState,budgets:budgetsState,goals:goalsState});
   const modeRef=useRef(spaceMode), pairRef=useRef(pairRoom);
   const configured=hasFirebaseConfig(firebaseConfig);
@@ -797,15 +839,20 @@ function useStore(){
   const setSpaceMode=mode=>{const clean=mode==='shared'?'shared':'personal';writeLocal('primebudget_space_mode',clean);setSpaceModeState(clean)};
   const setPairRoom=room=>{if(room&&room.id){writeLocal('primebudget_pair_room',room);setPairRoomState(room)}else{localStorage.removeItem('primebudget_pair_room');setPairRoomState(null)}};
 
-  useEffect(()=>{const cached=readScopeLocal(spaceMode,pairRoom);applyingRemoteRef.current=true;setTxState([...cached.transactions]);setBudgetsState({...cached.budgets});setGoalsState([...cached.goals]);setRemoteVersion(v=>v+1);setTimeout(()=>{applyingRemoteRef.current=false},0)},[spaceMode,pairRoom?.id]);
+  useEffect(()=>{const cached=readScopeLocal(spaceMode,pairRoom);const ct=liveTx(cached.transactions),cg=liveGoals(cached.goals),cb=safeBudgets(cached.budgets);applyingRemoteRef.current=true;setTxState([...ct]);setBudgetsState({...cb});setGoalsState([...cg]);baseTxRef.current=ct;baseGoalsRef.current=cg;baseBudgetsRef.current=cb;setRemoteVersion(v=>v+1);setTimeout(()=>{applyingRemoteRef.current=false},0)},[spaceMode,pairRoom?.id]);
 
-  const pushNow=async(label='Synchronisation...')=>{try{if(!docRef.current||!window.firebase)return;setSyncStatus(label);const data=dataRef.current;const mode=modeRef.current,room=pairRef.current;await docRef.current.set({transactions:safeTx(data.transactions),budgets:safeBudgets(data.budgets),goals:safeGoals(data.goals),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:user?.email||'',updatedFrom:navigator.userAgent.slice(0,140)},{merge:true});persistScopeLocal(mode,room,data.transactions,data.budgets,data.goals);if(user?.uid)persistUserLocal(user.uid,mode,room,data.transactions,data.budgets,data.goals);setLastSync(new Date());setSyncStatus(mode==='shared'?'Espace à deux synchronisé':'Synchronisé')}catch(err){setFirebaseError(err?.message||'Erreur Firebase');setSyncStatus('Erreur de synchronisation')}};
+  const pushNow=async(label='Synchronisation...')=>{try{if(!docRef.current||!window.firebase||!dbRef.current)return;setSyncStatus(label);const data=dataRef.current;const mode=modeRef.current,room=pairRef.current;const ref=docRef.current;const localTx=liveTx(data.transactions),localGoals=liveGoals(data.goals),localBudgets=safeBudgets(data.budgets);const merged=await dbRef.current.runTransaction(async t=>{const snap=await t.get(ref);const rd=snap.exists?(snap.data()||{}):{};const mTx=mergeById(txId,safeTx(rd.transactions),baseTxRef.current,localTx);const mGoals=mergeById(goalId,safeGoals(rd.goals),baseGoalsRef.current,localGoals);const mBudgets=mergeBudgets(rd.budgets,baseBudgetsRef.current,localBudgets);const budgetWrite={...mBudgets};Object.keys(safeBudgets(rd.budgets)).forEach(k=>{if(!(k in mBudgets))budgetWrite[k]=firebase.firestore.FieldValue.delete()});t.set(ref,{transactions:mTx,goals:mGoals,budgets:budgetWrite,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:user?.email||'',updatedFrom:navigator.userAgent.slice(0,140)},{merge:true});return{mTx,mGoals,mBudgets}});const liveT=liveTx(merged.mTx),liveG=liveGoals(merged.mGoals),liveB=merged.mBudgets;baseTxRef.current=liveT;baseGoalsRef.current=liveG;baseBudgetsRef.current=liveB;persistScopeLocal(mode,room,liveT,liveB,liveG);if(user?.uid)persistUserLocal(user.uid,mode,room,liveT,liveB,liveG);setLastSync(new Date());setSyncStatus(mode==='shared'?'Espace à deux synchronisé':'Synchronisé')}catch(err){setFirebaseError(err?.message||'Erreur Firebase');setSyncStatus('Erreur de synchronisation')}};
 
   useEffect(()=>{persistScopeLocal(spaceMode,pairRoom,txState,budgetsState,goalsState);if(!user||!docRef.current||!remoteReadyRef.current||applyingRemoteRef.current)return;clearTimeout(saveTimerRef.current);setSyncStatus(spaceMode==='shared'?'Synchronisation à deux...':'Synchronisation...');saveTimerRef.current=setTimeout(()=>pushNow(),350);return()=>clearTimeout(saveTimerRef.current)},[txState,budgetsState,goalsState,user,spaceMode,pairRoom?.id]);
 
   useEffect(()=>{if(!configured){setSyncStatus('Mode local');return}if(!window.firebase){setFirebaseError('Firebase ne s’est pas chargé. Vérifie ta connexion internet.');setSyncStatus('Firebase indisponible');return}try{setFirebaseError('');const app=firebase.apps.length?firebase.app():firebase.initializeApp(firebaseConfig);try{if(firebase.analytics&&firebaseConfig.measurementId)firebase.analytics(app)}catch(e){}const auth=firebase.auth(app);const db=firebase.firestore(app);authRef.current=auth;dbRef.current=db;auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{});auth.getRedirectResult().catch(()=>{});if(unsubAuthRef.current)unsubAuthRef.current();unsubAuthRef.current=auth.onAuthStateChanged(current=>setUser(current))}catch(err){setFirebaseError(err?.message||'Configuration Firebase invalide');setSyncStatus('Erreur Firebase')}return()=>{if(unsubAuthRef.current)unsubAuthRef.current();if(unsubDocRef.current)unsubDocRef.current()}},[JSON.stringify(firebaseConfig),configured]);
 
-  useEffect(()=>{if(unsubDocRef.current){unsubDocRef.current();unsubDocRef.current=null}docRef.current=null;remoteReadyRef.current=false;if(!configured){setSyncStatus('Mode local');return}if(!user){setSyncStatus('Connecte-toi avec Google');return}if(!dbRef.current){setSyncStatus('Firebase pas encore prêt');return}if(spaceMode==='shared'&&!pairRoom?.id){setSyncStatus('Espace à deux : crée ou rejoins une connexion');return}const mode=spaceMode,room=pairRoom;setSyncStatus(mode==='shared'?'Connexion à l’espace à deux...':'Connexion au cloud...');const ref=mode==='shared'?dbRef.current.collection('primebudgetPairRooms').doc(room.id):dbRef.current.collection('users').doc(user.uid).collection('primebudget').doc('main');docRef.current=ref;unsubDocRef.current=ref.onSnapshot(snapshot=>{if(snapshot.exists){const data=snapshot.data()||{};const nextTx=safeTx(data.transactions);const nextBudgets=safeBudgets(data.budgets);const nextGoals=safeGoals(data.goals);applyingRemoteRef.current=true;setTxState([...nextTx]);setBudgetsState({...nextBudgets});setGoalsState([...nextGoals]);persistScopeLocal(mode,room,nextTx,nextBudgets,nextGoals);persistUserLocal(user.uid,mode,room,nextTx,nextBudgets,nextGoals);setRemoteVersion(v=>v+1);setLastSync(new Date());setSyncStatus(mode==='shared'?'Espace à deux synchronisé':'Synchronisé');setTimeout(()=>{applyingRemoteRef.current=false;remoteReadyRef.current=true},0)}else if(mode==='personal'){const cached=readUserLocal(user.uid,mode,room)||readScopeLocal(mode,room);const firstTx=safeTx(cached?.transactions||[]);const firstBudgets=safeBudgets(cached?.budgets||{});const firstGoals=safeGoals(cached?.goals||[]);applyingRemoteRef.current=true;setSyncStatus('Création de ton espace cloud...');setTxState([...firstTx]);setBudgetsState({...firstBudgets});setGoalsState([...firstGoals]);persistScopeLocal(mode,room,firstTx,firstBudgets,firstGoals);persistUserLocal(user.uid,mode,room,firstTx,firstBudgets,firstGoals);ref.set({transactions:firstTx,budgets:firstBudgets,goals:firstGoals,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedFrom:navigator.userAgent.slice(0,140)},{merge:true}).then(()=>{setLastSync(new Date());setSyncStatus('Synchronisé')}).catch(err=>{setFirebaseError(err?.message||'Erreur Firestore');setSyncStatus('Erreur cloud')});setTimeout(()=>{applyingRemoteRef.current=false;remoteReadyRef.current=true},0)}else{setSyncStatus('Espace à deux introuvable ou accès refusé')}},err=>{setFirebaseError(err?.message||'Erreur Firestore');setSyncStatus(mode==='shared'?'Erreur espace à deux':'Erreur cloud')});return()=>{if(unsubDocRef.current){unsubDocRef.current();unsubDocRef.current=null}}},[configured,user?.uid,spaceMode,pairRoom?.id]);
+  useEffect(()=>{if(unsubDocRef.current){unsubDocRef.current();unsubDocRef.current=null}docRef.current=null;remoteReadyRef.current=false;if(!configured){setSyncStatus('Mode local');return}if(!user){setSyncStatus('Connecte-toi avec Google');return}if(!dbRef.current){setSyncStatus('Firebase pas encore prêt');return}if(spaceMode==='shared'&&!pairRoom?.id){setSyncStatus('Espace à deux : crée ou rejoins une connexion');return}const mode=spaceMode,room=pairRoom;setSyncStatus(mode==='shared'?'Connexion à l’espace à deux...':'Connexion au cloud...');const ref=mode==='shared'?dbRef.current.collection('primebudgetPairRooms').doc(room.id):dbRef.current.collection('users').doc(user.uid).collection('primebudget').doc('main');docRef.current=ref;unsubDocRef.current=ref.onSnapshot(snapshot=>{if(snapshot.exists){const data=snapshot.data()||{};const nextTx=liveTx(data.transactions);const nextBudgets=safeBudgets(data.budgets);const nextGoals=liveGoals(data.goals);applyingRemoteRef.current=true;setTxState([...nextTx]);setBudgetsState({...nextBudgets});setGoalsState([...nextGoals]);baseTxRef.current=nextTx;baseGoalsRef.current=nextGoals;baseBudgetsRef.current=nextBudgets;persistScopeLocal(mode,room,nextTx,nextBudgets,nextGoals);persistUserLocal(user.uid,mode,room,nextTx,nextBudgets,nextGoals);setRemoteVersion(v=>v+1);setLastSync(new Date());setSyncStatus(mode==='shared'?'Espace à deux synchronisé':'Synchronisé');setTimeout(()=>{applyingRemoteRef.current=false;remoteReadyRef.current=true},0)}else if(mode==='personal'){const cached=readUserLocal(user.uid,mode,room)||readScopeLocal(mode,room);const firstTx=liveTx(cached?.transactions||[]);const firstBudgets=safeBudgets(cached?.budgets||{});const firstGoals=liveGoals(cached?.goals||[]);applyingRemoteRef.current=true;setSyncStatus('Création de ton espace cloud...');setTxState([...firstTx]);setBudgetsState({...firstBudgets});setGoalsState([...firstGoals]);baseTxRef.current=firstTx;baseGoalsRef.current=firstGoals;baseBudgetsRef.current=firstBudgets;persistScopeLocal(mode,room,firstTx,firstBudgets,firstGoals);persistUserLocal(user.uid,mode,room,firstTx,firstBudgets,firstGoals);ref.set({transactions:firstTx,budgets:firstBudgets,goals:firstGoals,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedFrom:navigator.userAgent.slice(0,140)},{merge:true}).then(()=>{setLastSync(new Date());setSyncStatus('Synchronisé')}).catch(err=>{setFirebaseError(err?.message||'Erreur Firestore');setSyncStatus('Erreur cloud')});setTimeout(()=>{applyingRemoteRef.current=false;remoteReadyRef.current=true},0)}else{setSyncStatus('Espace à deux introuvable ou accès refusé')}},err=>{setFirebaseError(err?.message||'Erreur Firestore');setSyncStatus(mode==='shared'?'Erreur espace à deux':'Erreur cloud')});return()=>{if(unsubDocRef.current){unsubDocRef.current();unsubDocRef.current=null}}},[configured,user?.uid,spaceMode,pairRoom?.id]);
+
+  useEffect(()=>{accountStateLoadedRef.current=false;if(!configured||!user?.uid||!dbRef.current)return;let cancelled=false;dbRef.current.collection('users').doc(user.uid).collection('primebudget').doc('state').get().then(snap=>{if(cancelled)return;if(snap.exists){const s=snap.data()||{};if(s.pairRoom&&s.pairRoom.id&&!pairRef.current?.id){setPairRoom(s.pairRoom);if(s.spaceMode==='shared')setSpaceMode('shared')}}accountStateLoadedRef.current=true}).catch(()=>{accountStateLoadedRef.current=true});return()=>{cancelled=true}},[configured,user?.uid]);
+
+  useEffect(()=>{if(!configured||!user?.uid||!dbRef.current||!accountStateLoadedRef.current)return;const payload={spaceMode,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};if(pairRoom&&pairRoom.id)payload.pairRoom={id:pairRoom.id,code:pairRoom.code||'',ownerEmail:pairRoom.ownerEmail||''};dbRef.current.collection('users').doc(user.uid).collection('primebudget').doc('state').set(payload,{merge:true}).catch(()=>{})},[configured,user?.uid,spaceMode,pairRoom?.id]);
+
 
   const setTx=updater=>setTxState(prev=>{const next=typeof updater==='function'?updater(prev):updater;const safe=safeTx(next);const k=currentKeys();writeLocal(k.tx,safe);return [...safe]});
   const setBudgets=updater=>setBudgetsState(prev=>{const next=typeof updater==='function'?updater(prev):updater;const safe=safeBudgets(next);const k=currentKeys();writeLocal(k.budgets,safe);return {...safe}});
