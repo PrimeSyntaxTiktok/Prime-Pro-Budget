@@ -19,8 +19,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="https://i.ibb.co/zWQXGQK0/a471dbe4979d.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -31,521 +30,961 @@
   <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-analytics-compat.js"></script>
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-
   <style>
-    :root {
-      --bg: #050508;
-      --panel: #0d0d14;
-      --panel2: #12121c;
-      --panel3: #181826;
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --soft: #64748b;
-      --gold: #f5c84b;
-      --gold2: #e0ab1f;
-      --green: #10b981;
-      --red: #f43f5e;
-      --blue: #3b82f6;
-      --purple: #8b5cf6;
-      --line: rgba(255, 255, 255, 0.06);
-      --line-bright: rgba(255, 255, 255, 0.12);
-      --shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-      --radius: 20px;
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-      --safe-top: env(safe-area-inset-top, 0px);
+    :root{
+      /* Surfaces obsidiennes */
+      --bg:#06060a;--bg2:#0a0a12;--panel:#101019;--panel2:#15151f;--panel3:#1c1c29;
+      --text:#f6f7fb;--muted:#9a9bb0;--soft:#6f7088;
+      /* Accents */
+      --gold:#f6cf6b;--gold2:#d8a52f;--goldsoft:#fbe3a6;
+      --green:#34e2a4;--red:#ff5573;--blue:#7fb4ff;--purple:#b29bff;
+      --line:rgba(255,255,255,.085);--line2:rgba(255,255,255,.05);
+      /* Mélanges */
+      --glass:linear-gradient(165deg,rgba(255,255,255,.07),rgba(255,255,255,.022));
+      --glass-strong:linear-gradient(165deg,rgba(255,255,255,.10),rgba(255,255,255,.035));
+      --gold-grad:linear-gradient(135deg,var(--goldsoft),var(--gold) 42%,var(--gold2));
+      --shadow:0 30px 90px -30px rgba(0,0,0,.7);
+      --shadow-sm:0 12px 34px -14px rgba(0,0,0,.6);
+      --glow-gold:0 0 0 1px rgba(246,207,107,.35),0 20px 55px -18px rgba(246,207,107,.45);
+      --radius:24px;--radius-sm:16px;
+      --safe-bottom:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);
+      --font-display:'Sora',system-ui,sans-serif;
+      --font-body:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+      --font-mono:'JetBrains Mono',ui-monospace,monospace;
+      --ease:cubic-bezier(.22,1,.36,1);
     }
 
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-      transition: background-color 0.2s, border-color 0.2s, transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body,#root{height:100%;margin:0}
+    body{
+      font-family:var(--font-body);background:var(--bg);color:var(--text);
+      overflow:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+      letter-spacing:-.01em;
+    }
+    /* Aurora vivante + lueurs profondes (sous le contenu) */
+    body:before{
+      content:"";position:fixed;inset:-25%;z-index:-2;pointer-events:none;
+      background:
+        radial-gradient(38% 42% at 18% 8%,rgba(246,207,107,.22),transparent 60%),
+        radial-gradient(34% 40% at 92% 16%,rgba(127,180,255,.16),transparent 60%),
+        radial-gradient(40% 44% at 78% 92%,rgba(52,226,164,.13),transparent 60%),
+        radial-gradient(46% 50% at 30% 96%,rgba(178,155,255,.12),transparent 62%);
+      filter:blur(28px);
+      animation:auroraDrift 26s ease-in-out infinite alternate;
+    }
+    /* Trame fine + voile texturé */
+    body:after{
+      content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+      background-image:
+        linear-gradient(to right,rgba(255,255,255,.025) 1px,transparent 1px),
+        linear-gradient(to bottom,rgba(255,255,255,.025) 1px,transparent 1px);
+      background-size:44px 44px;
+      mask-image:radial-gradient(circle at 50% 0%,#000,transparent 78%);
+      -webkit-mask-image:radial-gradient(circle at 50% 0%,#000,transparent 78%);
     }
 
-    html, body, #root {
-      height: 100%;
-      margin: 0;
+    button,input,select,textarea{font:inherit;font-family:var(--font-body)}
+    button{border:0;color:inherit;cursor:pointer}
+    input,select,textarea{
+      width:100%;border:1px solid var(--line);background:rgba(255,255,255,.045);
+      color:var(--text);border-radius:var(--radius-sm);padding:13px 14px;outline:none;
+      transition:border-color .25s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease);
+    }
+    input::placeholder,textarea::placeholder{color:var(--soft)}
+    input:focus,select:focus,textarea:focus{
+      border-color:rgba(246,207,107,.6);background:rgba(255,255,255,.06);
+      box-shadow:0 0 0 4px rgba(246,207,107,.13),0 8px 30px -12px rgba(246,207,107,.4);
+    }
+    select option{background:#0e0e16;color:#fff}
+
+    /* ============ Coque applicative ============ */
+    .app{position:relative;height:100%;display:grid;grid-template-columns:300px 1fr;overflow:hidden}
+    .sidebar{
+      padding:24px;height:100%;border-right:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(12,12,20,.82),rgba(8,8,14,.78));
+      backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);
+      display:flex;flex-direction:column;gap:20px;position:relative;
+    }
+    .sidebar:after{content:"";position:absolute;top:0;right:0;width:1px;height:100%;
+      background:linear-gradient(180deg,transparent,rgba(246,207,107,.35),transparent)}
+    .brand{display:flex;align-items:center;gap:13px}
+    .brand img{
+      width:48px;height:48px;border-radius:16px;object-fit:cover;
+      box-shadow:0 0 0 1px rgba(246,207,107,.5),0 14px 40px -10px rgba(246,207,107,.4);
+    }
+    .brand h1{margin:0;font-family:var(--font-display);font-size:22px;font-weight:800;letter-spacing:-.04em}
+    .brand p{margin:2px 0 0;color:var(--muted);font-size:12px;font-weight:600}
+
+    .nav{display:flex;flex-direction:column;gap:7px}
+    .nav button{
+      position:relative;background:transparent;border-radius:16px;padding:13px 15px;
+      display:flex;align-items:center;gap:13px;color:var(--muted);font-weight:700;
+      text-align:left;overflow:hidden;transition:color .25s var(--ease),background .3s var(--ease),transform .2s var(--ease);
+    }
+    .nav button:before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%) scaleY(0);
+      width:3px;height:60%;border-radius:0 4px 4px 0;background:var(--gold-grad);transition:transform .3s var(--ease)}
+    .nav button.active,.nav button:hover{
+      background:linear-gradient(135deg,rgba(246,207,107,.16),rgba(255,255,255,.035));color:#fff;
+    }
+    .nav button.active:before{transform:translateY(-50%) scaleY(1)}
+    .nav button:hover{transform:translateX(2px)}
+    .nav ion-icon{font-size:21px;color:var(--gold);transition:transform .25s var(--ease)}
+    .nav button:hover ion-icon{transform:scale(1.12)}
+
+    .sideCard{
+      margin-top:auto;border:1px solid var(--line);background:var(--glass);
+      border-radius:22px;padding:17px;position:relative;overflow:hidden;
+    }
+    .sideCard:before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;
+      background:linear-gradient(160deg,rgba(246,207,107,.4),transparent 55%);
+      -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+    .sideCard b{font-family:var(--font-display);font-weight:700}
+
+    .content{height:100%;overflow:auto;padding:28px 30px 110px;scroll-behavior:smooth}
+    .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:24px}
+    .title h2{font-family:var(--font-display);font-size:34px;font-weight:800;letter-spacing:-.05em;margin:0;
+      background:linear-gradient(120deg,#fff,#cfd0df);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .title p{margin:8px 0 0;color:var(--muted)}
+    .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+
+    /* ============ Boutons ============ */
+    .btn{
+      position:relative;border-radius:var(--radius-sm);padding:12px 16px;font-weight:800;font-size:14px;
+      background:var(--glass);border:1px solid var(--line);color:var(--text);
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;letter-spacing:-.01em;
+      transition:transform .18s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease),border-color .25s var(--ease);
+    }
+    .btn ion-icon{font-size:18px}
+    .btn:hover{transform:translateY(-2px);background:var(--glass-strong);border-color:rgba(255,255,255,.16)}
+    .btn:active{transform:translateY(0) scale(.98)}
+    .btn.primary{
+      background:var(--gold-grad);color:#120d02;border:0;
+      box-shadow:var(--glow-gold);text-shadow:0 1px 0 rgba(255,255,255,.25);
+    }
+    .btn.primary:hover{box-shadow:0 0 0 1px rgba(246,207,107,.5),0 26px 60px -16px rgba(246,207,107,.6);filter:brightness(1.05)}
+    .btn.danger{color:var(--red);background:rgba(255,85,115,.1);border-color:rgba(255,85,115,.25)}
+    .btn.danger:hover{background:rgba(255,85,115,.16);border-color:rgba(255,85,115,.45)}
+    .btn.ghost{background:rgba(255,255,255,.05);color:var(--text)}
+
+    /* ============ Grilles & cartes ============ */
+    .grid{display:grid;gap:16px}
+    .kpis{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:16px}
+    .card{
+      position:relative;border:1px solid var(--line);background:var(--glass);
+      border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;overflow:hidden;
+      animation:rise .6s var(--ease) both;
+    }
+    .card:before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;
+      background:linear-gradient(150deg,rgba(255,255,255,.22),transparent 40%);
+      -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+    .kpis .kpi:nth-child(1){animation-delay:.04s}
+    .kpis .kpi:nth-child(2){animation-delay:.1s}
+    .kpis .kpi:nth-child(3){animation-delay:.16s}
+    .kpis .kpi:nth-child(4){animation-delay:.22s}
+
+    .kpi{position:relative;min-height:128px;transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+    .kpi:after{content:"";position:absolute;left:0;top:0;height:3px;width:100%;
+      background:linear-gradient(90deg,var(--gold),transparent 70%);opacity:.7}
+    .kpi:hover{transform:translateY(-4px);box-shadow:0 36px 80px -28px rgba(0,0,0,.8)}
+    .kpi small{color:var(--muted);font-weight:800;text-transform:uppercase;font-size:11px;letter-spacing:.1em}
+    .kpi strong{display:block;font-family:var(--font-display);font-size:28px;font-weight:800;letter-spacing:-.045em;margin-top:11px}
+    .kpi span{color:var(--muted);font-size:13px;font-weight:600}
+    .kpi ion-icon{position:absolute;right:16px;top:16px;font-size:26px;opacity:.55;
+      padding:9px;border-radius:13px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+
+    .mainGrid{grid-template-columns:1.35fr .65fr}
+    .sectionTitle{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 16px}
+    .sectionTitle h3{margin:0;font-family:var(--font-display);font-size:18px;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+    .chartBox{height:292px}
+
+    .tabs{display:flex;gap:8px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:18px;padding:5px}
+    .tabs button{border-radius:13px;background:transparent;color:var(--muted);padding:10px 13px;font-weight:800;transition:all .25s var(--ease)}
+    .tabs button.active{background:rgba(255,255,255,.1);color:#fff}
+
+    .progress{height:11px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,.4)}
+    .progress i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--gold));width:0;
+      box-shadow:0 0 14px rgba(52,226,164,.5);transition:width .6s var(--ease)}
+
+    /* ============ Listes & transactions ============ */
+    .list{display:flex;flex-direction:column;gap:10px}
+    .tx{
+      display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;padding:13px;
+      border-radius:18px;background:rgba(255,255,255,.04);border:1px solid var(--line2);
+      user-select:none;touch-action:manipulation;transition:transform .2s var(--ease),background .25s var(--ease),border-color .25s var(--ease);
+    }
+    .tx:hover{background:rgba(255,255,255,.06);border-color:var(--line);transform:translateX(2px)}
+    .tx.longPressing{border-color:rgba(255,85,115,.65);background:rgba(255,85,115,.1);transform:scale(.995)}
+    .txIcon{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid var(--line)}
+    .txTitle{font-weight:800}
+    .txMeta{font-size:12px;color:var(--muted);margin-top:3px}
+    .amount{font-family:var(--font-mono);font-weight:800;letter-spacing:-.02em}
+    .green{color:var(--green)}.red{color:var(--red)}.blue{color:var(--blue)}.gold{color:var(--gold)}
+
+    .tableWrap{overflow:auto;border-radius:20px;border:1px solid var(--line)}
+    table{width:100%;border-collapse:collapse;min-width:760px}
+    th,td{padding:15px;text-align:left;border-bottom:1px solid var(--line2)}
+    th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:800}
+    td{color:#e9e9f1}
+    tbody tr{transition:background .2s var(--ease)}
+    tbody tr:hover{background:rgba(255,255,255,.035)}
+    .pill{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;
+      background:rgba(255,255,255,.06);border:1px solid var(--line);font-size:12px;font-weight:800}
+    .pill ion-icon{font-size:15px}
+
+    /* ============ FAB & navigation mobile ============ */
+    .fab{
+      display:none;position:fixed;right:18px;bottom:calc(82px + var(--safe-bottom));z-index:20;
+      width:58px;height:58px;border-radius:22px;background:var(--gold-grad);color:#120d02;
+      box-shadow:0 22px 60px -16px rgba(246,207,107,.6);font-size:28px;
+      transition:transform .25s var(--ease);
+    }
+    .fab:before{content:"";position:absolute;inset:-6px;border-radius:26px;border:1px solid rgba(246,207,107,.4);
+      animation:fabPulse 2.6s ease-out infinite}
+    .fab:active{transform:scale(.92)}
+    .bottomNav{display:none}
+
+    /* ============ Modales ============ */
+    .modal{position:fixed;inset:0;z-index:50;background:rgba(4,4,8,.66);
+      backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:grid;place-items:center;padding:18px;
+      animation:fadeIn .25s var(--ease) both}
+    .modalBox{
+      position:relative;width:min(620px,100%);max-height:90vh;overflow:auto;
+      background:linear-gradient(180deg,rgba(22,22,32,.98),rgba(12,12,18,.98));
+      border:1px solid var(--line);border-radius:30px;box-shadow:var(--shadow);padding:22px;
+      animation:popIn .4s var(--ease) both;
+    }
+    .modalBox:before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;
+      background:linear-gradient(150deg,rgba(246,207,107,.4),transparent 45%);
+      -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+    .modalHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+    .modalHead h3{margin:0;font-family:var(--font-display);font-size:23px;font-weight:700;letter-spacing:-.03em}
+    .formGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .field{display:flex;flex-direction:column;gap:7px}
+    .field label{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+    .catGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .catBtn{padding:12px 8px;border-radius:16px;background:rgba(255,255,255,.045);border:1px solid var(--line);
+      display:flex;flex-direction:column;gap:6px;align-items:center;font-size:11px;font-weight:800;color:var(--muted);
+      transition:transform .2s var(--ease),background .25s var(--ease),border-color .25s var(--ease)}
+    .catBtn:hover{transform:translateY(-2px);background:rgba(255,255,255,.07)}
+    .catBtn.active{background:rgba(246,207,107,.15);border-color:rgba(246,207,107,.5);color:#fff;box-shadow:0 0 0 1px rgba(246,207,107,.25)}
+    .empty{text-align:center;color:var(--muted);padding:38px;font-weight:600}
+    .installBanner{
+      display:none;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:10;
+      margin:-8px 0 18px;padding:13px 14px;border:1px solid rgba(246,207,107,.28);
+      background:linear-gradient(135deg,rgba(246,207,107,.14),rgba(255,255,255,.03));border-radius:19px;
+      box-shadow:var(--shadow-sm);
+    }
+    .installBanner b{font-family:var(--font-display)}
+    .mini{font-size:12px;color:var(--muted)}
+    .mobileDeleteHint{display:none;margin-top:10px;color:var(--muted);font-size:12px}
+    .mobileOnly{display:none}
+
+    /* ============ Scrollbars ============ */
+    *{scrollbar-width:thin;scrollbar-color:rgba(246,207,107,.7) rgba(255,255,255,.05)}
+    ::-webkit-scrollbar{width:10px;height:10px}
+    ::-webkit-scrollbar-track{background:rgba(255,255,255,.04);border-radius:999px}
+    ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--gold),var(--gold2));border-radius:999px;border:2px solid rgba(8,8,14,.9)}
+    ::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#ffe89a,var(--gold2))}
+    ::-webkit-scrollbar-corner{background:transparent}
+
+    /* ============ Dialogue ============ */
+    .dialogBox{width:min(480px,100%);background:linear-gradient(180deg,rgba(30,30,44,.98),rgba(12,12,18,.98));border-color:rgba(246,207,107,.22)}
+    .dialogTitle{display:flex;align-items:center;gap:10px;font-family:var(--font-display)}
+    .dialogTitle ion-icon{font-size:24px;color:var(--gold)}
+    .dialogTitle.danger ion-icon{color:var(--red)}.dialogTitle.success ion-icon{color:var(--green)}
+    .dialogText{margin:0;color:var(--muted);line-height:1.55;font-size:14px}
+    .dialogActions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:22px}
+    .dialogActions .btn{min-width:118px}
+
+    /* ============ Auth & synchronisation ============ */
+    .authBox{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .authUser{display:flex;align-items:center;gap:9px;padding:9px 12px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.05);max-width:280px}
+    .authUser img{width:28px;height:28px;border-radius:50%;object-fit:cover}
+    .authUser span{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px}
+    .googleBtn{min-width:112px;position:relative}
+    .googleBtn.connected{background:rgba(52,226,164,.1);border-color:rgba(52,226,164,.3);color:#fff}
+    .googleBtn .googleDot{width:8px;height:8px;border-radius:999px;background:var(--green);box-shadow:0 0 0 4px rgba(52,226,164,.15),0 0 12px rgba(52,226,164,.6)}
+    .syncLine{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px;margin-top:8px;font-weight:600}
+    .dot{width:9px;height:9px;border-radius:50%;background:var(--soft);box-shadow:0 0 0 4px rgba(255,255,255,.035)}
+    .dot.online{background:var(--green);box-shadow:0 0 0 4px rgba(52,226,164,.13),0 0 10px rgba(52,226,164,.6);animation:dotPulse 2.4s ease-in-out infinite}
+    .dot.warn{background:var(--gold);box-shadow:0 0 0 4px rgba(246,207,107,.13)}
+    .dot.err{background:var(--red);box-shadow:0 0 0 4px rgba(255,85,115,.13)}
+    .syncCard{border:1px solid rgba(246,207,107,.2);background:rgba(246,207,107,.07);border-radius:20px;padding:14px}
+    .smallGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+    .syncBadge{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:999px;padding:7px 11px;font-size:12px;font-weight:800;color:var(--muted)}
+
+    /* ============ Panneau de partage ============ */
+    .sharePanel{display:grid;gap:14px;margin-top:16px}
+    .shareHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .shareHeader h3{margin:0;font-family:var(--font-display);font-size:18px;font-weight:700}
+    .shareCodeRow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+    .shareCodeDisplay{font-family:var(--font-mono);font-size:18px;font-weight:700;letter-spacing:.1em;text-align:center;
+      border:1px solid rgba(246,207,107,.32);background:rgba(246,207,107,.1);border-radius:18px;padding:14px;color:var(--gold);
+      box-shadow:inset 0 0 30px rgba(246,207,107,.08)}
+    .shareSteps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+    .shareStep{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:18px;padding:13px}
+    .shareStep b{display:block;margin-bottom:5px;font-family:var(--font-display)}
+    .shareStep span{font-size:12px;color:var(--muted);line-height:1.45}
+    .rulesMini{border:1px dashed rgba(246,207,107,.3);background:rgba(246,207,107,.06);border-radius:18px;padding:13px}
+    .rulesMini .btn{margin-top:10px}
+
+    /* ============ Suivi des paiements ============ */
+    .tx,.paidTx{position:relative}
+    .tx.paidTx{padding-top:42px}
+    .txPaidBadge{display:inline-flex;align-items:center;justify-content:center;min-width:48px;height:28px;padding:0 11px;border-radius:999px;
+      background:linear-gradient(135deg,#ff6f88,var(--red));color:#fff;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;
+      box-shadow:0 12px 30px -8px rgba(255,85,115,.55);z-index:2}
+    .tx .txPaidBadge{position:absolute;right:12px;top:10px}
+    .txAmountBlock{display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:132px}
+    .remainingLine{font-size:11px;color:var(--muted);line-height:1.25;text-align:right;white-space:nowrap}
+    .remainingLine strong{display:block;color:var(--green);font-family:var(--font-mono);font-size:12px;margin-top:2px}
+    .paidLine{font-size:11px;color:var(--muted);white-space:nowrap}
+    .txTitleCell{position:relative}
+    .txTitleCell .txPaidBadge{display:none}
+    .txActionsCell{position:relative;white-space:nowrap}
+    .txActionsCell.hasPaidBadge{padding-top:42px}
+    .txActionsCell .txPaidBadge{position:absolute;right:12px;top:8px}
+    .paymentPreview{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .paymentBox{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:18px;padding:13px}
+    .paymentBox span{display:block;color:var(--muted);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+    .paymentBox b{font-family:var(--font-mono);font-size:17px}
+    .paidToggle{width:100%;min-height:52px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.05);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;font-weight:900;transition:all .25s var(--ease)}
+    .paidToggle ion-icon{font-size:22px;color:var(--muted)}
+    .paidToggle.active{background:rgba(255,85,115,.13);border-color:rgba(255,85,115,.45);color:#fff}
+    .paidToggle.active ion-icon{color:var(--red)}
+    .paymentSection{grid-column:1/-1;border:1px solid rgba(246,207,107,.2);background:rgba(246,207,107,.06);border-radius:22px;padding:15px;margin-top:12px;display:grid;gap:12px}
+    .paymentSectionHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .paymentSectionHead h4{margin:0;font-family:var(--font-display);font-size:15px;letter-spacing:-.02em}
+    .paymentSectionHead p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.35}
+    .paymentUseList{display:grid;gap:10px}
+    .paymentUseRow{display:grid;grid-template-columns:1.1fr .8fr .7fr auto;gap:9px;align-items:end;border:1px solid var(--line);background:rgba(0,0,0,.13);border-radius:18px;padding:10px}
+    .paymentUseRow input{min-height:48px}
+    .paymentUseRow .btn{min-height:48px;border-radius:15px}
+    .paymentUseEmpty{border:1px dashed rgba(255,255,255,.16);border-radius:18px;padding:14px;color:var(--muted);font-size:13px;text-align:center}
+    .paymentActionStack{display:grid;gap:10px;margin-top:4px}
+    .paymentActionStack .btn{width:100%;min-height:50px;border-radius:17px}
+    .paymentSummaryLine{display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--muted);font-size:13px;border:1px solid var(--line);background:rgba(0,0,0,.12);border-radius:16px;padding:11px 13px}
+    .paymentSummaryLine b{color:#fff;font-family:var(--font-mono)}
+    .nestedPaymentModal{z-index:85;background:rgba(4,4,8,.78)}
+    .nestedPaymentModal .modalBox{width:min(520px,100%)}
+    .paymentWizardSteps{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:2px 0 18px}
+    .paymentWizardSteps i{display:block;height:7px;border-radius:999px;background:rgba(255,255,255,.1);transition:background .35s var(--ease)}
+    .paymentWizardSteps i.active{background:var(--gold-grad);box-shadow:0 0 12px rgba(246,207,107,.5)}
+    .paymentStepTitle{margin:0 0 12px;font-family:var(--font-display);font-size:17px;letter-spacing:-.02em}
+    .paymentStepHelp{margin:-5px 0 14px;color:var(--muted);font-size:13px;line-height:1.45}
+    .paymentConfirmCard{display:grid;gap:10px;border:1px solid rgba(246,207,107,.2);background:rgba(246,207,107,.07);border-radius:20px;padding:15px}
+    .paymentConfirmRow{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:9px;color:var(--muted);font-size:13px}
+    .paymentConfirmRow:last-child{border-bottom:0;padding-bottom:0}
+    .paymentConfirmRow b{color:#fff;text-align:right}
+    .paymentModalActions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:18px}
+    .paymentModalActions .btn{min-width:118px}
+    .paymentHistoryList{display:grid;gap:10px;margin-top:10px}
+    .paymentHistoryRow{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:18px;padding:13px}
+    .paymentHistoryTitle{font-weight:900;margin-bottom:5px}
+    .paymentHistoryMeta{color:var(--muted);font-size:12px;display:flex;flex-wrap:wrap;gap:7px}
+    .paymentHistoryAmount{font-family:var(--font-mono);font-weight:900;color:var(--gold);font-size:16px;text-align:right;margin-bottom:8px}
+    .paymentHistoryActions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+    .paymentHistoryActions .btn{min-height:42px;border-radius:14px;padding:10px 12px}
+
+    /* ============ Mode personnel / espace à deux ============ */
+    .modeBtn.shared,.brandModeBtn.shared{background:rgba(52,226,164,.12);border-color:rgba(52,226,164,.32);color:#fff}
+    .modeBtn ion-icon,.brandModeBtn ion-icon{font-size:21px;color:var(--gold)}
+    .modeBtn.shared ion-icon,.brandModeBtn.shared ion-icon{color:var(--green)}
+    .brandWrap{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .brandModeBtn{width:46px;height:46px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid var(--line);display:grid;place-items:center;flex:0 0 auto;transition:all .25s var(--ease)}
+    .brandModeBtn:hover{transform:translateY(-2px);background:rgba(255,255,255,.09)}
+    .brandModeBtn ion-icon{font-size:24px}
+    .modeBadge{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:999px;padding:7px 11px;font-size:12px;font-weight:900;color:var(--muted)}
+    .modeBadge.shared{background:rgba(52,226,164,.1);border-color:rgba(52,226,164,.3);color:#fff}
+    .sharedNotice{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px;border-color:rgba(52,226,164,.26);background:linear-gradient(135deg,rgba(52,226,164,.12),rgba(255,255,255,.03))}
+    .sharedNotice h3{margin:0 0 6px;font-family:var(--font-display);font-size:17px;display:flex;align-items:center;gap:8px}
+    .sharedNotice p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+    .pairPanel{display:grid;gap:14px;border-color:rgba(52,226,164,.26);background:linear-gradient(180deg,rgba(52,226,164,.1),rgba(255,255,255,.03))}
+    .pairPanel .shareCodeDisplay{border-color:rgba(52,226,164,.35);background:rgba(52,226,164,.1);color:var(--green)}
+    .pairStatus{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+    .pairBox{border:1px solid var(--line);background:rgba(0,0,0,.13);border-radius:18px;padding:13px}
+    .pairBox b{display:block;margin-bottom:5px;font-family:var(--font-display)}
+    .pairBox span{color:var(--muted);font-size:12px;line-height:1.45}
+    .bottomNav.hasMode{grid-template-columns:repeat(4,1fr)!important}
+
+    /* ============ Animations ============ */
+    @keyframes auroraDrift{
+      0%{transform:translate3d(-2%,-1%,0) scale(1)}
+      50%{transform:translate3d(2%,2%,0) scale(1.06)}
+      100%{transform:translate3d(-1%,2%,0) scale(1.03)}
+    }
+    @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes popIn{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes dotPulse{0%,100%{box-shadow:0 0 0 4px rgba(52,226,164,.13),0 0 8px rgba(52,226,164,.5)}50%{box-shadow:0 0 0 7px rgba(52,226,164,.05),0 0 16px rgba(52,226,164,.8)}}
+    @keyframes fabPulse{0%{transform:scale(1);opacity:.7}80%,100%{transform:scale(1.3);opacity:0}}
+    @media(prefers-reduced-motion:reduce){
+      *,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
     }
 
-    body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow: hidden;
-      letter-spacing: -0.01em;
+    /* ============ Responsive ============ */
+    @media(max-width:1050px){
+      .app{grid-template-columns:1fr}.sidebar{display:none}
+      .content{padding:calc(14px + var(--safe-top)) 14px 110px}
+      .topbar{flex-direction:column;align-items:stretch}
+      .toolbar{justify-content:stretch}.toolbar .btn,.toolbar select{flex:1}
+      .kpis{grid-template-columns:repeat(2,1fr)}
+      .mainGrid{grid-template-columns:1fr}
+      .bottomNav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(5,1fr);
+        padding:8px 8px calc(8px + var(--safe-bottom));background:rgba(8,8,14,.88);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-top:1px solid var(--line)}
+      .bottomNav button{position:relative;background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;
+        font-size:10px;font-weight:800;padding:7px 4px;border-radius:16px;transition:color .25s var(--ease),background .3s var(--ease)}
+      .bottomNav button.active{background:rgba(246,207,107,.14);color:#fff}
+      .bottomNav button.active ion-icon{transform:translateY(-1px) scale(1.05)}
+      .bottomNav ion-icon{font-size:21px;transition:transform .25s var(--ease)}
+      .fab{display:grid;place-items:center}
+      .hideMobile{display:none!important}
+      .title h2{font-size:29px}
+      .chartBox{height:240px}
+      .tx{grid-template-columns:auto 1fr auto}
+      .txActions{grid-column:2/4;display:flex;justify-content:flex-end}
+      .installBanner{display:flex}
+      .mobileDeleteHint,.mobileOnly{display:block}
+    }
+    @media(max-width:560px){
+      .kpis{grid-template-columns:1fr 1fr;gap:10px}
+      .card{border-radius:20px;padding:15px}
+      .kpi{min-height:104px}.kpi strong{font-size:21px}
+      .formGrid{grid-template-columns:1fr}
+      .catGrid{grid-template-columns:repeat(2,1fr)}
+      .modal{padding:10px;align-items:end}
+      .modalBox{border-radius:26px 26px 0 0;max-height:92vh}
+      .toolbar select{min-width:100%}
+      .btnText{display:none}
+      .tx{padding:11px}.amount{font-size:13px}
+      .shareCodeRow{grid-template-columns:1fr}.shareCodeDisplay{font-size:16px}
+      .shareHeader{display:block}.shareHeader .syncBadge{margin-top:10px}
     }
 
-    /* Amélioration de l'ambiance lumineuse en arrière-plan */
-    body:before {
-      content: "";
-      position: fixed;
-      inset: -10%;
-      background: 
-        radial-gradient(circle at 15% 15%, rgba(245, 200, 75, 0.15), transparent 35%),
-        radial-gradient(circle at 85% 25%, rgba(59, 130, 246, 0.12), transparent 40%),
-        radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.08), transparent 45%);
-      filter: blur(40px);
-      pointer-events: none;
-      z-index: 0;
+    /* Affichage mobile type application : plus grand, plus lisible */
+    @media(max-width:700px){
+      html{font-size:16px}
+      body{font-size:16px;overflow:hidden}
+      .app{height:100svh;min-height:100svh}
+      .content{padding:calc(18px + var(--safe-top)) 14px calc(118px + var(--safe-bottom));scroll-padding-bottom:calc(118px + var(--safe-bottom))}
+      .topbar{gap:14px;margin-bottom:16px}
+      .title h2{font-size:30px;line-height:1.05;letter-spacing:-.045em}
+      .syncLine{font-size:13px;margin-top:8px}
+      .toolbar{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:stretch;justify-content:stretch;width:100%}
+      .toolbar select{grid-column:1 / -1;min-width:0!important;min-height:52px;font-size:16px;border-radius:18px;padding:0 14px}
+      .toolbar .btn,.toolbar label.btn,.googleBtn{min-height:52px;width:100%;font-size:15px;border-radius:18px;padding:13px 12px;white-space:nowrap}
+      .toolbar ion-icon{font-size:19px}
+      .btnText{display:inline}
+      .kpis{grid-template-columns:1fr;gap:12px;margin-bottom:14px}
+      .card{border-radius:24px;padding:18px}
+      .kpi{min-height:122px;padding:20px}
+      .kpi small{font-size:12px;letter-spacing:.09em}
+      .kpi strong{font-size:31px;line-height:1.05;margin-top:12px}
+      .kpi span{font-size:15px;line-height:1.35}
+      .kpi ion-icon{font-size:26px;right:18px;top:18px}
+      .sectionTitle{align-items:flex-start;margin-bottom:16px}
+      .sectionTitle h3{font-size:20px;line-height:1.15}
+      .sectionTitle .btn{min-height:46px;font-size:14px;padding:12px 14px}
+      .mainGrid{gap:14px}
+      .chartBox{height:285px}
+      .modal{padding:0;align-items:end}
+      .modalBox{width:100%;max-height:92svh;border-radius:28px 28px 0 0;padding:20px}
+      .modalHead h3{font-size:23px}
+      input,select,textarea{min-height:52px;font-size:16px;border-radius:18px}
+      textarea{min-height:110px}
+      .field label{font-size:12px}
+      .catBtn{min-height:72px;font-size:12px;border-radius:18px}
+      .installBanner{padding:14px;border-radius:20px;font-size:15px}
+      .installBanner .btn{min-height:48px}
+
+      /* Transactions en cartes au lieu d'un tableau */
+      .tableWrap{overflow:visible;border:0;border-radius:0}
+      table{width:100%;min-width:0;border-collapse:separate;border-spacing:0}
+      thead{display:none}
+      tbody{display:grid;gap:12px}
+      tbody tr{display:grid;border:1px solid var(--line);border-radius:22px;
+        background:var(--glass);padding:15px;box-shadow:var(--shadow-sm)}
+      tbody tr:hover{background:var(--glass)}
+      tbody td{display:flex;align-items:center;justify-content:space-between;gap:12px;border:0;padding:7px 0;font-size:15px}
+      tbody td::before{color:var(--muted);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;flex:0 0 auto}
+      tbody td:nth-child(1){display:block;padding:0 0 10px}
+      tbody td:nth-child(1)::before{content:none}
+      tbody td:nth-child(1) b{display:block;font-size:18px;line-height:1.2}
+      tbody td:nth-child(1) .mini{margin-top:5px;font-size:13px}
+      tbody td:nth-child(2)::before{content:"Catégorie"}
+      tbody td:nth-child(3)::before{content:"Date"}
+      tbody td:nth-child(4)::before{content:"Type"}
+      tbody td:nth-child(5)::before{content:"Montant"}
+      tbody td:nth-child(6)::before{content:none}
+      tbody td:nth-child(5){font-size:19px;padding-top:10px}
+      tbody td:nth-child(6){display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:12px}
+      tbody td:nth-child(6) .btn{width:100%;min-height:48px;font-size:14px;border-radius:16px}
+      .pill{font-size:13px;padding:8px 11px}
+      .mobileDeleteHint{display:block;font-size:13px;line-height:1.4;margin:10px 0 14px}
+      .bottomNav{grid-template-columns:repeat(3,1fr);padding:10px 10px calc(10px + var(--safe-bottom));min-height:76px}
+      .bottomNav button{min-height:54px;font-size:12px;gap:5px;border-radius:20px}
+      .bottomNav ion-icon{font-size:24px}
+      .fab{width:64px;height:64px;right:16px;bottom:calc(90px + var(--safe-bottom));border-radius:24px;font-size:31px}
+      .sharePanel{gap:16px}
+      .shareCodeRow{grid-template-columns:1fr;gap:10px}
+      .shareCodeDisplay{font-size:19px;padding:15px;border-radius:20px}
+      .shareStep{padding:14px;border-radius:20px}
+      .shareStep b{font-size:15px}.shareStep span{font-size:13px}
+
+      /* Paiements (mobile) */
+      tbody tr.paidTx{padding-top:42px}
+      .txTitleCell .txPaidBadge{display:inline-flex;position:absolute;right:0;top:-36px}
+      .txActionsCell .txPaidBadge{display:none}
+      .txActionsCell.hasPaidBadge{padding-top:12px}
+      .txAmountBlock{align-items:flex-end;min-width:0}
+      .remainingLine{font-size:12px}.remainingLine strong{font-size:13px}
+      .paymentPreview{grid-template-columns:1fr}
+      .paymentUseRow{grid-template-columns:1fr}
+      .paymentSectionHead{display:grid;gap:10px}
+      .paymentActionStack{width:100%}
+      .paymentHistoryRow{grid-template-columns:1fr;align-items:stretch}
+      .paymentHistoryAmount{text-align:left;margin:0}
+      .paymentHistoryActions{justify-content:stretch}
+      .paymentHistoryActions .btn{flex:1}
+      .paymentModalActions{display:grid;grid-template-columns:1fr 1fr}
+      .paymentModalActions .btn{width:100%;min-width:0}
+
+      /* Mode duo (mobile) */
+      .sharedNotice{display:grid}
+      .brandWrap{display:none}
+      .pairStatus{grid-template-columns:1fr}
+      .modeBtn .btnText{display:inline}
+      .toolbar{grid-template-columns:1fr 1fr}
+      .toolbar .modeBtn{grid-column:auto}
     }
 
-    button, input, select, textarea { font: inherit; }
-    button { border: 0; color: inherit; cursor: pointer; background: none; }
-
-    input, select, textarea {
-      width: 100%;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text);
-      border-radius: 14px;
-      padding: 12px 16px;
-      outline: none;
-    }
-    input:focus, select:focus, textarea:focus {
-      border-color: rgba(245, 200, 75, 0.5);
-      background: rgba(255, 255, 255, 0.07);
-      box-shadow: 0 0 0 4px rgba(245, 200, 75, 0.1);
-    }
-    select option { background: #0d0d14; color: #fff; }
-
-    .app {
-      position: relative;
-      height: 100%;
-      display: grid;
-      grid-template-columns: 280px 1fr;
-      overflow: hidden;
-      z-index: 1;
-    }
-
-    /* Barre latérale au style ultra-premium */
-    .sidebar {
-      padding: 24px;
-      height: 100%;
-      border-right: 1px solid var(--line);
-      background: rgba(8, 8, 12, 0.65);
-      backdrop-filter: blur(30px);
-      -webkit-backdrop-filter: blur(30px);
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    .brand { display: flex; align-items: center; gap: 14px; }
-    .brand img {
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      box-shadow: 0 0 0 1px rgba(245, 200, 75, 0.3), 0 8px 24px rgba(245, 200, 75, 0.15);
-    }
-    .brand h1 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -0.04em; }
-    .brand p { margin: 2px 0 0; color: var(--muted); font-size: 11px; font-weight: 500; }
-
-    .nav { display: flex; flex-direction: column; gap: 6px; }
-    .nav button {
-      border-radius: 12px;
-      padding: 12px 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: var(--muted);
-      font-weight: 600;
-      font-size: 14px;
-      text-align: left;
-    }
-    .nav button:hover {
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.04);
-    }
-    .nav button.active {
-      background: linear-gradient(135deg, rgba(245, 200, 75, 0.12), rgba(255, 255, 255, 0.02));
-      color: #fff;
-      box-shadow: inset 0 0 0 1px rgba(245, 200, 75, 0.2);
-    }
-    .nav ion-icon { font-size: 20px; color: var(--muted); }
-    .nav button.active ion-icon, .nav button:hover ion-icon { color: var(--gold); }
-
-    .sideCard {
-      margin-top: auto;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 16px;
-      padding: 16px;
-    }
-
-    .content {
-      height: 100%;
-      overflow: auto;
-      padding: 32px 32px 120px;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 28px;
-    }
-    .title h2 { font-size: 32px; font-weight: 800; letter-spacing: -0.04em; margin: 0; }
-    .title p { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
-
-    .toolbar { display: flex; gap: 10px; align-items: center; flex-wrap:wrap; justify-content: flex-end; }
-
-    /* Boutons et éléments interactifs */
-    .btn {
-      border-radius: 12px;
-      padding: 10px 16px;
-      font-weight: 700;
-      font-size: 13.5px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--line);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      color: var(--text);
-    }
-    .btn:hover { background: rgba(255, 255, 255, 0.09); border-color: var(--line-bright); }
-    .btn:active { transform: scale(0.97); }
-    .btn.primary {
-      background: linear-gradient(135deg, var(--gold), var(--gold2));
-      color: #050508;
-      border: 0;
-      box-shadow: 0 12px 30px rgba(245, 200, 75, 0.2);
-    }
-    .btn.primary:hover { filter: brightness(1.1); }
-    .btn.danger { color: var(--red); background: rgba(244, 63, 94, 0.1); border-color: rgba(244, 63, 94, 0.15); }
-    .btn.danger:hover { background: rgba(244, 63, 94, 0.16); }
-
-    .grid { display: grid; gap: 20px; }
-    .kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 24px; }
-
-    /* Cartes KPI aux angles doux & dégradé néon discret */
-    .card {
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 20px;
-      overflow: hidden;
-      backdrop-filter: blur(10px);
-    }
-    .kpi { position: relative; min-height: 115px; display: flex; flex-direction: column; justify-content: center; }
-    .kpi small { color: var(--muted); font-weight: 700; text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; }
-    .kpi strong { display: block; font-size: 26px; font-family: 'JetBrains Mono', monospace; font-weight: 700; letter-spacing: -0.03em; margin-top: 8px; }
-    .kpi span { color: var(--soft); font-size: 12px; margin-top: 4px; }
-    .kpi ion-icon { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 32px; opacity: 0.2; color: var(--text); }
-
-    .mainGrid { grid-template-columns: 1.4fr 0.6fr; }
-    .sectionTitle { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 16px; }
-    .sectionTitle h3 { margin: 0; font-size: 18px; font-weight: 700; }
-
-    .chartBox { height: 300px; padding: 10px; }
-
-    .tabs { display: flex; gap: 4px; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--line); border-radius: 12px; padding: 4px; }
-    .tabs button { border-radius: 8px; background: transparent; color: var(--muted); padding: 8px 12px; font-weight: 700; font-size: 13px; }
-    .tabs button.active { background: rgba(255, 255, 255, 0.08); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-
-    .progress { height: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 99px; overflow: hidden; }
-    .progress i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--green), var(--gold)); width: 0; }
-
-    .list { display: flex; flex-direction: column; gap: 10px; }
-    .tx {
-      display: grid; 
-      grid-template-columns: auto 1fr auto auto; 
-      gap: 14px; 
-      align-items: center; 
-      padding: 14px; 
-      border-radius: 14px; 
-      background: rgba(255, 255, 255, 0.02); 
-      border: 1px solid var(--line);
-    }
-    .tx:hover { border-color: var(--line-bright); background: rgba(255, 255, 255, 0.04); }
-    
-    .txIcon { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: rgba(255, 255, 255, 0.05); font-size: 18px; }
-    .txTitle { font-weight: 700; font-size: 14.5px; }
-    .txMeta { font-size: 12px; color: var(--muted); margin-top: 2px; }
-    .amount { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15px; }
-
-    .green { color: var(--green); }
-    .red { color: var(--red); }
-    .blue { color: var(--blue); }
-    .gold { color: var(--gold); }
-
-    /* Tableaux épurés et modernes */
-    .tableWrap { overflow: auto; border-radius: 16px; border: 1px solid var(--line); background: rgba(0, 0, 0, 0.15); }
-    table { width: 100%; border-collapse: collapse; min-width: 700px; }
-    th, td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--line); }
-    th { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; background: rgba(255,255,255,0.01); }
-    td { color: #e2e8f0; font-size: 14px; }
-    tr:last-child td { border-bottom: 0; }
-
-    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 99px; background: rgba(255, 255, 255, 0.06); font-size: 11.5px; font-weight: 700; }
-
-    .modal { position: fixed; inset: 0; z-index: 100; background: rgba(3, 3, 5, 0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); display: grid; place-items: center; padding: 20px; }
-    .modalBox { width: min(580px, 100%); max-height: 85vh; overflow: auto; background: var(--panel); border: 1px solid var(--line-bright); border-radius: 24px; box-shadow: 0 30px 70px rgba(0,0,0,0.8); padding: 24px; }
-    .modalHead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .modalHead h3 { margin: 0; font-size: 20px; font-weight: 800; }
-
-    .formGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .field { display: flex; flex-direction: column; gap: 6px; }
-    .field label { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
-
-    .catGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .catBtn { padding: 12px 8px; border-radius: 12px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; align-items: center; font-size: 12px; font-weight: 600; color: var(--muted); }
-    .catBtn.active { background: rgba(245, 200, 75, 0.1); border-color: rgba(245, 200, 75, 0.4); color: #fff; }
-
-    /* Scrollbars invisibles ou fines type macOS */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 99px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
-
-    /* Responsive global & comportements Mobile */
-    @media (max-width: 1050px) {
-      .app { grid-template-columns: 1fr; }
-      .sidebar { display: none; }
-      .content { padding: calc(16px + var(--safe-top)) 16px 120px; }
-      .kpis { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-      .mainGrid { grid-template-columns: 1fr; }
-    }
-
-    @media (max-width: 700px) {
-      .kpis { grid-template-columns: 1fr; }
-      .formGrid { grid-template-columns: 1fr; }
-      .catGrid { grid-template-columns: repeat(2, 1fr); }
-      .topbar { flex-direction: column; align-items: flex-start; }
-      .toolbar { width: 100%; justify-content: space-between; }
-      .toolbar .btn { flex: 1; }
+    @media(max-width:380px){
+      .content{padding-left:12px;padding-right:12px}
+      .title h2{font-size:28px}
+      .toolbar .btn,.toolbar label.btn,.googleBtn{font-size:14px;padding-left:10px;padding-right:10px}
+      .kpi strong{font-size:28px}
+      .chartBox{height:255px}
     }
   </style>
 </head>
 <body>
+<div id="root"></div>
+<script>
+(async function(){
+  const APP_NAME='PrimeBudget';
+  const iconSource='https://i.ibb.co/zWQXGQK0/a471dbe4979d.png';
+  const cleanUrl=location.href.split('#')[0];
+  const currentUrl=cleanUrl.split('?')[0];
+  const currentScope=currentUrl.slice(0,currentUrl.lastIndexOf('/')+1)||'./';
 
-  <div id="root"></div>
+  const ensureLink=(rel,href,sizes='')=>{
+    let el=document.head.querySelector(`link[rel="${rel}"]`);
+    if(!el){el=document.createElement('link');el.rel=rel;document.head.appendChild(el)}
+    if(sizes)el.sizes=sizes;
+    el.href=href;
+    return el;
+  };
+  const ensureMeta=(name,content)=>{
+    let el=document.head.querySelector(`meta[name="${name}"]`);
+    if(!el){el=document.createElement('meta');el.name=name;document.head.appendChild(el)}
+    el.content=content;
+    return el;
+  };
+  const loadImage=(src)=>new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.crossOrigin='anonymous';
+    img.onload=()=>resolve(img);
+    img.onerror=reject;
+    img.src=src;
+  });
+  const buildTransparentIcon=(img,size,paddingRatio=.1)=>{
+    const canvas=document.createElement('canvas');
+    canvas.width=size;
+    canvas.height=size;
+    const ctx=canvas.getContext('2d');
+    ctx.clearRect(0,0,size,size);
+    const padding=Math.round(size*paddingRatio);
+    const max=size-padding*2;
+    const ratio=Math.min(max/img.width,max/img.height);
+    const w=Math.round(img.width*ratio);
+    const h=Math.round(img.height*ratio);
+    const x=Math.round((size-w)/2);
+    const y=Math.round((size-h)/2);
+    ctx.imageSmoothingEnabled=true;
+    ctx.imageSmoothingQuality='high';
+    ctx.drawImage(img,x,y,w,h);
+    return canvas.toDataURL('image/png');
+  };
 
-  <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
+  let icon192=iconSource;
+  let icon512=iconSource;
+  let icon180=iconSource;
+  try{
+    const img=await loadImage(iconSource);
+    icon192=buildTransparentIcon(img,192,.08);
+    icon512=buildTransparentIcon(img,512,.08);
+    icon180=buildTransparentIcon(img,180,.08);
+  }catch(err){
+    console.warn('Icône transparente PWA non générée, utilisation du logo source.', err);
+  }
 
-    // Simulation simplifiée des composants d'édition pour la cohérence structurelle
-    function PaymentUseEditor({ editor, total, onClose, onSave }) {
-      return (
-        <div className="modal">
-          <div className="modalBox">
-            <div className="modalHead">
-              <h3>Éditeur de Paiement</h3>
-              <button className="btn" onClick={onClose}><ion-icon name="close-outline"></ion-icon></button>
-            </div>
-            <p style={{ color: 'var(--muted)', fontSize: '14px' }}>Ajustement des critères de répartition du budget utilisable.</p>
-            <button className="btn primary" style={{ width: '100%', marginTop: '12px' }} onClick={onClose}>Fermer</button>
-          </div>
-        </div>
-      );
+  ensureLink('icon',icon192,'192x192');
+  ensureLink('shortcut icon',icon192);
+  ensureLink('apple-touch-icon',icon180,'180x180');
+  ensureMeta('msapplication-TileImage',icon192);
+
+  const manifest={
+    id:currentUrl,
+    name:APP_NAME,
+    short_name:APP_NAME,
+    description:'Application de gestion de budget intelligente.',
+    start_url:currentUrl,
+    scope:currentScope,
+    display:'standalone',
+    display_override:['standalone','minimal-ui'],
+    orientation:'portrait-primary',
+    background_color:'#07070a',
+    theme_color:'#07070a',
+    icons:[
+      {src:icon192,sizes:'192x192',type:'image/png',purpose:'any'},
+      {src:icon512,sizes:'512x512',type:'image/png',purpose:'any'}
+    ]
+  };
+  const murl=URL.createObjectURL(new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'}));
+  let manifestLink=document.head.querySelector('link[rel="manifest"]');
+  if(!manifestLink){manifestLink=document.createElement('link');manifestLink.rel='manifest';document.head.appendChild(manifestLink)}
+  manifestLink.href=murl;
+
+  if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+    const sw=`const CACHE='primebudget-v23-duo-clean';self.addEventListener('install',e=>{self.skipWaiting()});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('primebudget-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});self.addEventListener('fetch',e=>{const req=e.request;if(req.method!=='GET')return;if(req.mode==='navigate'){e.respondWith(fetch(req).then(res=>{const copy=res.clone();caches.open(CACHE).then(c=>c.put('./',copy)).catch(()=>{});return res}).catch(()=>caches.match('./')));return}e.respondWith(fetch(req).catch(()=>caches.match(req)))})`;
+    const swurl=URL.createObjectURL(new Blob([sw],{type:'text/javascript'}));
+    navigator.serviceWorker.register(swurl).catch(()=>{});
+  }
+})();
+</script>
+<script type="text/babel">
+const {useEffect,useMemo,useRef,useState}=React;
+const APP_LOGO='https://i.ibb.co/zWQXGQK0/a471dbe4979d.png';
+const EMBEDDED_FIREBASE_CONFIG={
+  apiKey:'AIzaSyD39GIbGoaZepVfNB1Qj33VLus_x-hR5Jg',
+  authDomain:'budget-master-pro-27c23.firebaseapp.com',
+  projectId:'budget-master-pro-27c23',
+  storageBucket:'budget-master-pro-27c23.firebasestorage.app',
+  messagingSenderId:'625395489880',
+  appId:'1:625395489880:web:14d8a071d7573d93dafe2d',
+  measurementId:'G-528WFJ7ZWN'
+};
+const money=n=>Number(n||0).toLocaleString('fr-FR',{style:'currency',currency:'EUR'});
+const today=()=>new Date().toISOString().slice(0,10); const keyOf=d=>{const x=new Date(d);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}`};
+const labelMonth=k=>new Date(+k.slice(0,4),+k.slice(5)-1,1).toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+const uid=()=>crypto?.randomUUID?.()||Math.random().toString(36).slice(2);
+const generateShareCodeValue=()=>{const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';const bytes=new Uint8Array(8);if(crypto?.getRandomValues)crypto.getRandomValues(bytes);else for(let i=0;i<bytes.length;i++)bytes[i]=Math.floor(Math.random()*256);const raw=[...bytes].map(b=>alphabet[b%alphabet.length]).join('');return `PB-${raw.slice(0,4)}-${raw.slice(4)}`};
+const normalizeShareCode=code=>{const raw=String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'');const trimmed=raw.startsWith('PB')?raw.slice(2):raw;return trimmed?`PB-${trimmed.slice(0,4)}-${trimmed.slice(4,8)}`:''};
+const generatePairCodeValue=()=>generateShareCodeValue().replace('PB-','DUO-');
+const normalizePairCode=code=>{const raw=String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'');const trimmed=raw.startsWith('DUO')?raw.slice(3):raw.startsWith('PB')?raw.slice(2):raw;return trimmed?`DUO-${trimmed.slice(0,4)}-${trimmed.slice(4,8)}`:''};
+const cats=[['Revenus','cash-outline','#2ee59d'],['Alimentation','cart-outline','#6ba8ff'],['Restaurants','restaurant-outline','#f5a524'],['Logement','home-outline','#a78bfa'],['Énergie','flash-outline','#f5c84b'],['Eau','water-outline','#38bdf8'],['Internet','wifi-outline','#818cf8'],['Téléphone','call-outline','#e879f9'],['Voiture','car-sport-outline','#ff4d6d'],['Transports','bus-outline','#2dd4bf'],['Shopping','bag-handle-outline','#fb7185'],['Santé','medkit-outline','#84cc16'],['Abonnements','card-outline','#60a5fa'],['Loisirs','game-controller-outline','#fb923c'],['Épargne','leaf-outline','#22c55e'],['Crédit','business-outline','#94a3b8'],['Impôts','document-text-outline','#cbd5e1'],['Imprévus','warning-outline','#ef4444'],['Autre','ellipsis-horizontal-circle-outline','#9ca3af']].map(([name,icon,color])=>({name,icon,color}));
+const clampNumber=(value,min=0,max=Infinity)=>Math.min(max,Math.max(min,Number(value||0)));
+const txTotal=t=>Math.max(0,Number(t?.amount||0));
+const normalizePaymentUses=(uses,total=Infinity)=>Array.isArray(uses)?uses.map(u=>({id:u?.id||uid(),label:String(u?.label||u?.title||u?.note||'').trim(),amount:clampNumber(u?.amount,0,total),date:u?.date||today()})).filter(u=>u.amount>0):[];
+const txPaymentUses=t=>normalizePaymentUses(t?.paymentUses||[],txTotal(t));
+const txPaidRaw=t=>{const uses=txPaymentUses(t);return uses.length?uses.reduce((a,u)=>a+Number(u.amount||0),0):Math.max(0,Number(t?.paidAmount||0))};
+const txIsPaid=t=>{const total=txTotal(t),paid=txPaidRaw(t);return t?.type==='expense'&&(!!t?.isPaid||(total>0&&paid>=total))};
+const txPaidAmount=t=>{const total=txTotal(t),paid=txPaidRaw(t);return txIsPaid(t)?total:clampNumber(paid,0,total)};
+const txRemaining=t=>Math.max(0,txTotal(t)-txPaidAmount(t));
+const txShowsPayment=t=>t?.type==='expense'&&(txPaymentUses(t).length>0||txPaidRaw(t)>0||txIsPaid(t));
+const cleanInitialTx=(value)=>{if(!Array.isArray(value))return [];const demo=value.length===3&&value.some(t=>t.title==='Salaire')&&value.some(t=>t.title==='Courses')&&value.some(t=>t.title==='Épargne automatique');return demo?[]:value};
+const sortTxByAmountDesc=list=>[...list].sort((a,b)=>{
+  const group=a.type===b.type?0:(a.type==='income'?-1:1);
+  if(group)return group;
+  const amountDiff=Number(b.amount||0)-Number(a.amount||0);
+  if(amountDiff)return amountDiff;
+  const dateDiff=new Date(b.date||0)-new Date(a.date||0);
+  if(dateDiff)return dateDiff;
+  return String(a.title||'').localeCompare(String(b.title||''),'fr');
+});
+const safeTx=list=>sortTxByAmountDesc(cleanInitialTx(Array.isArray(list)?list:[]).map(t=>({...t,category:t.category&&t.category.name?t.category:cats.find(c=>c.name===t.category)||cats[18]})));
+const safeBudgets=obj=>obj&&typeof obj==='object'&&!Array.isArray(obj)?obj:{};
+const safeGoals=list=>Array.isArray(list)?list:[];
+const cleanTextKey=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ');
+const amountKey=value=>String(Math.round((Number(value||0)+Number.EPSILON)*100));
+const categoryKey=tx=>cleanTextKey(tx?.category?.name||tx?.category||'');
+const dateKey=value=>String(value||'').slice(0,10);
+const duplicateTxKey=tx=>[dateKey(tx?.date),cleanTextKey(tx?.type),amountKey(tx?.amount),categoryKey(tx),cleanTextKey(tx?.title),cleanTextKey(tx?.note)].join('|');
+const duplicateTxLooseKey=tx=>[dateKey(tx?.date),cleanTextKey(tx?.type),amountKey(tx?.amount),categoryKey(tx),cleanTextKey(tx?.title)].join('|');
+const sourceTxKey=tx=>{const owner=cleanTextKey(tx?.sharedOwnerUid||tx?.ownerUid||'');const source=cleanTextKey(tx?.sharedSourceId||tx?.sourceId||'');return owner&&source?`${owner}|${source}`:''};
+const uniqueSharedTransactions=(existing,incoming)=>{const existingRows=safeTx(existing),incomingRows=safeTx(incoming);const keys=new Set(existingRows.map(duplicateTxKey));const looseKeys=new Set(existingRows.map(duplicateTxLooseKey));const sourceKeys=new Set(existingRows.map(sourceTxKey).filter(Boolean));const unique=[];let skipped=0;incomingRows.forEach(row=>{const key=duplicateTxKey(row),loose=duplicateTxLooseKey(row),src=sourceTxKey(row);if(keys.has(key)||looseKeys.has(loose)||(src&&sourceKeys.has(src))){skipped++;return}unique.push(row);keys.add(key);looseKeys.add(loose);if(src)sourceKeys.add(src)});return{unique:sortTxByAmountDesc(unique),skipped,total:incomingRows.length}};
+const readLocal=(name,fallback)=>{try{const value=localStorage.getItem(name);return value?JSON.parse(value):fallback}catch{return fallback}};
+const writeLocal=(name,value)=>{try{localStorage.setItem(name,JSON.stringify(value))}catch{}};
+const copyText=async text=>{const value=String(text||'');try{if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(value);return true}}catch{}try{const area=document.createElement('textarea');area.value=value;area.setAttribute('readonly','');area.style.position='fixed';area.style.opacity='0';area.style.pointerEvents='none';document.body.appendChild(area);area.select();const ok=document.execCommand('copy');document.body.removeChild(area);return ok}catch{return false}};
+const hasFirebaseConfig=cfg=>!!(cfg&&cfg.apiKey&&cfg.authDomain&&cfg.projectId&&cfg.appId&&String(cfg.apiKey).trim()&&!String(cfg.apiKey).includes('TON_'));
+const parseFirebaseConfigText=text=>{const raw=String(text||'').trim();if(!raw)throw new Error('Configuration vide');try{return JSON.parse(raw)}catch{}const keys=['apiKey','authDomain','projectId','storageBucket','messagingSenderId','appId','measurementId'];const cfg={};keys.forEach(k=>{const r=new RegExp(k+"\\s*:\\s*[\"']([^\"']+)[\"']",'m');const m=raw.match(r);if(m)cfg[k]=m[1]});if(Object.keys(cfg).length)return cfg;throw new Error('Configuration Firebase illisible')};
+const firebaseConfigTemplate=JSON.stringify(EMBEDDED_FIREBASE_CONFIG,null,2);
+const firestoreRules=`rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId}/primebudget/{docId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    function PaymentHistoryModal({ uses, onClose, onEdit, onDelete }) {
-      return (
-        <div className="modal">
-          <div className="modalBox">
-            <div className="modalHead">
-              <h3>Historique des utilisations</h3>
-              <button className="btn" onClick={onClose}><ion-icon name="close-outline"></ion-icon></button>
-            </div>
-            <div className="list">
-              <p style={{ color: 'var(--muted)', textAlign: 'center' }}>Aucun historique additionnel détecté.</p>
-            </div>
-          </div>
-        </div>
-      );
+    match /primebudgetShareCodes/{shareCode} {
+      allow get: if request.auth != null;
+      allow list: if false;
+      allow create: if request.auth != null && request.resource.data.ownerUid == request.auth.uid;
+      allow update: if request.auth != null && resource.data.ownerUid == request.auth.uid && request.resource.data.ownerUid == request.auth.uid;
+      allow delete: if request.auth != null && resource.data.ownerUid == request.auth.uid;
     }
 
-    function AppDialog({ dialog, close }) {
-      if (!dialog) return null;
-      const icon = dialog.kind === 'danger' ? 'warning-outline' : dialog.kind === 'success' ? 'checkmark-circle-outline' : 'information-circle-outline';
-      
-      return (
-        <div className="modal" onMouseDown={ev => { if (ev.target === ev.currentTarget) close(); }}>
-          <div className="modalBox styleCard">
-            <div className="modalHead">
-              <h3 className={`dialogTitle ${dialog.kind || ''}`} style={{ display: 'flex', align-items: 'center', gap: '8px' }}>
-                <ion-icon name={icon} style={{ color: dialog.kind === 'danger' ? 'var(--red)' : 'var(--gold)' }}></ion-icon>
-                {dialog.title}
-              </h3>
-              <button className="btn" onClick={close}><ion-icon name="close-outline"></ion-icon></button>
-            </div>
-            {dialog.message && <p style={{ color: 'var(--muted)', fontSize: '14px', lineHeight: '1.5' }}>{dialog.message}</p>}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
-              {(dialog.actions || []).map((action, i) => (
-                <button key={i} className={`btn ${action.className || ''}`} onClick={action.onClick}>
-                  {action.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      );
+    match /primebudgetPairCodes/{pairCode} {
+      allow get: if request.auth != null;
+      allow list: if false;
+      allow create: if request.auth != null && request.resource.data.ownerUid == request.auth.uid;
+      allow update, delete: if request.auth != null && resource.data.ownerUid == request.auth.uid;
     }
 
-    // Composant principal de l'application Budget
-    function App() {
-      const [currentTab, setCurrentTab] = useState('dashboard');
-      const [dialog, setDialog] = useState(null);
-
-      return (
-        <div className="app">
-          {/* Sidebar de navigation gauche */}
-          <div className="sidebar">
-            <div className="brand">
-              <img src="https://i.ibb.co/zWQXGQK0/a471dbe4979d.png" alt="Logo PrimeBudget" />
-              <div>
-                <h1>PrimeBudget</h1>
-                <p>Gestion Intelligente</p>
-              </div>
-            </div>
-
-            <div className="nav">
-              <button className={currentTab === 'dashboard' ? 'active' : ''} onClick={() => setCurrentTab('dashboard')}>
-                <ion-icon name="grid-outline"></ion-icon> Table de bord
-              </button>
-              <button className={currentTab === 'transactions' ? 'active' : ''} onClick={() => setCurrentTab('transactions')}>
-                <ion-icon name="swap-horizontal-outline"></ion-icon> Transactions
-              </button>
-              <button className={currentTab === 'analytics' ? 'active' : ''} onClick={() => setCurrentTab('analytics')}>
-                <ion-icon name="pie-chart-outline"></ion-icon> Analyses
-              </button>
-            </div>
-
-            <div className="sideCard">
-              <div style={{ fontSize: '12px', color: 'var(--muted)', fontWeight: 'bold' }}>VERSION ACTUELLE</div>
-              <div style={{ fontSize: '14px', marginTop: '4px', fontFamily: 'monospace' }}>v2.4.0-premium</div>
-            </div>
-          </div>
-
-          {/* Zone de contenu principale de l'application */}
-          <div className="content">
-            <div className="topbar">
-              <div className="title">
-                <h2>Aperçu Général</h2>
-                <p>Suivi de vos flux financiers en temps réel.</p>
-              </div>
-              <div className="toolbar">
-                <button className="btn primary" onClick={() => setDialog({
-                  title: "Nouvelle transaction",
-                  message: "Souhaitez-vous ajouter manuellement une écriture bancaire ou un flux de trésorerie ?",
-                  kind: "success",
-                  actions: [{ label: "Confirmer", className: "primary", onClick: () => setDialog(null) }]
-                })}>
-                  <ion-icon name="add-circle-outline"></ion-icon> Ajouter un flux
-                </button>
-              </div>
-            </div>
-
-            {/* Grille d'indicateurs clés (KPI) */}
-            <div className="grid kpis">
-              <div className="card kpi">
-                <small>Solde Disponible</small>
-                <strong className="green">5,439.50 €</strong>
-                <span>Mise à jour en direct</span>
-                <ion-icon name="wallet-outline"></ion-icon>
-              </div>
-              <div className="card kpi">
-                <small>Économies Mensuelles</small>
-                <strong className="gold">1,250.00 €</strong>
-                <span>Objectif atteint à 82%</span>
-                <ion-icon name="trending-up-outline"></ion-icon>
-              </div>
-              <div className="card kpi">
-                <small>Dépenses Engagées</small>
-                <strong className="red">640.22 €</strong>
-                <span>Plafond global sécurisé</span>
-                <ion-icon name="card-outline"></ion-icon>
-              </div>
-              <div className="card kpi">
-                <small>Reste Utilisable</small>
-                <strong>3,549.28 €</strong>
-                <span>Allocation prédictive</span>
-                <ion-icon name="calculator-outline"></ion-icon>
-              </div>
-            </div>
-
-            {/* Vue principale (Tableau et flux récents) */}
-            <div className="grid mainGrid">
-              <div className="card">
-                <div className="sectionTitle">
-                  <h3>Flux Bancaires Récents</h3>
-                  <div className="tabs">
-                    <button className="active">Tous</button>
-                    <button>Entrées</button>
-                    <button>Sorties</button>
-                  </div>
-                </div>
-                
-                <div className="tableWrap">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Intitulé / Libellé</th>
-                        <th>Catégorie</th>
-                        <th>Date de valeur</th>
-                        <th>Montant total</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td><b>Virement Salaire Metallurgy</b><div style={{fontSize:'12px', color:'var(--muted)'}}>Métallurgie Entrée</div></td>
-                        <td><span className="pill">Revenus</span></td>
-                        <td>01 Juin 2026</td>
-                        <td><span className="amount green">+2,450.00 €</span></td>
-                      </tr>
-                      <tr>
-                        <td><b>Abonnement Serveur Cloud & PWA</b><div style={{fontSize:'12px', color:'var(--muted)'}}>Hébergement VPS Linode</div></td>
-                        <td><span className="pill">Infrastructure</span></td>
-                        <td>28 Mai 2026</td>
-                        <td><span className="amount red">-45.90 €</span></td>
-                      </tr>
-                      <tr>
-                        <td><b>Achat Pièces Auto Twingo 2</b><div style={{fontSize:'12px', color:'var(--muted)'}}>Disques & Plaquettes Brembo</div></td>
-                        <td><span className="pill">Automobile</span></td>
-                        <td>24 Mai 2026</td>
-                        <td><span className="amount red">-112.50 €</span></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Panneau latéral de progression */}
-              <div className="card">
-                <div className="sectionTitle">
-                  <h3>Seuils d'Alerte</h3>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '6px' }}>
-                      <span>Budget Logement / Atelier</span>
-                      <span style={{ fontWeight: 'bold' }}>75%</span>
-                    </div>
-                    <div className="progress"><i style={{ width: '75%' }}></i></div>
-                  </div>
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '6px' }}>
-                      <span>Vie Quotidienne & Loisirs</span>
-                      <span style={{ fontWeight: 'bold' }}>42%</span>
-                    </div>
-                    <div className="progress"><i style={{ width: '42%', background: 'var(--green)' }}></i></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Gestion globale des boîtes de dialogue et modals */}
-          {dialog && <AppDialog dialog={dialog} close={() => setDialog(null)} />}
-        </div>
+    match /primebudgetPairRooms/{roomId} {
+      allow create: if request.auth != null && request.auth.uid in request.resource.data.memberUids;
+      allow read: if request.auth != null && request.auth.uid in resource.data.memberUids;
+      allow update: if request.auth != null && (
+        request.auth.uid in resource.data.memberUids ||
+        (
+          !(request.auth.uid in resource.data.memberUids) &&
+          request.auth.uid in request.resource.data.memberUids &&
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['memberUids','memberEmails','updatedAt'])
+        )
       );
+      allow delete: if request.auth != null && resource.data.ownerUid == request.auth.uid;
     }
+  }
+}`;
+function loadFirebaseConfig(){return hasFirebaseConfig(EMBEDDED_FIREBASE_CONFIG)?EMBEDDED_FIREBASE_CONFIG:readLocal('primebudget_firebase_config',null)}
 
-    const root = ReactDom.createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
+function useStore(){
+  const initialMode=readLocal('primebudget_space_mode','personal')==='shared'?'shared':'personal';
+  const initialPair=readLocal('primebudget_pair_room',null);
+  const keysFor=(mode=initialMode,room=initialPair)=>mode==='shared'?{tx:`primebudget_pair_${room?.id||'scratch'}_tx`,budgets:`primebudget_pair_${room?.id||'scratch'}_budgets`,goals:`primebudget_pair_${room?.id||'scratch'}_goals`}:{tx:'primebudget_tx',budgets:'primebudget_budgets',goals:'primebudget_goals'};
+  const firstKeys=keysFor(initialMode,initialPair);
+  const [spaceMode,setSpaceModeState]=useState(initialMode);
+  const [pairRoom,setPairRoomState]=useState(initialPair&&initialPair.id?initialPair:null);
+  const [txState,setTxState]=useState(()=>safeTx(readLocal(firstKeys.tx,[])));
+  const [budgetsState,setBudgetsState]=useState(()=>safeBudgets(readLocal(firstKeys.budgets,{})));
+  const [goalsState,setGoalsState]=useState(()=>safeGoals(readLocal(firstKeys.goals,[])));
+  const [firebaseConfig,setFirebaseConfigState]=useState(()=>loadFirebaseConfig());
+  const [user,setUser]=useState(null);
+  const [firebaseError,setFirebaseError]=useState('');
+  const [syncStatus,setSyncStatus]=useState(hasFirebaseConfig(loadFirebaseConfig())?'Firebase prêt':'Mode local');
+  const [lastSync,setLastSync]=useState(null);
+  const [remoteVersion,setRemoteVersion]=useState(0);
+  const authRef=useRef(null), dbRef=useRef(null), docRef=useRef(null), unsubDocRef=useRef(null), saveTimerRef=useRef(null), unsubAuthRef=useRef(null);
+  const remoteReadyRef=useRef(false), applyingRemoteRef=useRef(false);
+  const dataRef=useRef({transactions:txState,budgets:budgetsState,goals:goalsState});
+  const modeRef=useRef(spaceMode), pairRef=useRef(pairRoom);
+  const configured=hasFirebaseConfig(firebaseConfig);
+
+  const currentKeys=()=>keysFor(modeRef.current,pairRef.current);
+  const persistScopeLocal=(mode,room,transactions,budgets,goals)=>{const k=keysFor(mode,room);writeLocal(k.tx,safeTx(transactions));writeLocal(k.budgets,safeBudgets(budgets));writeLocal(k.goals,safeGoals(goals))};
+  const readScopeLocal=(mode,room)=>{const k=keysFor(mode,room);return{transactions:safeTx(readLocal(k.tx,[])),budgets:safeBudgets(readLocal(k.budgets,{})),goals:safeGoals(readLocal(k.goals,[]))}};
+  const persistUserLocal=(uid,mode,room,transactions,budgets,goals)=>{if(!uid)return;const suffix=mode==='shared'?`pair_${room?.id||'scratch'}`:'personal';writeLocal(`primebudget_user_${uid}_${suffix}`,{transactions:safeTx(transactions),budgets:safeBudgets(budgets),goals:safeGoals(goals),savedAt:Date.now()})};
+  const readUserLocal=(uid,mode,room)=>uid?readLocal(`primebudget_user_${uid}_${mode==='shared'?`pair_${room?.id||'scratch'}`:'personal'}`,null):null;
+  const loadPersonalLocal=()=>({transactions:safeTx(readLocal('primebudget_tx',[])),budgets:safeBudgets(readLocal('primebudget_budgets',{})),goals:safeGoals(readLocal('primebudget_goals',[]))});
+
+  useEffect(()=>{dataRef.current={transactions:txState,budgets:budgetsState,goals:goalsState}},[txState,budgetsState,goalsState]);
+  useEffect(()=>{modeRef.current=spaceMode;pairRef.current=pairRoom},[spaceMode,pairRoom?.id]);
+
+  const setSpaceMode=mode=>{const clean=mode==='shared'?'shared':'personal';writeLocal('primebudget_space_mode',clean);setSpaceModeState(clean)};
+  const setPairRoom=room=>{if(room&&room.id){writeLocal('primebudget_pair_room',room);setPairRoomState(room)}else{localStorage.removeItem('primebudget_pair_room');setPairRoomState(null)}};
+
+  useEffect(()=>{const cached=readScopeLocal(spaceMode,pairRoom);applyingRemoteRef.current=true;setTxState([...cached.transactions]);setBudgetsState({...cached.budgets});setGoalsState([...cached.goals]);setRemoteVersion(v=>v+1);setTimeout(()=>{applyingRemoteRef.current=false},0)},[spaceMode,pairRoom?.id]);
+
+  const pushNow=async(label='Synchronisation...')=>{try{if(!docRef.current||!window.firebase)return;setSyncStatus(label);const data=dataRef.current;const mode=modeRef.current,room=pairRef.current;await docRef.current.set({transactions:safeTx(data.transactions),budgets:safeBudgets(data.budgets),goals:safeGoals(data.goals),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:user?.email||'',updatedFrom:navigator.userAgent.slice(0,140)},{merge:true});persistScopeLocal(mode,room,data.transactions,data.budgets,data.goals);if(user?.uid)persistUserLocal(user.uid,mode,room,data.transactions,data.budgets,data.goals);setLastSync(new Date());setSyncStatus(mode==='shared'?'Espace à deux synchronisé':'Synchronisé')}catch(err){setFirebaseError(err?.message||'Erreur Firebase');setSyncStatus('Erreur de synchronisation')}};
+
+  useEffect(()=>{persistScopeLocal(spaceMode,pairRoom,txState,budgetsState,goalsState);if(!user||!docRef.current||!remoteReadyRef.current||applyingRemoteRef.current)return;clearTimeout(saveTimerRef.current);setSyncStatus(spaceMode==='shared'?'Synchronisation à deux...':'Synchronisation...');saveTimerRef.current=setTimeout(()=>pushNow(),350);return()=>clearTimeout(saveTimerRef.current)},[txState,budgetsState,goalsState,user,spaceMode,pairRoom?.id]);
+
+  useEffect(()=>{if(!configured){setSyncStatus('Mode local');return}if(!window.firebase){setFirebaseError('Firebase ne s’est pas chargé. Vérifie ta connexion internet.');setSyncStatus('Firebase indisponible');return}try{setFirebaseError('');const app=firebase.apps.length?firebase.app():firebase.initializeApp(firebaseConfig);try{if(firebase.analytics&&firebaseConfig.measurementId)firebase.analytics(app)}catch(e){}const auth=firebase.auth(app);const db=firebase.firestore(app);authRef.current=auth;dbRef.current=db;auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{});auth.getRedirectResult().catch(()=>{});if(unsubAuthRef.current)unsubAuthRef.current();unsubAuthRef.current=auth.onAuthStateChanged(current=>setUser(current))}catch(err){setFirebaseError(err?.message||'Configuration Firebase invalide');setSyncStatus('Erreur Firebase')}return()=>{if(unsubAuthRef.current)unsubAuthRef.current();if(unsubDocRef.current)unsubDocRef.current()}},[JSON.stringify(firebaseConfig),configured]);
+
+  useEffect(()=>{if(unsubDocRef.current){unsubDocRef.current();unsubDocRef.current=null}docRef.current=null;remoteReadyRef.current=false;if(!configured){setSyncStatus('Mode local');return}if(!user){setSyncStatus('Connecte-toi avec Google');return}if(!dbRef.current){setSyncStatus('Firebase pas encore prêt');return}if(spaceMode==='shared'&&!pairRoom?.id){setSyncStatus('Espace à deux : crée ou rejoins une connexion');return}const mode=spaceMode,room=pairRoom;setSyncStatus(mode==='shared'?'Connexion à l’espace à deux...':'Connexion au cloud...');const ref=mode==='shared'?dbRef.current.collection('primebudgetPairRooms').doc(room.id):dbRef.current.collection('users').doc(user.uid).collection('primebudget').doc('main');docRef.current=ref;unsubDocRef.current=ref.onSnapshot(snapshot=>{if(snapshot.exists){const data=snapshot.data()||{};const nextTx=safeTx(data.transactions);const nextBudgets=safeBudgets(data.budgets);const nextGoals=safeGoals(data.goals);applyingRemoteRef.current=true;setTxState([...nextTx]);setBudgetsState({...nextBudgets});setGoalsState([...nextGoals]);persistScopeLocal(mode,room,nextTx,nextBudgets,nextGoals);persistUserLocal(user.uid,mode,room,nextTx,nextBudgets,nextGoals);setRemoteVersion(v=>v+1);setLastSync(new Date());setSyncStatus(mode==='shared'?'Espace à deux synchronisé':'Synchronisé');setTimeout(()=>{applyingRemoteRef.current=false;remoteReadyRef.current=true},0)}else if(mode==='personal'){const cached=readUserLocal(user.uid,mode,room)||readScopeLocal(mode,room);const firstTx=safeTx(cached?.transactions||[]);const firstBudgets=safeBudgets(cached?.budgets||{});const firstGoals=safeGoals(cached?.goals||[]);applyingRemoteRef.current=true;setSyncStatus('Création de ton espace cloud...');setTxState([...firstTx]);setBudgetsState({...firstBudgets});setGoalsState([...firstGoals]);persistScopeLocal(mode,room,firstTx,firstBudgets,firstGoals);persistUserLocal(user.uid,mode,room,firstTx,firstBudgets,firstGoals);ref.set({transactions:firstTx,budgets:firstBudgets,goals:firstGoals,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedFrom:navigator.userAgent.slice(0,140)},{merge:true}).then(()=>{setLastSync(new Date());setSyncStatus('Synchronisé')}).catch(err=>{setFirebaseError(err?.message||'Erreur Firestore');setSyncStatus('Erreur cloud')});setTimeout(()=>{applyingRemoteRef.current=false;remoteReadyRef.current=true},0)}else{setSyncStatus('Espace à deux introuvable ou accès refusé')}},err=>{setFirebaseError(err?.message||'Erreur Firestore');setSyncStatus(mode==='shared'?'Erreur espace à deux':'Erreur cloud')});return()=>{if(unsubDocRef.current){unsubDocRef.current();unsubDocRef.current=null}}},[configured,user?.uid,spaceMode,pairRoom?.id]);
+
+  const setTx=updater=>setTxState(prev=>{const next=typeof updater==='function'?updater(prev):updater;const safe=safeTx(next);const k=currentKeys();writeLocal(k.tx,safe);return [...safe]});
+  const setBudgets=updater=>setBudgetsState(prev=>{const next=typeof updater==='function'?updater(prev):updater;const safe=safeBudgets(next);const k=currentKeys();writeLocal(k.budgets,safe);return {...safe}});
+  const setGoals=updater=>setGoalsState(prev=>{const next=typeof updater==='function'?updater(prev):updater;const safe=safeGoals(next);const k=currentKeys();writeLocal(k.goals,safe);return [...safe]});
+  const signInGoogle=async()=>{try{if(!configured){setSyncStatus('Configuration Firebase manquante');return}if(!authRef.current){setSyncStatus('Firebase pas encore prêt');return}const provider=new firebase.auth.GoogleAuthProvider();provider.setCustomParameters({prompt:'select_account'});try{await authRef.current.signInWithPopup(provider)}catch(err){if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment'].includes(err?.code)){await authRef.current.signInWithRedirect(provider)}else{throw err}}}catch(err){setFirebaseError(err?.message||'Connexion Google impossible');setSyncStatus('Connexion annulée ou impossible')}};
+  const signOut=async()=>{try{if(authRef.current)await authRef.current.signOut();setUser(null);setSyncStatus(configured?'Déconnecté':'Mode local')}catch(err){setFirebaseError(err?.message||'Déconnexion impossible')}};
+  const saveFirebaseConfig=cfg=>{const clean=safeBudgets(cfg);if(!hasFirebaseConfig(clean)){setFirebaseError('Configuration incomplète : apiKey, authDomain, projectId et appId sont obligatoires.');return false}writeLocal('primebudget_firebase_config',clean);setFirebaseConfigState(clean);setFirebaseError('');setSyncStatus('Configuration enregistrée');setTimeout(()=>location.reload(),350);return true};
+  const clearFirebaseConfig=()=>{localStorage.removeItem('primebudget_firebase_config');setFirebaseConfigState(EMBEDDED_FIREBASE_CONFIG);setUser(null);setTimeout(()=>location.reload(),250)};
+  const ensureShareReady=()=>{if(!configured)throw new Error('Firebase n’est pas configuré dans ce fichier.');if(!user)throw new Error('Connecte-toi avec Google avant d’utiliser le partage.');if(!dbRef.current)throw new Error('Firestore n’est pas encore prêt. Réessaie dans quelques secondes.')};
+  const generateShareCode=async(monthKey,monthRows)=>{ensureShareReady();const rows=safeTx(monthRows).filter(t=>keyOf(t.date)===monthKey);if(!rows.length)throw new Error('Aucune transaction à partager pour le mois affiché.');let code=generateShareCodeValue(),ref=dbRef.current.collection('primebudgetShareCodes').doc(code);for(let i=0;i<7;i++){const snap=await ref.get();if(!snap.exists)break;code=generateShareCodeValue();ref=dbRef.current.collection('primebudgetShareCodes').doc(code)}const payload={app:'PrimeBudget',version:1,ownerUid:user.uid,ownerEmail:user.email||'',ownerName:user.displayName||'',monthKey,monthLabel:labelMonth(monthKey),transactionCount:rows.length,totalAmount:rows.reduce((a,t)=>a+Number(t.amount||0),0),transactions:rows.map(t=>({...t})),createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};await ref.set(payload);return{code,monthKey,count:rows.length}};
+  const readShareCode=async(input)=>{ensureShareReady();const code=normalizeShareCode(input);const raw=code.replace(/[^A-Z0-9]/g,'');if(raw.length<10)throw new Error('Code de partage incomplet.');const snap=await dbRef.current.collection('primebudgetShareCodes').doc(code).get();if(!snap.exists)throw new Error('Aucun partage trouvé avec ce code.');const data=snap.data()||{};const monthKey=data.monthKey||keyOf(today());const ownerUid=data.ownerUid||'';const rows=safeTx(data.transactions).map(t=>({...t,id:uid(),sharedFrom:code,sharedOwnerUid:ownerUid,sharedSourceId:t.sharedSourceId||t.id||'',importedAt:today()}));if(!rows.length)throw new Error('Ce code ne contient aucune transaction.');return{code,monthKey,monthLabel:data.monthLabel||labelMonth(monthKey),transactions:rows,count:rows.length,ownerEmail:data.ownerEmail||'',ownerUid}};
+  const ensurePairReady=()=>{if(!configured)throw new Error('Firebase n’est pas configuré dans ce fichier.');if(!user)throw new Error('Connecte-toi avec Google avant de créer ou rejoindre un espace à deux.');if(!dbRef.current)throw new Error('Firestore n’est pas encore prêt. Réessaie dans quelques secondes.')};
+  const createPairRoom=async({copyPersonal=true}={})=>{ensurePairReady();let code=generatePairCodeValue(),codeRef=dbRef.current.collection('primebudgetPairCodes').doc(code);for(let i=0;i<8;i++){const snap=await codeRef.get();if(!snap.exists)break;code=generatePairCodeValue();codeRef=dbRef.current.collection('primebudgetPairCodes').doc(code)}const roomId=uid();const base=copyPersonal?loadPersonalLocal():dataRef.current;const payload={app:'PrimeBudget',version:2,type:'pairRoom',ownerUid:user.uid,ownerEmail:user.email||'',ownerName:user.displayName||'',memberUids:[user.uid],memberEmails:user.email?[user.email]:[],transactions:safeTx(base.transactions),budgets:safeBudgets(base.budgets),goals:safeGoals(base.goals),createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:user.email||''};await dbRef.current.collection('primebudgetPairRooms').doc(roomId).set(payload);await codeRef.set({app:'PrimeBudget',version:2,type:'pairCode',roomId,ownerUid:user.uid,ownerEmail:user.email||'',ownerName:user.displayName||'',createdAt:firebase.firestore.FieldValue.serverTimestamp()});const room={id:roomId,code,ownerEmail:user.email||''};setPairRoom(room);setSpaceMode('shared');return{code,roomId,count:payload.transactions.length}};
+  const joinPairRoom=async(input)=>{ensurePairReady();const code=normalizePairCode(input);const raw=code.replace(/[^A-Z0-9]/g,'');if(raw.length<11)throw new Error('Code de connexion incomplet.');const codeSnap=await dbRef.current.collection('primebudgetPairCodes').doc(code).get();if(!codeSnap.exists)throw new Error('Aucune connexion trouvée avec ce code.');const data=codeSnap.data()||{};if(!data.roomId)throw new Error('Ce code ne contient pas de salon de synchronisation.');const roomRef=dbRef.current.collection('primebudgetPairRooms').doc(data.roomId);await roomRef.update({memberUids:firebase.firestore.FieldValue.arrayUnion(user.uid),memberEmails:user.email?firebase.firestore.FieldValue.arrayUnion(user.email):firebase.firestore.FieldValue.arrayUnion(user.uid),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});const room={id:data.roomId,code,ownerEmail:data.ownerEmail||''};setPairRoom(room);setSpaceMode('shared');return{code,roomId:data.roomId,ownerEmail:data.ownerEmail||''}};
+  const disconnectPairRoom=()=>{setPairRoom(null);setSpaceMode('shared');setSyncStatus('Espace à deux déconnecté sur cet appareil')};
+  return{tx:txState,setTx,budgets:budgetsState,setBudgets,goals:goalsState,setGoals,remoteVersion,sync:{configured,user,status:syncStatus,error:firebaseError,lastSync,config:firebaseConfig,rules:firestoreRules,mode:spaceMode,setMode:setSpaceMode,pairRoom,signInGoogle,signOut,saveFirebaseConfig,clearFirebaseConfig,pushNow,generateShareCode,readShareCode,createPairRoom,joinPairRoom,disconnectPairRoom}}
+}
+
+function ChartLine({rows,month,version}){const ref=useRef(null);useEffect(()=>{if(!ref.current)return; const [y,m]=month.split('-').map(Number),days=new Date(y,m,0).getDate();let bal=0,labels=[],data=[];for(let d=1;d<=days;d++){labels.push(String(d).padStart(2,'0'));rows.filter(t=>new Date(t.date).getDate()===d).forEach(t=>bal+=t.type==='income'?+t.amount:-t.amount);data.push(bal)};const c=new Chart(ref.current,{type:'line',data:{labels,datasets:[{data,borderColor:'#f5c84b',backgroundColor:'rgba(245,200,75,.14)',fill:true,tension:.36,pointRadius:0,borderWidth:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#777'}},y:{grid:{color:'rgba(255,255,255,.07)'},ticks:{color:'#777'}}}}});return()=>c.destroy()},[rows,month,version]);return <canvas ref={ref}/>}
+function ChartDonut({rows,version}){const ref=useRef(null);useEffect(()=>{if(!ref.current)return; const map={};rows.filter(t=>t.type==='expense').forEach(t=>map[t.category.name]=(map[t.category.name]||0)+ +t.amount);const labels=Object.keys(map), data=Object.values(map), colors=labels.map(l=>cats.find(c=>c.name===l)?.color||'#999');const c=new Chart(ref.current,{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:colors,borderColor:'#101017',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}});return()=>c.destroy()},[rows,version]);return <canvas ref={ref}/>}
+
+const isStandaloneMode=()=>!!(window.matchMedia?.('(display-mode: standalone)')?.matches||window.navigator?.standalone===true||document.referrer.startsWith('android-app://'));
+const isIosDevice=()=>/iphone|ipad|ipod/i.test(navigator.userAgent||'');
+const checkPwaInstalled=async()=>{
+  if(isStandaloneMode())return true;
+  if(navigator.getInstalledRelatedApps){
+    try{
+      const apps=await navigator.getInstalledRelatedApps();
+      return Array.isArray(apps)&&apps.some(app=>app?.platform==='webapp'||String(app?.url||'').startsWith(location.origin)||String(app?.id||'').includes('PrimeBudget'));
+    }catch(e){}
+  }
+  return false;
+};
+
+function LongPressRow({tx,onEdit,onDelete,children,as='div',className='',style}){const timer=useRef(null), fired=useRef(false); const [pressing,setPressing]=useState(false); const Tag=as;const clear=()=>{if(timer.current)clearTimeout(timer.current);timer.current=null;setPressing(false);setTimeout(()=>{fired.current=false},0)};const start=()=>{if(!matchMedia('(max-width:1050px)').matches)return;fired.current=false;setPressing(true);timer.current=setTimeout(()=>{fired.current=true;setPressing(false);onDelete(tx.id)},650)};const click=e=>{if(fired.current){e.preventDefault();e.stopPropagation();return} if(onEdit && matchMedia('(max-width:1050px)').matches && as!=='tr')onEdit(tx)};return <Tag className={`${className} ${pressing?'longPressing':''}`} style={style} onPointerDown={start} onPointerUp={clear} onPointerCancel={clear} onPointerLeave={clear} onClick={click}>{children}</Tag>}
+
+function App(){
+ const{tx,setTx,budgets,setBudgets,goals,setGoals,remoteVersion,sync}=useStore();
+ const [view,setView]=useState('home'),[month,setMonth]=useState(keyOf(today())),[modal,setModal]=useState(null),[dialog,setDialog]=useState(null),[install,setInstall]=useState(null),[query,setQuery]=useState(''),[shareCode,setShareCode]=useState(''),[refreshKey,setRefreshKey]=useState(0),[isInstalled,setIsInstalled]=useState(()=>isStandaloneMode()),[installVisible,setInstallVisible]=useState(false);
+ const installRef=useRef(null);
+ const closeDialog=()=>setDialog(null);
+ const notify=(title,message,kind='info')=>setDialog({kind,title,message,actions:[{label:'OK',className:'primary',onClick:()=>setDialog(null)}]});
+ const ask=({title,message,confirmLabel='Confirmer',cancelLabel='Annuler',danger=false,onConfirm})=>setDialog({kind:danger?'danger':'confirm',title,message,actions:[{label:cancelLabel,className:'ghost',onClick:()=>setDialog(null)},{label:confirmLabel,className:danger?'danger':'primary',onClick:()=>{setDialog(null);requestAnimationFrame(()=>onConfirm?.())}}]});
+ const goShared=()=>{sync.setMode('shared');setView('settings');setQuery('')};
+ const goPersonal=()=>{sync.setMode('personal');setView('home');setQuery('')};
+ const switchMode=()=>sync.mode==='shared'?goPersonal():goShared();
+ useEffect(()=>{setMonth(keyOf(today()))},[]);
+ useEffect(()=>{
+  let mounted=true;
+  localStorage.removeItem('primebudget_pwa_installed');
+  const media=window.matchMedia?.('(display-mode: standalone)');
+  const refreshInstallState=async()=>{
+    const installed=await checkPwaInstalled();
+    if(!mounted)return;
+    setIsInstalled(installed);
+    if(installed){installRef.current=null;setInstall(null);setInstallVisible(false)}else{setInstallVisible(!!installRef.current||isIosDevice())}
+  };
+  const beforeInstall=e=>{e.preventDefault();installRef.current=e;setInstall(e);setIsInstalled(false);setInstallVisible(true)};
+  const appInstalled=()=>{installRef.current=null;setInstall(null);setIsInstalled(true);setInstallVisible(false)};
+  const onFocus=()=>setTimeout(refreshInstallState,250);
+  const onVisibility=()=>{if(!document.hidden)onFocus()};
+  refreshInstallState();setTimeout(refreshInstallState,1200);
+  window.addEventListener('beforeinstallprompt',beforeInstall);window.addEventListener('appinstalled',appInstalled);window.addEventListener('focus',onFocus);window.addEventListener('pageshow',onFocus);document.addEventListener('visibilitychange',onVisibility);media?.addEventListener?.('change',refreshInstallState);media?.addListener?.(refreshInstallState);
+  return()=>{mounted=false;window.removeEventListener('beforeinstallprompt',beforeInstall);window.removeEventListener('appinstalled',appInstalled);window.removeEventListener('focus',onFocus);window.removeEventListener('pageshow',onFocus);document.removeEventListener('visibilitychange',onVisibility);media?.removeEventListener?.('change',refreshInstallState);media?.removeListener?.(refreshInstallState)};
+ },[]);
+ const promptInstall=async()=>{
+  const installed=await checkPwaInstalled();
+  if(installed){setIsInstalled(true);setInstallVisible(false);notify('Application déjà installée','PrimeBudget est déjà installé sur cet appareil.','success');return}
+  const promptEvent=installRef.current||install;
+  if(promptEvent){try{await promptEvent.prompt();const choice=await promptEvent.userChoice.catch(()=>null);installRef.current=null;setInstall(null);if(choice?.outcome==='accepted'){setIsInstalled(true);setInstallVisible(false);notify('Installation lancée','PrimeBudget est en cours d’installation sur cet appareil.','success')}else{setInstallVisible(true)}}catch{installRef.current=null;setInstall(null);setInstallVisible(!isStandaloneMode());notify('Installation indisponible','Recharge la page puis réessaie. Sur iPhone ou iPad, utilise Partager puis Ajouter à l’écran d’accueil.','info')}return}
+  notify('Installer PrimeBudget',isIosDevice()?'Sur iPhone ou iPad, appuie sur le bouton Partager de Safari, puis choisis Ajouter à l’écran d’accueil.':'Recharge la page puis appuie à nouveau sur Installer. Le navigateur proposera l’installation dès que la PWA sera disponible.','info');
+ };
+ const months=useMemo(()=>{const s=[...new Set(tx.map(t=>keyOf(t.date)).concat([keyOf(today())]))];return s.sort((a,b)=>b.localeCompare(a))},[tx]);
+ useEffect(()=>{if(!months.includes(month))setMonth(keyOf(today()))},[months.join('|')]);
+ const rows=useMemo(()=>sortTxByAmountDesc(tx.filter(t=>keyOf(t.date)===month)),[tx,month,remoteVersion]);
+ const income=rows.filter(t=>t.type==='income').reduce((a,t)=>a+ +t.amount,0), expense=rows.filter(t=>t.type==='expense').reduce((a,t)=>a+ +t.amount,0), balance=income-expense;
+ const saving=rows.filter(t=>t.category.name==='Épargne').reduce((a,t)=>a+ +t.amount,0);
+ const burn=expense/(new Date(+month.slice(0,4),+month.slice(5),0).getDate());
+ const filtered=rows.filter(t=>(t.title+t.category.name+(t.note||'')).toLowerCase().includes(query.toLowerCase()));
+ const refreshUI=()=>{setRefreshKey(v=>v+1);requestAnimationFrame(()=>{window.dispatchEvent(new Event('resize'));window.dispatchEvent(new CustomEvent('primebudget:updated',{detail:{at:Date.now()}}))})};
+ const sortTx=list=>sortTxByAmountDesc(list);
+ const addTx=data=>{setTx(x=>sortTx([data,...x]));setMonth(keyOf(data.date));setQuery('');refreshUI()};
+ const updateTx=data=>{setTx(x=>sortTx(x.map(t=>t.id===data.id?data:t)));setMonth(keyOf(data.date));setQuery('');refreshUI()};
+ const del=id=>{const item=tx.find(t=>t.id===id);ask({title:'Supprimer cette transaction ?',message:`La transaction « ${item?.title||'sélectionnée'} » sera supprimée définitivement.`,confirmLabel:'Supprimer',danger:true,onConfirm:()=>{setTx(x=>x.filter(t=>t.id!==id));refreshUI();notify('Transaction supprimée','La liste a été mise à jour.','success')}})};
+ const exportAll=()=>{const a=document.createElement('a');const label=sync.mode==='shared'?'PrimeBudget-Duo':'PrimeBudget';a.href=URL.createObjectURL(new Blob([JSON.stringify({mode:sync.mode,pairRoom:sync.pairRoom,transactions:tx,budgets,goals},null,2)],{type:'application/json'}));a.download=`${label}-sauvegarde.json`;a.click()};
+ const importAll=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(Array.isArray(j))setTx(safeTx(j));else{if(j.transactions)setTx(safeTx(j.transactions));if(j.budgets)setBudgets(j.budgets);if(j.goals)setGoals(j.goals)}setMonth(keyOf(today()));refreshUI();notify('Import réussi','Tes données ont été importées et l’affichage a été actualisé.','success')}catch{notify('Fichier invalide','Le fichier sélectionné ne contient pas une sauvegarde PrimeBudget valide.','danger')}};r.readAsText(f);e.target.value=''};
+ const duplicate=()=>{const [y,m]=month.split('-').map(Number);const n=new Date(y,m,1),nk=keyOf(n);const clones=rows.map(t=>({...t,id:uid(),date:`${nk}-${String(new Date(t.date).getDate()).padStart(2,'0')}`}));setTx(x=>sortTx([...clones,...x]));setMonth(nk);refreshUI()};
+ const clearAll=()=>ask({title:sync.mode==='shared'?'Réinitialiser l’espace à deux ?':'Réinitialiser PrimeBudget ?',message:sync.mode==='shared'?'Toutes les transactions de cet espace partagé seront supprimées pour les deux personnes connectées.':'Toutes les transactions, budgets et objectifs enregistrés sur ce compte seront supprimés de cette application.',confirmLabel:'Réinitialiser',danger:true,onConfirm:()=>{setTx([]);setBudgets({});setGoals([]);setMonth(keyOf(today()));refreshUI();notify('Application réinitialisée','PrimeBudget est prêt pour un nouveau suivi.','success')}});
+ const generateShare=async()=>{try{const result=await sync.generateShareCode(month,rows);setShareCode(result.code);await copyText(result.code);notify('Code de partage généré',`Le code ${result.code} a été enregistré dans Firebase et copié. Il partage ${result.count} transaction(s) du mois ${labelMonth(result.monthKey)}.`,'success');return result}catch(err){notify('Partage impossible',err?.message||'Impossible de générer le code de partage.','danger');throw err}};
+ const importShare=async(code)=>{try{const shared=await sync.readShareCode(code);const checked=uniqueSharedTransactions(tx,shared.transactions);if(!checked.unique.length){notify('Aucune nouvelle transaction',`Ce code contient ${checked.total} transaction(s), mais elles existent déjà dans ton compte. Aucun doublon n’a été importé.`,'success');return {...shared,imported:0,skipped:checked.skipped}}setTx(x=>sortTx([...checked.unique,...x]));setMonth(shared.monthKey);setQuery('');refreshUI();const skippedText=checked.skipped?` ${checked.skipped} doublon(s) ignoré(s).`:'';notify('Mois partagé importé',`${checked.unique.length} transaction(s) copiée(s) dans ${labelMonth(shared.monthKey)} sur ton compte Google.${skippedText}`,'success');return {...shared,imported:checked.unique.length,skipped:checked.skipped}}catch(err){notify('Import du partage impossible',err?.message||'Le code de partage est invalide ou inaccessible.','danger');throw err}};
+ const baseTitle={home:'Vue globale',transactions:'Transactions',settings:'Réglages'}[view]||'Vue globale';
+ const title=sync.mode==='shared'?`${baseTitle} à deux`:baseTitle;
+ const sharedNoRoom=sync.mode==='shared'&&!sync.pairRoom?.id;
+ return <div className="app"><aside className="sidebar"><Brand mode={sync.mode} onSwitch={switchMode}/><Nav view={view} setView={setView}/><div className="sideCard"><b>{sync.mode==='shared'?'Espace à deux':'Synchronisation'}</b><div className="syncLine"><i className={`dot ${sync.user?'online':sync.configured?'warn':''}`}></i>{sync.status}</div>{sync.user&&<p className="mini">Connecté : {sync.user.email}</p>}{sync.mode==='shared'&&sync.pairRoom?.code&&<p className="mini">Code : {sync.pairRoom.code}</p>}</div></aside><main className="content">{installVisible&&!isInstalled&&<div className="installBanner" style={{display:'flex'}}><div><b>Installer PrimeBudget</b><div className="mini">Ajoute l’app sur téléphone ou PC.</div></div><button className="btn primary" onClick={promptInstall}>Installer</button></div>}<div className="topbar"><div className="title"><h2>{title}</h2><div className="syncLine"><i className={`dot ${sync.user?'online':sync.configured?'warn':''}`}></i>{sync.status}{sync.lastSync?` • ${sync.lastSync.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}`:''}</div></div><div className="toolbar"><select value={month} onChange={e=>setMonth(e.target.value)}>{months.map(m=><option key={m} value={m}>{labelMonth(m)}</option>)}</select><button className={`btn modeBtn ${sync.mode==='shared'?'shared':''}`} onClick={switchMode} title={sync.mode==='shared'?'Retour au budget personnel':'Ouvrir le budget à deux'}><ion-icon name={sync.mode==='shared'?'person-outline':'people-outline'}/><span className="btnText">{sync.mode==='shared'?'Personnel':'À deux'}</span></button>{view==='transactions'&&<button className="btn primary hideMobile" onClick={()=>setModal({type:'tx'})}><ion-icon name="add-outline"/>Transaction</button>}</div></div>
+ {sync.mode==='shared'&&<div className="sharedNotice card"><div><h3><ion-icon name="people-outline"/> Espace budget à deux</h3><p>{sync.pairRoom?.id?'Toutes les modifications sont synchronisées avec la personne connectée à ce code.':'Crée ton code ou entre celui de l’autre personne dans les réglages pour synchroniser les mêmes données.'}</p></div><span className="modeBadge shared"><ion-icon name="people-outline"/>{sync.pairRoom?.code||'Non connecté'}</span></div>}
+ {view==='home'&&<div className="kpis grid"><Kpi label="Solde" value={money(balance)} icon="wallet-outline" cls={balance>=0?'green':'red'} sub={balance>=0?'Mois positif':'À surveiller'}/><Kpi label="Revenus" value={money(income)} icon="trending-up-outline" cls="green" sub="Entrées du mois"/><Kpi label="Dépenses" value={money(expense)} icon="trending-down-outline" cls="red" sub={`${money(burn)} / jour`}/><Kpi label="Épargne" value={money(saving)} icon="leaf-outline" cls={saving>0?'green':'gold'} sub=""/></div>}
+ {view==='home'&&<Home rows={rows} month={month} refreshKey={refreshKey+remoteVersion} setModal={setModal} duplicate={duplicate}/>} {view==='transactions'&&<Transactions rows={filtered} query={query} setQuery={setQuery} setModal={setModal} del={del}/>} {view==='settings'&&<Settings duplicate={duplicate} exportAll={exportAll} importAll={importAll} clear={clearAll} sync={sync} month={month} rows={rows} shareCode={shareCode} setShareCode={setShareCode} generateShare={generateShare} importShare={importShare} notify={notify}/>} </main>{view==='transactions'&&<button className="fab" onClick={()=>setModal({type:'tx'})}><ion-icon name="add-outline"/></button>}<Bottom view={view} setView={setView} mode={sync.mode} onSwitch={switchMode}/>{modal&&<TxModal modal={modal} close={()=>setModal(null)} save={d=>{modal.edit?updateTx(d):addTx(d);setModal(null)}}/>}{dialog&&<AppDialog dialog={dialog} close={closeDialog}/>}</div>}
+
+function AuthBar({sync,notify}){
+ const connected=!!sync.user;
+ const handleClick=()=>{if(!sync.configured){notify?.('Firebase indisponible','La configuration Firebase n’est pas intégrée dans ce fichier HTML.','danger');return} connected?sync.signOut():sync.signInGoogle()};
+ return <button className={`btn googleBtn ${connected?'connected':'primary'}`} onClick={handleClick} title={connected?`Connecté : ${sync.user.email}`:'Se connecter avec Google'}><ion-icon name="logo-google"/><span>Google</span>{connected&&<i className="googleDot"></i>}</button>
+}
+function Brand({mode='personal',onSwitch}){const shared=mode==='shared';return <div className="brandWrap"><div className="brand"><img src={APP_LOGO} alt="Logo PrimeBudget"/><div><h1>{shared?'PrimeBudget Duo':'PrimeBudget'}</h1><p>{shared?'Budget à deux':'Budget intelligent'}</p></div></div><button className={`brandModeBtn ${shared?'shared':''}`} onClick={onSwitch} title={shared?'Retour au budget personnel':'Ouvrir le budget à deux'}><ion-icon name={shared?'person-outline':'people-outline'}/></button></div>}
+function Nav({view,setView}){return <nav className="nav">{[['home','analytics-outline','Tableau de bord'],['transactions','swap-horizontal-outline','Transactions'],['settings','settings-outline','Réglages']].map(i=><button key={i[0]} onClick={()=>setView(i[0])} className={view===i[0]?'active':''}><ion-icon name={i[1]}/>{i[2]}</button>)}</nav>}
+function Bottom(p){const shared=p.mode==='shared';const items=[['home','analytics-outline','Accueil'],['transactions','list-outline','Lignes'],['settings','settings-outline','Plus']];return <div className="bottomNav hasMode">{items.map(i=><button key={i[0]} className={p.view===i[0]?'active':''} onClick={()=>p.setView(i[0])}><ion-icon name={i[1]}/>{i[2]}</button>)}<button className={shared?'active':''} onClick={p.onSwitch}><ion-icon name={shared?'person-outline':'people-outline'}/>{shared?'Perso':'À deux'}</button></div>}
+function Kpi({label,value,icon,cls,sub}){return <div className="card kpi"><ion-icon name={icon}/><small>{label}</small><strong className={cls}>{value}</strong>{sub&&<span>{sub}</span>}</div>}
+function Home({rows,month,refreshKey,setModal,duplicate}){return <div className="mainGrid grid"><div className="card"><div className="sectionTitle"><h3>Évolution du solde</h3><button className="btn" onClick={duplicate}><ion-icon name="copy-outline"/>Dupliquer le mois</button></div><div className="chartBox"><ChartLine rows={rows} month={month} version={refreshKey}/></div></div><div className="card"><div className="sectionTitle"><h3>Répartition des dépenses</h3></div><div className="chartBox"><ChartDonut rows={rows} version={refreshKey}/></div></div></div>}
+function PaidBadge(){return <span className="txPaidBadge">Payé</span>}
+function AmountBlock({tx}){const show=txShowsPayment(tx);const remaining=txRemaining(tx);return <div className="txAmountBlock"><div className={tx.type==='income'?'amount green':'amount red'}>{tx.type==='income'?'+':'-'} {money(tx.amount)}</div>{show&&remaining>0&&<div className="remainingLine"><span>Restant utilisable</span><strong>{money(remaining)}</strong></div>}{show&&txPaidAmount(tx)>0&&<div className="paidLine">Déjà payé : {money(txPaidAmount(tx))}</div>}</div>}
+function Transactions({rows,query,setQuery,setModal,del}){return <div className="card"><div className="sectionTitle"><h3>Toutes les transactions</h3><button className="btn primary" onClick={()=>setModal({type:'tx'})}>Ajouter</button></div><input placeholder="Rechercher une transaction, catégorie, note..." value={query} onChange={e=>setQuery(e.target.value)} style={{marginBottom:14}}/><div className="mobileDeleteHint">Sur téléphone : reste appuyé sur une ligne pour la supprimer avec confirmation.</div><div className="tableWrap"><table><thead><tr><th>Titre</th><th>Catégorie</th><th>Date</th><th>Type</th><th>Montant</th><th>Actions</th></tr></thead><tbody>{rows.map(t=>{const paid=txIsPaid(t);return <LongPressRow as="tr" className={paid?'paidTx':''} key={t.id} tx={t} onDelete={del}><td className="txTitleCell"><b>{t.title}</b>{paid&&<PaidBadge/>}<div className="mini">{t.note}</div></td><td><span className="pill"><ion-icon name={t.category.icon} style={{color:t.category.color}}/>{t.category.name}</span></td><td>{new Date(t.date).toLocaleDateString('fr-FR')}</td><td>{t.type==='income'?'Revenu':'Dépense'}</td><td><AmountBlock tx={t}/></td><td className={`txActionsCell ${paid?'hasPaidBadge':''}`}>{paid&&<PaidBadge/>}<button className="btn" onClick={()=>setModal({type:'tx',edit:t})}>Modifier</button> <button className="btn danger" onClick={()=>del(t.id)}>Supprimer</button></td></LongPressRow>})}{!rows.length&&<tr><td colSpan="6"><div className="empty">Aucune transaction.</div></td></tr>}</tbody></table></div></div>}
+function TxList({rows,setModal,del}){return <div className="list">{rows.length?<><div className="mobileDeleteHint">Reste appuyé sur une ligne pour la supprimer.</div>{rows.map(t=>{const paid=txIsPaid(t);return <LongPressRow className={`tx ${paid?'paidTx':''}`} key={t.id} tx={t} onEdit={(tx)=>setModal({type:'tx',edit:tx})} onDelete={del}>{paid&&<PaidBadge/>}<Icon cat={t.category}/><div><div className="txTitle">{t.title}</div><div className="txMeta">{t.category.name} • {new Date(t.date).toLocaleDateString('fr-FR')}</div></div><AmountBlock tx={t}/><div className="txActions"><button className="btn" onClick={(e)=>{e.stopPropagation();setModal({type:'tx',edit:t})}}>Modifier</button></div></LongPressRow>})}</>:<div className="empty">Aucune transaction pour ce mois.</div>}</div>}
+function Icon({cat}){return <div className="txIcon"><ion-icon name={cat.icon} style={{color:cat.color,fontSize:23}}/></div>}
+function Budgets({rows,budgets,setBudgets}){const exp=rows.filter(t=>t.type==='expense');const spent=n=>exp.filter(t=>t.category.name===n).reduce((a,t)=>a+ +t.amount,0);return <div className="grid" style={{gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))'}}>{cats.filter(c=>c.name!=='Revenus').map(c=>{const s=spent(c.name),b=+budgets[c.name]||0,p=b?Math.min(100,s/b*100):0;return <div className="card" key={c.name}><div className="sectionTitle"><h3><ion-icon name={c.icon} style={{color:c.color}}/> {c.name}</h3></div><div className="amount">{money(s)} / {b?money(b):'non défini'}</div><div className="progress" style={{margin:'12px 0'}}><i style={{width:p+'%',background:p>100?'var(--red)':'linear-gradient(90deg,var(--green),var(--gold))'}}/></div><input type="number" placeholder="Budget mensuel" value={budgets[c.name]||''} onChange={e=>setBudgets({...budgets,[c.name]:e.target.value})}/></div>})}</div>}
+function Goals({goals,setGoals}){const [name,setName]=useState(''),[target,setTarget]=useState(''),[saved,setSaved]=useState('');const add=()=>{if(!name||!target)return;setGoals([...goals,{id:uid(),name,target:+target,saved:+saved||0}]);setName('');setTarget('');setSaved('')};return <div className="grid"><div className="card"><h3 style={{marginTop:0}}>Nouvel objectif</h3><div className="formGrid"><input placeholder="Nom: vacances, voiture..." value={name} onChange={e=>setName(e.target.value)}/><input type="number" placeholder="Montant cible" value={target} onChange={e=>setTarget(e.target.value)}/><input type="number" placeholder="Déjà mis de côté" value={saved} onChange={e=>setSaved(e.target.value)}/><button className="btn primary" onClick={add}>Créer l’objectif</button></div></div><div className="grid" style={{gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))'}}>{goals.map(g=>{const p=Math.min(100,g.saved/g.target*100);return <div className="card" key={g.id}><div className="sectionTitle"><h3>{g.name}</h3><button className="btn danger" onClick={()=>setGoals(goals.filter(x=>x.id!==g.id))}>Supprimer</button></div><div className="amount gold">{money(g.saved)} / {money(g.target)}</div><div className="progress" style={{margin:'12px 0'}}><i style={{width:p+'%'}}/></div><input type="number" value={g.saved} onChange={e=>setGoals(goals.map(x=>x.id===g.id?{...x,saved:+e.target.value}:x))}/></div>})}</div></div>}
+function PairConnectionPanel({sync,notify}){
+ const [pairInput,setPairInput]=useState(''),[busy,setBusy]=useState(false);
+ const connected=!!sync.user;
+ const room=sync.pairRoom;
+ const permissionHelp='Firebase refuse la création du code. Mets à jour les règles Firestore : Firebase Console → Firestore Database → Rules, colle les règles PrimeBudget, puis clique sur Publier. Recharge ensuite le site.';
+ const errorText=err=>err?.code==='permission-denied'||String(err?.message||'').toLowerCase().includes('permission')?permissionHelp:(err?.message||'Impossible de continuer.');
+ const copyRules=async()=>{const ok=await copyText(sync.rules||firestoreRules);notify(ok?'Règles Firestore copiées':'Copie impossible',ok?'Colle ces règles dans Firebase Console → Firestore Database → Rules, puis clique sur Publier.':'Ton navigateur bloque la copie automatique. Va dans Réglages Firebase et copie les règles manuellement.',ok?'success':'danger')};
+ const createPair=async()=>{if(busy)return;setBusy(true);try{const result=await sync.createPairRoom({copyPersonal:true});await copyText(result.code);notify('Code à deux créé',`Le code ${result.code} a été copié. Donne-le à l’autre personne : elle verra les mêmes données et chaque modification sera synchronisée.`, 'success')}catch(err){notify('Connexion à deux impossible',errorText(err),'danger')}finally{setBusy(false)}};
+ const joinPair=async()=>{if(busy)return;setBusy(true);try{const result=await sync.joinPairRoom(pairInput);setPairInput('');notify('Espace à deux connecté',`Tu es connecté au code ${result.code}. Les données vont maintenant se mettre à jour des deux côtés.`, 'success')}catch(err){notify('Code de connexion invalide',errorText(err),'danger')}finally{setBusy(false)}};
+ const copyPair=async()=>{if(!room?.code)return;const ok=await copyText(room.code);notify(ok?'Code copié':'Copie impossible',ok?'Envoie ce code à la personne à connecter.':'Ton navigateur bloque la copie automatique.',ok?'success':'danger')};
+ const disconnect=()=>{sync.disconnectPairRoom();notify('Espace à deux déconnecté','Cet appareil n’est plus relié à ce code. Tu peux en créer ou rejoindre un autre.', 'success')};
+ return <div className="card pairPanel"><div className="shareHeader"><div><h3>Connexion à deux</h3><p className="mini" style={{margin:'6px 0 0'}}>Ce mode est un deuxième PrimeBudget parallèle. Le budget personnel reste séparé, et ici les deux personnes voient les mêmes données en direct.</p></div><span className={`syncBadge ${room?.id?'shared':''}`}><ion-icon name={room?.id?'people-outline':'person-add-outline'}/>{room?.id?'Connecté à deux':'Non connecté'}</span></div><div className="pairStatus"><div className="pairBox"><b>Compte Google</b><span>{connected?sync.user.email:'Connexion Google obligatoire pour synchroniser.'}</span></div><div className="pairBox"><b>Données partagées</b><span>{room?.id?'Chaque ajout, modification ou suppression se met à jour chez les deux personnes.':'Crée un code pour partager tes données personnelles dans cet espace, ou entre le code reçu.'}</span></div></div>{room?.code&&<div className="shareCodeRow"><div className="shareCodeDisplay">{room.code}</div><button className="btn" onClick={copyPair}><ion-icon name="copy-outline"/>Copier</button></div>}<div className="grid" style={{gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))'}}><button className="btn primary" onClick={createPair} disabled={busy||!connected}><ion-icon name="people-outline"/>{room?.id?'Créer un nouveau code':'Créer mon code à deux'}</button><button className="btn danger" onClick={disconnect} disabled={!room?.id}><ion-icon name="unlink-outline"/>Déconnecter cet appareil</button></div><div className="field"><label>Entrer le code d’une autre personne</label><div className="shareCodeRow"><input value={pairInput} onChange={e=>setPairInput(e.target.value.toUpperCase())} placeholder="DUO-XXXX-XXXX"/><button className="btn primary" onClick={joinPair} disabled={busy||!connected}><ion-icon name="log-in-outline"/>Connecter</button></div></div></div>
+}
+function Settings({duplicate,exportAll,importAll,clear,sync,month,rows,shareCode,setShareCode,generateShare,importShare,notify}){const [shareInput,setShareInput]=useState(''),[busy,setBusy]=useState(false);const connected=!!sync.user;const monthLabel=labelMonth(month);const copyCode=async()=>{if(!shareCode)return;const ok=await copyText(shareCode);notify(ok?'Code copié':'Copie impossible',ok?'Le code de partage est prêt à être envoyé.':'Ton navigateur bloque la copie automatique. Sélectionne le code manuellement.',ok?'success':'danger')};const copyRules=async()=>{const ok=await copyText(sync.rules||firestoreRules);notify(ok?'Règles Firestore copiées':'Copie impossible',ok?'Colle ces règles dans Firebase Console → Firestore Database → Rules.':'Ton navigateur bloque la copie automatique.',ok?'success':'danger')};const handleGenerate=async()=>{if(busy)return;setBusy(true);try{await generateShare()}catch{}finally{setBusy(false)}};const handleImport=async()=>{if(busy)return;setBusy(true);try{await importShare(shareInput);setShareInput('')}catch{}finally{setBusy(false)}};return <div className="grid">{sync.mode==='shared'&&<PairConnectionPanel sync={sync} notify={notify}/>}<div className="card"><h3 style={{marginTop:0}}>Réglages & sauvegarde</h3><div className="grid" style={{gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))'}}><AuthBar sync={sync} notify={notify}/><button className="btn" onClick={exportAll}><ion-icon name="download-outline"/>Exporter</button><label className="btn"><ion-icon name="cloud-upload-outline"/>Importer<input type="file" accept=".json" hidden onChange={importAll}/></label><button className="btn" onClick={duplicate}><ion-icon name="copy-outline"/>Dupliquer le mois affiché</button><button className="btn danger" onClick={clear}><ion-icon name="trash-outline"/>Réinitialiser</button></div><p className="mini" style={{marginTop:18}}>PrimeBudget est optimisé pour une utilisation fluide sur ordinateur, Android et iOS, avec une installation possible en application PWA.</p></div><div className="card sharePanel"><div className="shareHeader"><div><h3>Partage du mois</h3><p className="mini" style={{margin:'6px 0 0'}}>Génère un code pour copier le mois affiché chez une autre personne connectée avec Google.</p></div><span className="syncBadge"><ion-icon name={connected?'cloud-done-outline':'cloud-offline-outline'}/>{connected?'Connecté':'Connexion Google requise'}</span></div><div className="shareSteps"><div className="shareStep"><b>Mois partagé</b><span>{monthLabel} • {rows.length} transaction(s)</span></div><div className="shareStep"><b>Sécurité</b><span>Le code est enregistré dans Firestore. Sans ce code, personne ne peut récupérer le partage. Les doublons sont ignorés automatiquement à l’import.</span></div></div><button className="btn primary" onClick={handleGenerate} disabled={busy||!connected}><ion-icon name="share-social-outline"/>{busy?'Traitement...':'Générer le code du mois affiché'}</button>{shareCode&&<div className="shareCodeRow"><div className="shareCodeDisplay">{shareCode}</div><button className="btn" onClick={copyCode}><ion-icon name="copy-outline"/>Copier</button></div>}<div className="field"><label>Entrer un code de partage</label><div className="shareCodeRow"><input value={shareInput} onChange={e=>setShareInput(e.target.value.toUpperCase())} placeholder="PB-XXXX-XXXX"/><button className="btn primary" onClick={handleImport} disabled={busy||!connected}><ion-icon name="download-outline"/>Importer</button></div></div></div></div>}
+function PaymentUseEditor({editor,total,onClose,onSave}){
+ const [step,setStep]=useState(0);
+ const [draft,setDraft]=useState(()=>({label:editor?.draft?.label||'',amount:editor?.draft?.amount??'',date:editor?.draft?.date||today()}));
+ const isEdit=!!editor?.editId;
+ const steps=['Nom','Somme','Date','Enregistrer'];
+ const nextLabel=step<3?'Suivant':'Enregistrer';
+ const update=(patch)=>setDraft(d=>({...d,...patch}));
+ const submit=ev=>{
+  ev.preventDefault();
+  if(step<3){setStep(v=>v+1);return}
+  const amount=clampNumber(draft.amount,0,total||Infinity);
+  if(amount<=0)return;
+  onSave({...draft,label:String(draft.label||'Paiement').trim(),amount,date:draft.date||today()});
+ };
+ return <div className="modal nestedPaymentModal" onMouseDown={ev=>{ev.stopPropagation();if(ev.target===ev.currentTarget)onClose()}}><div className="modalBox"><div className="modalHead"><h3>{isEdit?'Modifier une somme':'Ajouter une somme'}</h3><button type="button" className="btn danger" onClick={onClose}><ion-icon name="close-outline"/></button></div><div className="paymentWizardSteps">{steps.map((_,i)=><i key={i} className={i<=step?'active':''}/>)}</div><form onSubmit={submit}>{step===0&&<div className="field"><h4 className="paymentStepTitle">Nom de l’utilisation</h4><p className="paymentStepHelp">Exemple : acompte, facture EDF, courses, mensualité ou paiement CB.</p><label>Nom</label><input required autoFocus value={draft.label} onChange={ev=>update({label:ev.target.value})} placeholder="Ex: Facture déjà réglée"/></div>}{step===1&&<div className="field"><h4 className="paymentStepTitle">Somme déjà payée</h4><p className="paymentStepHelp">Indique uniquement la somme utilisée pour ce paiement.</p><label>Somme</label><input required autoFocus type="number" step="0.01" min="0.01" max={total||undefined} value={draft.amount} onChange={ev=>update({amount:ev.target.value})} placeholder="0,00"/></div>}{step===2&&<div className="field"><h4 className="paymentStepTitle">Date du paiement</h4><p className="paymentStepHelp">Cette date apparaîtra dans l’historique des déjà payés.</p><label>Date</label><input required autoFocus type="date" value={draft.date||today()} onChange={ev=>update({date:ev.target.value})}/></div>}{step===3&&<div><h4 className="paymentStepTitle">Vérification</h4><p className="paymentStepHelp">Tout est prêt. Enregistre pour ajouter cette somme dans l’historique.</p><div className="paymentConfirmCard"><div className="paymentConfirmRow"><span>Nom</span><b>{draft.label||'Paiement'}</b></div><div className="paymentConfirmRow"><span>Somme</span><b>{money(draft.amount)}</b></div><div className="paymentConfirmRow"><span>Date</span><b>{new Date(draft.date||today()).toLocaleDateString('fr-FR')}</b></div></div></div>}<div className="paymentModalActions"><button type="button" className="btn ghost" onClick={step>0?()=>setStep(v=>v-1):onClose}>{step>0?'Retour':'Annuler'}</button><button className="btn primary" type="submit"><ion-icon name={step<3?'arrow-forward-outline':'checkmark-circle-outline'}/>{nextLabel}</button></div></form></div></div>
+}
+function PaymentHistoryModal({uses,onClose,onEdit,onDelete}){
+ const rows=normalizePaymentUses(uses||[],Infinity).sort((a,b)=>new Date(b.date)-new Date(a.date));
+ return <div className="modal nestedPaymentModal" onMouseDown={ev=>{ev.stopPropagation();if(ev.target===ev.currentTarget)onClose()}}><div className="modalBox"><div className="modalHead"><h3>Historique des déjà payés</h3><button type="button" className="btn danger" onClick={onClose}><ion-icon name="close-outline"/></button></div>{rows.length?<div className="paymentHistoryList">{rows.map(u=><div className="paymentHistoryRow" key={u.id}><div><div className="paymentHistoryTitle">{u.label||'Paiement'}</div><div className="paymentHistoryMeta"><span>{new Date(u.date||today()).toLocaleDateString('fr-FR')}</span><span>•</span><span>Déjà payé</span></div></div><div><div className="paymentHistoryAmount">{money(u.amount)}</div><div className="paymentHistoryActions"><button type="button" className="btn" onClick={()=>onEdit(u)}><ion-icon name="create-outline"/>Modifier</button><button type="button" className="btn danger" onClick={()=>onDelete(u.id)}><ion-icon name="trash-outline"/>Supprimer</button></div></div></div>)}</div>:<div className="paymentUseEmpty">Aucun paiement enregistré pour cette opération.</div>}</div></div>
+}
+function TxModal({modal,close,save}){
+ const e=modal.edit;
+ const isEdit=!!e;
+ const initialUses=()=>{
+  if(!isEdit||e?.type!=='expense')return [];
+  const total=txTotal(e);
+  const savedUses=normalizePaymentUses(e?.paymentUses||[],total);
+  if(savedUses.length)return savedUses;
+  const legacy=clampNumber(e?.paidAmount,0,total);
+  return legacy>0?[{id:uid(),label:'Paiement déjà ajouté',amount:legacy,date:e?.date||today()}]:[];
+ };
+ const [type,setType]=useState(e?.type||'expense'),[cat,setCat]=useState(e?.category?.name||'Alimentation'),[amount,setAmount]=useState(e?.amount??''),[paymentUses,setPaymentUses]=useState(initialUses),[isPaid,setIsPaid]=useState(isEdit?txIsPaid(e||{}):false),[payEditor,setPayEditor]=useState(null),[showHistory,setShowHistory]=useState(false);
+ const forceUnpaidRef=useRef(false);
+ const chosen=cats.find(c=>c.name===cat)||cats[1];
+ const showPaymentControls=isEdit&&type==='expense';
+ const total=txTotal({amount});
+ const usesTotal=paymentUses.reduce((a,u)=>a+Number(u.amount||0),0);
+ const previewPaid=showPaymentControls?(isPaid?total:clampNumber(usesTotal,0,total)):0;
+ const previewRemaining=Math.max(0,total-previewPaid);
+ const openAddUse=()=>setPayEditor({editId:null,draft:{label:'',amount:'',date:today()}});
+ const openEditUse=u=>{setShowHistory(false);setPayEditor({editId:u.id,draft:{label:u.label||'',amount:String(u.amount||''),date:u.date||today()}})};
+ const saveUse=draft=>{forceUnpaidRef.current=false;setPaymentUses(list=>{const nextUse={id:payEditor?.editId||uid(),label:String(draft.label||'Paiement').trim(),amount:clampNumber(draft.amount,0,total||Infinity),date:draft.date||today()};const next=normalizePaymentUses(payEditor?.editId?list.map(u=>u.id===payEditor.editId?nextUse:u):[...list,nextUse],total);const nextTotal=next.reduce((a,u)=>a+Number(u.amount||0),0);if(nextTotal<total)setIsPaid(false);return next});setPayEditor(null)};
+ const removeUse=id=>{setPaymentUses(list=>{const next=list.filter(u=>u.id!==id);const nextTotal=next.reduce((a,u)=>a+Number(u.amount||0),0);if(nextTotal<total)setIsPaid(false);return next});};
+ const togglePaidStatus=()=>setIsPaid(current=>{const next=!current;forceUnpaidRef.current=!next;if(!next){setPaymentUses([]);setPayEditor(null);setShowHistory(false)}return next});
+ const changeType=value=>{setType(value);if(value==='income'){forceUnpaidRef.current=true;setCat('Revenus');setIsPaid(false);setPaymentUses([]);setPayEditor(null);setShowHistory(false)}if(value==='expense'&&cat==='Revenus')setCat('Alimentation')};
+ return <div className="modal" onMouseDown={ev=>{if(ev.target===ev.currentTarget)close()}}><div className="modalBox"><div className="modalHead"><h3>{e?'Modifier':'Ajouter'} une transaction</h3><button className="btn danger" onClick={close}><ion-icon name="close-outline"/></button></div><form onSubmit={ev=>{ev.preventDefault();const f=new FormData(ev.currentTarget);const totalAmount=Math.max(0,Number(f.get('amount')||0));const canEditPayment=!!e&&type==='expense';const forceUnpaid=forceUnpaidRef.current&&!isPaid;const cleanedUses=canEditPayment&&!forceUnpaid?normalizePaymentUses(paymentUses,totalAmount):[];const rawPaid=cleanedUses.reduce((a,u)=>a+Number(u.amount||0),0);const finalPaidStatus=canEditPayment&&!forceUnpaid&&(isPaid||(totalAmount>0&&rawPaid>=totalAmount));const finalPaid=canEditPayment&&!forceUnpaid?(finalPaidStatus?totalAmount:clampNumber(rawPaid,0,totalAmount)):0;save({...e,id:e?.id||uid(),title:f.get('title'),amount:totalAmount,type,category:chosen,date:f.get('date'),note:f.get('note'),paymentUses:forceUnpaid?[]:cleanedUses,paidAmount:finalPaid,isPaid:finalPaidStatus})}}><div className="formGrid"><div className="field"><label>Titre</label><input name="title" required defaultValue={e?.title||''} placeholder="Ex: salaire, courses..." autoFocus/></div><div className="field"><label>Montant</label><input name="amount" type="number" step="0.01" min="0" required value={amount} onChange={ev=>{setAmount(ev.target.value);if(Number(ev.target.value||0)>usesTotal)setIsPaid(false)}}/></div><div className="field"><label>Type</label><select value={type} onChange={ev=>changeType(ev.target.value)}><option value="expense">Dépense</option><option value="income">Revenu</option></select></div><div className="field"><label>Date</label><input name="date" type="date" defaultValue={e?.date||today()}/></div>{showPaymentControls&&<div className="field"><label>Statut</label><button type="button" className={isPaid?'paidToggle active':'paidToggle'} onClick={togglePaidStatus}><span>{isPaid?'Payé':'Non payé'}</span><ion-icon name={isPaid?'checkmark-circle-outline':'ellipse-outline'}/></button></div>}</div>{showPaymentControls&&<div className="paymentSection"><div className="paymentSectionHead"><div><h4>Sommes déjà payées</h4><p>Ajoute chaque paiement proprement avec un nom, une somme et une date.</p></div><div className="paymentActionStack"><button type="button" className="btn primary" onClick={openAddUse}><ion-icon name="add-outline"/>Ajouter une somme</button><button type="button" className="btn" onClick={()=>setShowHistory(true)}><ion-icon name="time-outline"/>Historique des déjà payés</button></div></div><div className="paymentSummaryLine"><span>{paymentUses.length} paiement(s) enregistré(s)</span><b>{money(usesTotal)}</b></div></div>}{showPaymentControls&&<div className="paymentPreview"><div className="paymentBox"><span>Déjà payé</span><b className="gold">{money(previewPaid)}</b></div><div className="paymentBox"><span>Restant utilisable</span><b className={previewRemaining>0?'green':'red'}>{money(previewRemaining)}</b></div></div>}<div className="field" style={{marginTop:12}}><label>Catégorie</label><div className="catGrid">{cats.filter(c=>type==='income'?c.name==='Revenus':c.name!=='Revenus').map(c=><button type="button" key={c.name} className={cat===c.name?'catBtn active':'catBtn'} onClick={()=>setCat(c.name)}><ion-icon name={c.icon} style={{color:c.color,fontSize:22}}/>{c.name}</button>)}</div></div><div className="field" style={{marginTop:12}}><label>Note</label><textarea name="note" rows="3" defaultValue={e?.note||''} placeholder="Optionnel"/></div><button className="btn primary" style={{width:'100%',marginTop:14}}><ion-icon name="checkmark-circle-outline"/>Enregistrer</button></form></div>{payEditor&&<PaymentUseEditor editor={payEditor} total={total} onClose={()=>setPayEditor(null)} onSave={saveUse}/>} {showHistory&&<PaymentHistoryModal uses={paymentUses} onClose={()=>setShowHistory(false)} onEdit={openEditUse} onDelete={removeUse}/>}</div>
+}
+
+function AppDialog({dialog,close}){const icon=dialog.kind==='danger'?'warning-outline':dialog.kind==='success'?'checkmark-circle-outline':'information-circle-outline';return <div className="modal" onMouseDown={ev=>{if(ev.target===ev.currentTarget)close()}}><div className="modalBox dialogBox"><div className="modalHead"><h3 className={`dialogTitle ${dialog.kind||''}`}><ion-icon name={icon}/>{dialog.title}</h3><button className="btn ghost" onClick={close}><ion-icon name="close-outline"/></button></div>{dialog.message&&<p className="dialogText">{dialog.message}</p>}<div className="dialogActions">{(dialog.actions||[]).map((action,i)=><button key={i} className={`btn ${action.className||''}`} onClick={action.onClick}>{action.label}</button>)}</div></div></div>}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
 </body>
 </html>
