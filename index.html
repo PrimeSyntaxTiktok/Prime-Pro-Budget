@@ -41,7 +41,7 @@
       --gold:#f6cf6b;--gold2:#d8a52f;--goldsoft:#fbe3a6;
       --green:#34e2a4;--red:#ff5573;--blue:#7fb4ff;--purple:#b29bff;
       --line:rgba(255,255,255,.085);--line2:rgba(255,255,255,.05);
-      /* Mélanges */
+      /* MÃ©langes */
       --glass:linear-gradient(165deg,rgba(255,255,255,.07),rgba(255,255,255,.022));
       --glass-strong:linear-gradient(165deg,rgba(255,255,255,.10),rgba(255,255,255,.035));
       --gold-grad:linear-gradient(135deg,var(--goldsoft),var(--gold) 42%,var(--gold2));
@@ -74,7 +74,7 @@
       filter:blur(28px);
       animation:auroraDrift 26s ease-in-out infinite alternate;
     }
-    /* Trame fine + voile texturé */
+    /* Trame fine + voile texturÃ© */
     body:after{
       content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
       background-image:
@@ -394,7 +394,7 @@
     .paymentHistoryActions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
     .paymentHistoryActions .btn{min-height:42px;border-radius:14px;padding:10px 12px}
 
-    /* ============ Mode personnel / espace à deux ============ */
+    /* ============ Mode personnel / espace Ã  deux ============ */
     .modeBtn.shared,.brandModeBtn.shared{background:rgba(52,226,164,.12);border-color:rgba(52,226,164,.32);color:#fff}
     .modeBtn ion-icon,.brandModeBtn ion-icon{font-size:21px;color:var(--gold)}
     .modeBtn.shared ion-icon,.brandModeBtn.shared ion-icon{color:var(--green)}
@@ -520,7 +520,7 @@
       tbody td:nth-child(1)::before{content:none}
       tbody td:nth-child(1) b{display:block;font-size:18px;line-height:1.2}
       tbody td:nth-child(1) .mini{margin-top:5px;font-size:13px}
-      tbody td:nth-child(2)::before{content:"Catégorie"}
+      tbody td:nth-child(2)::before{content:"CatÃ©gorie"}
       tbody td:nth-child(3)::before{content:"Date"}
       tbody td:nth-child(4)::before{content:"Type"}
       tbody td:nth-child(5)::before{content:"Montant"}
@@ -575,6 +575,98 @@
       .chartBox{height:255px}
     }
   </style>
+<style id="primebudget-redesign-2026">
+:root{
+  --bg:#07080b;--bg2:#0b0d12;--panel:#10131a;--panel2:#151923;--panel3:#1b202c;
+  --text:#f7f8fb;--muted:#a3a9b7;--soft:#747d90;--line:rgba(255,255,255,.1);--line2:rgba(255,255,255,.06);
+  --gold:#f2c85b;--gold2:#d9a93c;--green:#35d49a;--red:#ff5e76;--blue:#6facff;--violet:#a78bfa;
+  --surface:linear-gradient(180deg,rgba(18,21,30,.96),rgba(11,13,18,.96));
+  --surface-soft:linear-gradient(180deg,rgba(22,26,36,.9),rgba(13,15,21,.9));
+  --accent:linear-gradient(135deg,#ffe49a,#f2c85b 52%,#c98f24);
+  --shadow:0 18px 42px rgba(0,0,0,.34);--shadow-sm:0 8px 22px rgba(0,0,0,.26);
+  --radius:8px;--radius-sm:8px;--safe-bottom:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);
+  --font-display:'Sora',system-ui,sans-serif;--font-body:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body,#root{height:100%;margin:0}
+body{font-family:var(--font-body);background:#07080b;color:var(--text);overflow:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;letter-spacing:0!important}
+body:before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:linear-gradient(180deg,#0d1017 0%,#07080b 42%,#050609 100%)!important;filter:none!important;animation:none!important}
+body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.34;background-image:linear-gradient(to right,rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.035) 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(#000,rgba(0,0,0,.72));-webkit-mask-image:linear-gradient(#000,rgba(0,0,0,.72))}
+button,input,select,textarea{font:inherit;font-family:var(--font-body);letter-spacing:0!important}
+button{border:0;color:inherit;cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.54;filter:saturate(.6)}
+input,select,textarea{width:100%;border:1px solid var(--line);background:#0c0f15;color:var(--text);border-radius:8px;padding:12px 13px;outline:none;min-height:44px;transition:border-color .18s var(--ease),box-shadow .18s var(--ease),background .18s var(--ease)}
+input::placeholder,textarea::placeholder{color:#6d7482}
+input:focus,select:focus,textarea:focus{border-color:rgba(242,200,91,.74);background:#10141c;box-shadow:0 0 0 3px rgba(242,200,91,.16)}
+select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,#b9c0ce 50%),linear-gradient(135deg,#b9c0ce 50%,transparent 50%);background-position:calc(100% - 18px) 20px,calc(100% - 12px) 20px;background-size:6px 6px,6px 6px;background-repeat:no-repeat;padding-right:34px}
+select option{background:#0f1219;color:#fff}
+textarea{resize:vertical;line-height:1.45}
+.app{position:relative;height:100%;display:grid;grid-template-columns:288px minmax(0,1fr);overflow:hidden;background:transparent}
+.sidebar{height:100%;padding:22px 18px;border-right:1px solid var(--line);background:rgba(8,10,15,.86);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);display:flex;flex-direction:column;gap:18px;position:relative}
+.sidebar:after,.card:before,.modalBox:before,.sideCard:before,.fab:before{display:none!important}
+.brandWrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 2px 12px;border-bottom:1px solid var(--line2)}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand img{width:46px;height:46px;border-radius:8px;object-fit:cover;box-shadow:0 0 0 1px rgba(242,200,91,.36),0 10px 24px rgba(0,0,0,.32)}
+.brand h1{margin:0;font-family:var(--font-display);font-size:21px;font-weight:800;letter-spacing:0!important;color:#fff}
+.brand p{margin:3px 0 0;color:var(--muted);font-size:12px;font-weight:700}
+.brandModeBtn{width:42px;height:42px;display:grid;place-items:center;border-radius:8px;background:#111620;border:1px solid var(--line);color:var(--gold);transition:background .18s var(--ease),transform .18s var(--ease),border-color .18s var(--ease)}
+.brandModeBtn:hover,.brandModeBtn.shared{background:rgba(242,200,91,.13);border-color:rgba(242,200,91,.38);transform:translateY(-1px)}
+.brandModeBtn ion-icon{font-size:20px}
+.nav{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.nav button{position:relative;min-height:46px;background:transparent;border-radius:8px;padding:0 12px;display:flex;align-items:center;gap:12px;color:var(--muted);font-weight:800;text-align:left;transition:color .18s var(--ease),background .18s var(--ease),transform .18s var(--ease)}
+.nav button:before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:var(--accent);opacity:0;transform:scaleY(.5);transition:opacity .18s var(--ease),transform .18s var(--ease)}
+.nav button:hover{background:rgba(255,255,255,.055);color:#fff;transform:translateX(1px)}
+.nav button.active{background:linear-gradient(90deg,rgba(242,200,91,.18),rgba(255,255,255,.045));color:#fff;box-shadow:inset 0 0 0 1px rgba(242,200,91,.18)}
+.nav button.active:before{opacity:1;transform:scaleY(1)}
+.nav ion-icon{font-size:20px;color:var(--gold);flex:0 0 auto}
+.sideCard{margin-top:auto;border:1px solid var(--line);background:var(--surface-soft);border-radius:8px;padding:16px;box-shadow:var(--shadow-sm);overflow:hidden}
+.sideCard b{font-family:var(--font-display);font-weight:800;color:#fff}
+.syncLine{display:flex;align-items:center;gap:9px;min-height:20px;color:var(--muted);font-size:13px;font-weight:700;line-height:1.4}
+.dot{width:9px;height:9px;border-radius:99px;background:#7b8392;box-shadow:0 0 0 4px rgba(123,131,146,.12);flex:0 0 auto}
+.dot.online{background:var(--green);box-shadow:0 0 0 4px rgba(53,212,154,.14)}
+.dot.warn{background:var(--gold);box-shadow:0 0 0 4px rgba(242,200,91,.14)}
+.dot.syncing{background:var(--blue);animation:pulse 1.2s ease-in-out infinite}
+.mini{font-size:12px;color:var(--muted);line-height:1.45;margin:8px 0 0;font-weight:650}
+.content{height:100%;overflow:auto;padding:26px 28px 104px;scroll-behavior:smooth}
+.content::-webkit-scrollbar{width:10px}.content::-webkit-scrollbar-track{background:#080a0f}.content::-webkit-scrollbar-thumb{background:#2a3240;border-radius:999px;border:2px solid #080a0f}.content::-webkit-scrollbar-thumb:hover{background:#3a4454}
+.installBanner{align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:8;margin:0 0 16px;padding:13px 14px;border:1px solid rgba(242,200,91,.28);background:linear-gradient(90deg,rgba(242,200,91,.15),rgba(21,25,35,.96));border-radius:8px;box-shadow:var(--shadow-sm)}
+.installBanner b{font-family:var(--font-display);font-size:14px}.installBanner .btn{min-height:38px;padding:0 14px}
+.topbar{position:sticky;top:0;z-index:7;display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin:-6px -2px 18px;padding:6px 2px 16px;background:linear-gradient(180deg,rgba(7,8,11,.96) 0%,rgba(7,8,11,.88) 72%,rgba(7,8,11,0) 100%);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.title{min-width:0}.title h2{margin:0 0 8px;font-family:var(--font-display);font-size:31px;line-height:1.08;font-weight:800;letter-spacing:0!important;color:#fff;background:none;-webkit-background-clip:initial;background-clip:initial}.title p{margin:7px 0 0;color:var(--muted)}
+.toolbar{display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:wrap;max-width:720px}.toolbar select{width:auto;min-width:196px;background-color:#10141c}.toolbar .googleBtn{min-width:112px}
+.btn{position:relative;min-height:42px;border-radius:8px;padding:0 14px;font-weight:800;font-size:14px;background:#121720;border:1px solid var(--line);color:var(--text);display:inline-flex;align-items:center;justify-content:center;gap:8px;line-height:1;white-space:nowrap;transition:transform .16s var(--ease),box-shadow .16s var(--ease),background .16s var(--ease),border-color .16s var(--ease),color .16s var(--ease)}
+.btn ion-icon{font-size:18px;flex:0 0 auto}.btn:hover{transform:translateY(-1px);background:#171d28;border-color:rgba(255,255,255,.16);box-shadow:var(--shadow-sm)}.btn:active{transform:translateY(0) scale(.99)}
+.btn.primary{background:var(--accent);border-color:transparent;color:#161004;box-shadow:0 11px 25px rgba(242,200,91,.18);text-shadow:none}.btn.primary:hover{filter:brightness(1.04);box-shadow:0 14px 31px rgba(242,200,91,.24)}
+.btn.danger{color:#ffd7de;background:rgba(255,94,118,.11);border-color:rgba(255,94,118,.3)}.btn.danger:hover{background:rgba(255,94,118,.18);border-color:rgba(255,94,118,.46)}.btn.ghost{background:rgba(255,255,255,.055);color:#d7dbe5}.btn.googleBtn.connected{background:rgba(53,212,154,.12);border-color:rgba(53,212,154,.34);color:#dffcf1}.googleDot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(53,212,154,.13)}
+.modeBtn.shared{background:rgba(111,172,255,.12);border-color:rgba(111,172,255,.3);color:#dcebff}.iconBtn{min-width:42px}.hideMobile{display:inline-flex}
+.grid{display:grid;gap:14px}.card{position:relative;border:1px solid var(--line);background:var(--surface);border-radius:8px;box-shadow:var(--shadow);padding:18px;overflow:hidden;animation:none!important}.card h3{font-family:var(--font-display);letter-spacing:0!important}.card:hover{border-color:rgba(255,255,255,.14)}
+.kpis{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:14px}.kpi{min-height:126px;padding:18px 16px}.kpi:after{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--gold),rgba(111,172,255,.7),transparent)}.kpi small{display:block;color:var(--muted);font-weight:900;text-transform:uppercase;font-size:11px;letter-spacing:.08em}.kpi strong{display:block;margin-top:12px;font-family:var(--font-display);font-size:26px;line-height:1.15;font-weight:800;letter-spacing:0!important}.kpi span{display:block;margin-top:8px;color:var(--muted);font-size:13px;font-weight:700}.kpi ion-icon{position:absolute;right:14px;top:14px;width:36px;height:36px;padding:8px;border-radius:8px;background:rgba(255,255,255,.055);border:1px solid var(--line);font-size:20px;color:#d6dbea;opacity:1}
+.mainGrid{grid-template-columns:minmax(0,1.35fr) minmax(310px,.65fr);align-items:start}.sectionTitle{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px}.sectionTitle h3{margin:0;font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px}.chartBox{height:300px;min-height:260px}.chartBox canvas{max-width:100%}
+.sharedNotice{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px;background:linear-gradient(90deg,rgba(111,172,255,.13),rgba(18,21,30,.96))}.sharedNotice h3{margin:0 0 6px;display:flex;align-items:center;gap:8px;font-size:17px}.sharedNotice p{margin:0;color:var(--muted);line-height:1.45}.modeBadge,.syncBadge{display:inline-flex;align-items:center;gap:7px;min-height:32px;padding:0 10px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--line);font-size:12px;font-weight:900;color:#dfe4ee}.modeBadge.shared,.syncBadge.shared{background:rgba(111,172,255,.13);border-color:rgba(111,172,255,.32);color:#dcebff}
+.green{color:var(--green)!important}.red{color:var(--red)!important}.blue{color:var(--blue)!important}.gold{color:var(--gold)!important}.amount{font-family:var(--font-mono);font-weight:900;letter-spacing:0!important}.progress{height:10px;background:rgba(255,255,255,.075);border-radius:999px;overflow:hidden}.progress i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),var(--gold));box-shadow:none;transition:width .35s var(--ease)}
+.list{display:flex;flex-direction:column;gap:9px}.tx{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:12px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid var(--line2);user-select:none;touch-action:manipulation;transition:background .16s var(--ease),border-color .16s var(--ease),transform .16s var(--ease)}.tx:hover{background:rgba(255,255,255,.065);border-color:var(--line);transform:translateX(1px)}.tx.longPressing{border-color:rgba(255,94,118,.62);background:rgba(255,94,118,.12)}.txIcon{width:42px;height:42px;border-radius:8px;display:grid;place-items:center;background:#121720;border:1px solid var(--line)}.txTitle{font-weight:900;overflow-wrap:anywhere}.txMeta{font-size:12px;color:var(--muted);margin-top:3px}.txActions{display:flex;gap:8px}.txActions .btn{min-height:36px;padding:0 10px}.txPaidBadge{display:inline-flex;align-items:center;min-height:22px;margin-left:7px;padding:0 8px;border-radius:999px;background:rgba(53,212,154,.12);border:1px solid rgba(53,212,154,.3);color:#bff6df;font-size:11px;font-weight:900;vertical-align:middle}.paidTx{background:rgba(53,212,154,.045)!important}.txAmountBlock{text-align:right;min-width:116px}.remainingLine,.paidLine{margin-top:3px;font-size:11px;color:var(--muted);font-weight:800}.paidLine{color:#bff6df}
+.tableWrap{overflow:auto;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.025)}table{width:100%;border-collapse:separate;border-spacing:0;min-width:780px}th,td{padding:13px 14px;text-align:left;border-bottom:1px solid var(--line2);vertical-align:middle}th{position:sticky;top:0;z-index:1;background:#10141c;color:var(--muted);text-transform:uppercase;font-size:11px;letter-spacing:.08em;font-weight:900}td{color:#edf0f6}tbody tr{transition:background .16s var(--ease)}tbody tr:hover{background:rgba(255,255,255,.045)}tbody tr:last-child td{border-bottom:0}.txTitleCell b{font-weight:900}.txActionsCell{display:flex;align-items:center;justify-content:flex-end;gap:8px}.pill{display:inline-flex;align-items:center;gap:7px;min-height:30px;padding:0 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);font-size:12px;font-weight:900}.pill ion-icon{font-size:15px}.empty{text-align:center;color:var(--muted);padding:34px 18px;font-weight:800;border:1px dashed var(--line);border-radius:8px;background:rgba(255,255,255,.025)}.mobileDeleteHint{display:none!important}
+.sharePanel,.pairPanel{background:linear-gradient(180deg,rgba(18,22,31,.98),rgba(9,11,16,.98))}.shareHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}.shareHeader h3{margin:0;font-size:18px}.shareSteps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 14px}.shareStep{border:1px solid var(--line);background:rgba(255,255,255,.045);border-radius:8px;padding:12px}.shareStep b{display:block;margin-bottom:4px}.shareStep p{margin:0;color:var(--muted);line-height:1.45;font-size:13px}.shareCodeRow{display:flex;gap:9px;align-items:center;margin-top:10px}.shareCodeDisplay{min-height:42px;display:flex;align-items:center;padding:0 13px;border-radius:8px;background:#090b10;border:1px solid rgba(242,200,91,.28);font-family:var(--font-mono);font-weight:900;color:var(--gold);white-space:nowrap}.pairStatus{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}.pairBox{border:1px solid var(--line);background:rgba(255,255,255,.045);border-radius:8px;padding:12px}.pairBox span{display:block;color:var(--muted);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.07em}.pairBox b{display:block;margin-top:6px;overflow-wrap:anywhere}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(3,4,7,.72);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:grid;place-items:center;padding:18px;animation:fadeIn .16s var(--ease) both}.modalBox{position:relative;width:min(640px,100%);max-height:90vh;overflow:auto;background:linear-gradient(180deg,#151923,#0c0f15);border:1px solid var(--line);border-radius:8px;box-shadow:0 30px 80px rgba(0,0,0,.56);padding:20px;animation:popIn .22s var(--ease) both}.modalHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.modalHead h3{margin:0;font-family:var(--font-display);font-size:21px;font-weight:800;letter-spacing:0!important}.modalHead .btn{min-width:42px;padding:0 11px}.formGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:7px}.field label{font-size:11px;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.08em}.catGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.catBtn{min-height:76px;padding:10px 8px;border-radius:8px;background:#10141c;border:1px solid var(--line);display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;text-align:center;font-size:11px;font-weight:900;color:var(--muted);transition:background .16s var(--ease),border-color .16s var(--ease),transform .16s var(--ease)}.catBtn:hover{background:#151b25;transform:translateY(-1px)}.catBtn.active{background:rgba(242,200,91,.14);border-color:rgba(242,200,91,.46);color:#fff}.catBtn ion-icon{font-size:22px}.dialogBox{width:min(500px,100%)}.dialogTitle{display:flex;align-items:center;gap:10px}.dialogTitle ion-icon{font-size:24px;color:var(--gold)}.dialogTitle.danger ion-icon{color:var(--red)}.dialogTitle.success ion-icon{color:var(--green)}.dialogText{margin:0;color:var(--muted);line-height:1.55}.dialogActions{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;margin-top:20px}.dialogActions .btn{min-width:112px}
+.paidToggle{width:100%;min-height:44px;border-radius:8px;border:1px solid var(--line);background:#10141c;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-weight:900;color:var(--muted)}.paidToggle.active{background:rgba(53,212,154,.13);border-color:rgba(53,212,154,.38);color:#dffcf1}.paidToggle ion-icon{font-size:20px}.paymentSection{margin-top:14px;border:1px solid var(--line);background:rgba(255,255,255,.035);border-radius:8px;padding:14px}.paymentSectionHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.paymentSection h4{margin:0 0 5px;font-size:15px}.paymentSection p{margin:0;color:var(--muted);line-height:1.45}.paymentActionStack{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.paymentSummaryLine{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line2);color:var(--muted);font-weight:800}.paymentPreview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}.paymentBox,.paymentConfirmCard{border:1px solid var(--line);background:#0d1118;border-radius:8px;padding:12px}.paymentBox span{display:block;color:var(--muted);font-size:12px;font-weight:800}.paymentBox b{display:block;margin-top:6px;font-family:var(--font-mono);font-size:18px}.paymentWizardSteps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 15px}.paymentWizardSteps i{height:5px;border-radius:999px;background:rgba(255,255,255,.1)}.paymentWizardSteps i.active{background:var(--accent)}.paymentStepTitle{margin:0 0 6px;font-family:var(--font-display);font-size:18px}.paymentStepHelp{margin:0 0 14px;color:var(--muted);line-height:1.5}.paymentConfirmRow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line2)}.paymentConfirmRow:last-child{border-bottom:0}.paymentModalActions{display:flex;justify-content:flex-end;gap:9px;margin-top:16px}.paymentHistoryList{display:flex;flex-direction:column;gap:9px}.paymentHistoryRow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:8px;padding:12px}.paymentHistoryTitle{font-weight:900}.paymentHistoryMeta{display:flex;gap:7px;margin-top:4px;color:var(--muted);font-size:12px}.paymentHistoryAmount{font-family:var(--font-mono);font-weight:900;text-align:right;color:var(--gold)}.paymentHistoryActions{display:flex;gap:7px;margin-top:7px}.paymentUseEmpty{border:1px dashed var(--line);border-radius:8px;padding:28px;text-align:center;color:var(--muted);font-weight:800}
+.fab{display:none;position:fixed;right:16px;bottom:calc(84px + var(--safe-bottom));z-index:20;width:56px;height:56px;border-radius:8px;background:var(--accent);color:#161004;box-shadow:0 18px 42px rgba(242,200,91,.24);font-size:28px;place-items:center}.bottomNav{display:none}
+*{scrollbar-width:thin;scrollbar-color:#394253 #080a0f}::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-track{background:#080a0f}::-webkit-scrollbar-thumb{background:#394253;border-radius:999px;border:2px solid #080a0f}::-webkit-scrollbar-thumb:hover{background:#4a5568}::-webkit-scrollbar-corner{background:transparent}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.78);opacity:.58}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes popIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+@media (max-width:1180px){.app{grid-template-columns:250px minmax(0,1fr)}.sidebar{padding:18px 14px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.mainGrid{grid-template-columns:1fr}.toolbar{max-width:560px}.chartBox{height:270px}}
+@media (max-width:860px){body{overflow:hidden}.app{display:block}.sidebar{display:none}.content{height:100%;padding:18px 14px calc(102px + var(--safe-bottom));overflow:auto}.topbar{margin:-2px -2px 14px;padding:2px 2px 12px;flex-direction:column;gap:12px}.title h2{font-size:27px}.toolbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));width:100%;max-width:none;gap:8px}.toolbar select{grid-column:1/-1;width:100%;min-width:0}.toolbar .btn{min-width:0;padding:0 10px}.toolbar .googleBtn span,.toolbar .btnText{display:none}.hideMobile{display:none!important}.sharedNotice{align-items:flex-start;flex-direction:column}.sharedNotice .modeBadge{max-width:100%;overflow:hidden}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.kpi{min-height:112px}.kpi strong{font-size:22px}.card{padding:15px}.sectionTitle{align-items:flex-start}.sectionTitle>div{display:flex;flex-wrap:wrap;justify-content:flex-end}.tableWrap{max-width:100%}.fab{display:grid}.bottomNav{position:fixed;left:10px;right:10px;bottom:calc(10px + var(--safe-bottom));z-index:30;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;min-height:68px;padding:6px;border-radius:8px;border:1px solid var(--line);background:rgba(12,15,21,.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 18px 44px rgba(0,0,0,.42)}.bottomNav button{border-radius:8px;background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;font-weight:900;line-height:1.05;min-width:0}.bottomNav button.active{background:rgba(242,200,91,.15);color:#fff}.bottomNav ion-icon{font-size:19px;color:var(--gold)}.modal{padding:12px}.modalBox{max-height:92vh;padding:16px}.formGrid,.paymentPreview,.pairStatus,.shareSteps{grid-template-columns:1fr}.catGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.paymentSectionHead{flex-direction:column}.paymentActionStack{width:100%;justify-content:stretch}.paymentActionStack .btn{flex:1}.paymentHistoryRow{grid-template-columns:1fr}.paymentHistoryAmount{text-align:left}.tx{grid-template-columns:auto minmax(0,1fr) auto}.txActions{grid-column:1/-1;justify-content:flex-end}}
+@media (max-width:560px){.content{padding-left:12px;padding-right:12px}.title h2{font-size:24px}.syncLine{font-size:12px}.toolbar{grid-template-columns:repeat(4,minmax(0,1fr))}.toolbar .btn{height:42px}.toolbar .btn ion-icon{font-size:20px}.kpis{grid-template-columns:1fr}.kpi{min-height:104px}.mainGrid{gap:12px}.chartBox{height:246px}.sectionTitle{flex-direction:column}.sectionTitle .btn{width:100%}.shareHeader{flex-direction:column}.shareCodeRow{flex-direction:column;align-items:stretch}.shareCodeDisplay{justify-content:center;white-space:normal;text-align:center;word-break:break-word}.dialogActions,.paymentModalActions{display:grid;grid-template-columns:1fr 1fr}.dialogActions .btn,.paymentModalActions .btn{min-width:0}.catGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.catBtn{min-height:70px;font-size:10px}.modalHead h3{font-size:19px}.bottomNav{left:8px;right:8px}.bottomNav button{font-size:9px}.bottomNav ion-icon{font-size:18px}table{min-width:720px}th,td{padding:12px}.btn{font-size:13px}}
+</style>
+<style id="primebudget-redesign-mobile-fix">
+@media (max-width:860px){
+  .bottomNav{grid-template-columns:repeat(5,minmax(0,1fr))!important;min-height:64px!important;padding:6px!important}
+  .bottomNav button{min-height:52px!important;border-radius:8px!important;font-size:9px!important;gap:3px!important;padding:0 2px!important}
+  .bottomNav ion-icon{font-size:18px!important}
+}
+@media (max-width:380px){
+  .bottomNav.hasMode button{font-size:8px!important}
+}
+</style>
 </head>
 <body>
 <div id="root"></div>
@@ -634,7 +726,7 @@
     icon512=buildTransparentIcon(img,512,.08);
     icon180=buildTransparentIcon(img,180,.08);
   }catch(err){
-    console.warn('Icône transparente PWA non générée, utilisation du logo source.', err);
+    console.warn('IcÃ´ne transparente PWA non gÃ©nÃ©rÃ©e, utilisation du logo source.', err);
   }
 
   ensureLink('icon',icon192,'192x192');
@@ -673,7 +765,7 @@
 </script>
 <script>
 if(!window.React||!window.ReactDOM){
-  document.getElementById('root').innerHTML='<div style="min-height:100vh;display:grid;place-items:center;padding:24px;background:#06060a;color:#f6f7fb;font-family:system-ui,sans-serif;text-align:center"><div><h1 style="margin:0 0 10px">PrimeBudget</h1><p style="color:#b7b7c8;max-width:520px">React n\'a pas pu se charger. Vérifie ta connexion internet ou lance ce fichier depuis un serveur local.</p></div></div>';
+  document.getElementById('root').innerHTML='<div style="min-height:100vh;display:grid;place-items:center;padding:24px;background:#06060a;color:#f6f7fb;font-family:system-ui,sans-serif;text-align:center"><div><h1 style="margin:0 0 10px">PrimeBudget</h1><p style="color:#b7b7c8;max-width:520px">React n\'a pas pu se charger. VÃ©rifie ta connexion internet ou lance ce fichier depuis un serveur local.</p></div></div>';
 } else {
 const { useEffect, useMemo, useRef, useState } = React;
 const APP_LOGO = 'https://i.ibb.co/zWQXGQK0/a471dbe4979d.png';
@@ -705,7 +797,7 @@ else
 const normalizeShareCode = code => { const raw = String(code || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); const trimmed = raw.startsWith('PB') ? raw.slice(2) : raw; return trimmed ? `PB-${trimmed.slice(0, 4)}-${trimmed.slice(4, 8)}` : ''; };
 const generatePairCodeValue = () => generateShareCodeValue().replace('PB-', 'DUO-');
 const normalizePairCode = code => { const raw = String(code || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); const trimmed = raw.startsWith('DUO') ? raw.slice(3) : raw.startsWith('PB') ? raw.slice(2) : raw; return trimmed ? `DUO-${trimmed.slice(0, 4)}-${trimmed.slice(4, 8)}` : ''; };
-const cats = [['Revenus', 'cash-outline', '#2ee59d'], ['Alimentation', 'cart-outline', '#6ba8ff'], ['Restaurants', 'restaurant-outline', '#f5a524'], ['Logement', 'home-outline', '#a78bfa'], ['Énergie', 'flash-outline', '#f5c84b'], ['Eau', 'water-outline', '#38bdf8'], ['Internet', 'wifi-outline', '#818cf8'], ['Téléphone', 'call-outline', '#e879f9'], ['Voiture', 'car-sport-outline', '#ff4d6d'], ['Transports', 'bus-outline', '#2dd4bf'], ['Shopping', 'bag-handle-outline', '#fb7185'], ['Santé', 'medkit-outline', '#84cc16'], ['Abonnements', 'card-outline', '#60a5fa'], ['Loisirs', 'game-controller-outline', '#fb923c'], ['Épargne', 'leaf-outline', '#22c55e'], ['Crédit', 'business-outline', '#94a3b8'], ['Impôts', 'document-text-outline', '#cbd5e1'], ['Imprévus', 'warning-outline', '#ef4444'], ['Autre', 'ellipsis-horizontal-circle-outline', '#9ca3af']].map(([name, icon, color]) => ({ name, icon, color }));
+const cats = [['Revenus', 'cash-outline', '#2ee59d'], ['Alimentation', 'cart-outline', '#6ba8ff'], ['Restaurants', 'restaurant-outline', '#f5a524'], ['Logement', 'home-outline', '#a78bfa'], ['Ã‰nergie', 'flash-outline', '#f5c84b'], ['Eau', 'water-outline', '#38bdf8'], ['Internet', 'wifi-outline', '#818cf8'], ['TÃ©lÃ©phone', 'call-outline', '#e879f9'], ['Voiture', 'car-sport-outline', '#ff4d6d'], ['Transports', 'bus-outline', '#2dd4bf'], ['Shopping', 'bag-handle-outline', '#fb7185'], ['SantÃ©', 'medkit-outline', '#84cc16'], ['Abonnements', 'card-outline', '#60a5fa'], ['Loisirs', 'game-controller-outline', '#fb923c'], ['Ã‰pargne', 'leaf-outline', '#22c55e'], ['CrÃ©dit', 'business-outline', '#94a3b8'], ['ImpÃ´ts', 'document-text-outline', '#cbd5e1'], ['ImprÃ©vus', 'warning-outline', '#ef4444'], ['Autre', 'ellipsis-horizontal-circle-outline', '#9ca3af']].map(([name, icon, color]) => ({ name, icon, color }));
 const clampNumber = (value, min = 0, max = Infinity) => Math.min(max, Math.max(min, Number(value || 0)));
 const txTotal = t => Math.max(0, Number(t?.amount || 0));
 const normalizePaymentUses = (uses, total = Infinity) => Array.isArray(uses) ? uses.map(u => ({ id: u?.id || uid(), label: String(u?.label || u?.title || u?.note || '').trim(), amount: clampNumber(u?.amount, 0, total), date: u?.date || today() })).filter(u => u.amount > 0) : [];
@@ -716,7 +808,7 @@ const txPaidAmount = t => { const total = txTotal(t), paid = txPaidRaw(t); retur
 const txRemaining = t => Math.max(0, txTotal(t) - txPaidAmount(t));
 const txShowsPayment = t => t?.type === 'expense' && (txPaymentUses(t).length > 0 || txPaidRaw(t) > 0 || txIsPaid(t));
 const cleanInitialTx = (value) => { if (!Array.isArray(value))
-    return []; const demo = value.length === 3 && value.some(t => t.title === 'Salaire') && value.some(t => t.title === 'Courses') && value.some(t => t.title === 'Épargne automatique'); return demo ? [] : value; };
+    return []; const demo = value.length === 3 && value.some(t => t.title === 'Salaire') && value.some(t => t.title === 'Courses') && value.some(t => t.title === 'Ã‰pargne automatique'); return demo ? [] : value; };
 const sortTxByAmountDesc = list => [...list].sort((a, b) => {
     const group = a.type === b.type ? 0 : (a.type === 'income' ? -1 : 1);
     if (group)
@@ -732,7 +824,7 @@ const sortTxByAmountDesc = list => [...list].sort((a, b) => {
 const safeTx = list => sortTxByAmountDesc(cleanInitialTx(Array.isArray(list) ? list : []).map(t => ({ ...t, category: t.category && t.category.name ? t.category : cats.find(c => c.name === t.category) || cats[18] })));
 const safeBudgets = obj => obj && typeof obj === 'object' && !Array.isArray(obj) ? obj : {};
 const safeGoals = list => Array.isArray(list) ? list : [];
-const cleanTextKey = value => String(value || '').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ');
+const cleanTextKey = value => String(value || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ');
 const amountKey = value => String(Math.round((Number(value || 0) + Number.EPSILON) * 100));
 const categoryKey = tx => cleanTextKey(tx?.category?.name || tx?.category || '');
 const dateKey = value => String(value || '').slice(0, 10);
@@ -890,7 +982,7 @@ function useStore() {
     const [firebaseConfig, setFirebaseConfigState] = useState(() => loadFirebaseConfig());
     const [user, setUser] = useState(null);
     const [firebaseError, setFirebaseError] = useState('');
-    const [syncStatus, setSyncStatus] = useState(hasFirebaseConfig(loadFirebaseConfig()) ? 'Firebase prêt' : 'Mode local');
+    const [syncStatus, setSyncStatus] = useState(hasFirebaseConfig(loadFirebaseConfig()) ? 'Firebase prÃªt' : 'Mode local');
     const [lastSync, setLastSync] = useState(null);
     const [remoteVersion, setRemoteVersion] = useState(0);
     const authRef = useRef(null), dbRef = useRef(null), docRef = useRef(null), unsubDocRef = useRef(null), saveTimerRef = useRef(null), unsubAuthRef = useRef(null);
@@ -940,7 +1032,7 @@ function useStore() {
             persistUserLocal(user.uid, mode, room, merged.mTx, merged.mBudgets, merged.mGoals);
         pendingSyncRef.current = false;
         setLastSync(new Date());
-        setSyncStatus(mode === 'shared' ? 'Espace à deux synchronisé' : 'Synchronisé');
+        setSyncStatus(mode === 'shared' ? 'Espace Ã  deux synchronisÃ©' : 'SynchronisÃ©');
     }
     catch (err) {
         pendingSyncRef.current = true;
@@ -957,7 +1049,7 @@ function useStore() {
         setSyncStatus('Mode local');
         return;
     } if (!window.firebase) {
-        setFirebaseError('Firebase ne s’est pas chargé. Vérifie ta connexion internet.');
+        setFirebaseError('Firebase ne sâ€™est pas chargÃ©. VÃ©rifie ta connexion internet.');
         setSyncStatus('Firebase indisponible');
         return;
     } try {
@@ -994,12 +1086,12 @@ function useStore() {
         setSyncStatus('Connecte-toi avec Google');
         return;
     } if (!dbRef.current) {
-        setSyncStatus('Firebase pas encore prêt');
+        setSyncStatus('Firebase pas encore prÃªt');
         return;
     } if (spaceMode === 'shared' && !pairRoom?.id) {
-        setSyncStatus('Espace à deux : crée ou rejoins une connexion');
+        setSyncStatus('Espace Ã  deux : crÃ©e ou rejoins une connexion');
         return;
-    } const mode = spaceMode, room = pairRoom; setSyncStatus(mode === 'shared' ? 'Connexion à l’espace à deux...' : 'Connexion au cloud...'); const ref = mode === 'shared' ? dbRef.current.collection('primebudgetPairRooms').doc(room.id) : dbRef.current.collection('users').doc(user.uid).collection('primebudget').doc('main'); docRef.current = ref; unsubDocRef.current = ref.onSnapshot(snapshot => { if (snapshot.exists) {
+    } const mode = spaceMode, room = pairRoom; setSyncStatus(mode === 'shared' ? 'Connexion Ã  lâ€™espace Ã  deux...' : 'Connexion au cloud...'); const ref = mode === 'shared' ? dbRef.current.collection('primebudgetPairRooms').doc(room.id) : dbRef.current.collection('users').doc(user.uid).collection('primebudget').doc('main'); docRef.current = ref; unsubDocRef.current = ref.onSnapshot(snapshot => { if (snapshot.exists) {
         const data = snapshot.data() || {};
         const remoteTx = safeTx(data.transactions), remoteGoals = safeGoals(data.goals), remoteBudgets = safeBudgets(data.budgets);
         const localData = dataRef.current;
@@ -1020,7 +1112,7 @@ function useStore() {
         persistUserLocal(user.uid, mode, room, mTx, mBudgets, mGoals);
         setRemoteVersion(v => v + 1);
         setLastSync(new Date());
-        setSyncStatus(mode === 'shared' ? 'Espace à deux synchronisé' : 'Synchronisé');
+        setSyncStatus(mode === 'shared' ? 'Espace Ã  deux synchronisÃ©' : 'SynchronisÃ©');
         setTimeout(() => { applyingRemoteRef.current = false; remoteReadyRef.current = true; }, 0);
     }
     else if (mode === 'personal') {
@@ -1029,7 +1121,7 @@ function useStore() {
         const firstBudgets = safeBudgets(cached?.budgets || {});
         const firstGoals = safeGoals(cached?.goals || []);
         applyingRemoteRef.current = true;
-        setSyncStatus('Création de ton espace cloud...');
+        setSyncStatus('CrÃ©ation de ton espace cloud...');
         setTxState([...firstTx]);
         setBudgetsState({ ...firstBudgets });
         setGoalsState([...firstGoals]);
@@ -1037,12 +1129,12 @@ function useStore() {
         lastSyncedSerialRef.current = serialState(firstTx, firstGoals, firstBudgets);
         persistScopeLocal(mode, room, firstTx, firstBudgets, firstGoals);
         persistUserLocal(user.uid, mode, room, firstTx, firstBudgets, firstGoals);
-        ref.set({ transactions: firstTx, budgets: firstBudgets, goals: firstGoals, updatedAt: firebase.firestore.FieldValue.serverTimestamp(), updatedFrom: navigator.userAgent.slice(0, 140) }, { merge: true }).then(() => { setLastSync(new Date()); setSyncStatus('Synchronisé'); }).catch(err => { setFirebaseError(err?.message || 'Erreur Firestore'); setSyncStatus('Erreur cloud'); });
+        ref.set({ transactions: firstTx, budgets: firstBudgets, goals: firstGoals, updatedAt: firebase.firestore.FieldValue.serverTimestamp(), updatedFrom: navigator.userAgent.slice(0, 140) }, { merge: true }).then(() => { setLastSync(new Date()); setSyncStatus('SynchronisÃ©'); }).catch(err => { setFirebaseError(err?.message || 'Erreur Firestore'); setSyncStatus('Erreur cloud'); });
         setTimeout(() => { applyingRemoteRef.current = false; remoteReadyRef.current = true; }, 0);
     }
     else {
-        setSyncStatus('Espace à deux introuvable ou accès refusé');
-    } }, err => { setFirebaseError(err?.message || 'Erreur Firestore'); setSyncStatus(mode === 'shared' ? 'Erreur espace à deux' : 'Erreur cloud'); }); return () => { if (unsubDocRef.current) {
+        setSyncStatus('Espace Ã  deux introuvable ou accÃ¨s refusÃ©');
+    } }, err => { setFirebaseError(err?.message || 'Erreur Firestore'); setSyncStatus(mode === 'shared' ? 'Erreur espace Ã  deux' : 'Erreur cloud'); }); return () => { if (unsubDocRef.current) {
         unsubDocRef.current();
         unsubDocRef.current = null;
     } }; }, [configured, user?.uid, spaceMode, pairRoom?.id]);
@@ -1073,7 +1165,7 @@ function useStore() {
             return;
         }
         if (!authRef.current) {
-            setSyncStatus('Firebase pas encore prêt');
+            setSyncStatus('Firebase pas encore prÃªt');
             return;
         }
         const provider = new firebase.auth.GoogleAuthProvider();
@@ -1092,28 +1184,28 @@ function useStore() {
     }
     catch (err) {
         setFirebaseError(err?.message || 'Connexion Google impossible');
-        setSyncStatus('Connexion annulée ou impossible');
+        setSyncStatus('Connexion annulÃ©e ou impossible');
     } };
     const signOut = async () => { try {
         if (authRef.current)
             await authRef.current.signOut();
         setUser(null);
-        setSyncStatus(configured ? 'Déconnecté' : 'Mode local');
+        setSyncStatus(configured ? 'DÃ©connectÃ©' : 'Mode local');
     }
     catch (err) {
-        setFirebaseError(err?.message || 'Déconnexion impossible');
+        setFirebaseError(err?.message || 'DÃ©connexion impossible');
     } };
     const saveFirebaseConfig = cfg => { const clean = safeBudgets(cfg); if (!hasFirebaseConfig(clean)) {
-        setFirebaseError('Configuration incomplète : apiKey, authDomain, projectId et appId sont obligatoires.');
+        setFirebaseError('Configuration incomplÃ¨te : apiKey, authDomain, projectId et appId sont obligatoires.');
         return false;
-    } writeLocal('primebudget_firebase_config', clean); setFirebaseConfigState(clean); setFirebaseError(''); setSyncStatus('Configuration enregistrée'); setTimeout(() => location.reload(), 350); return true; };
+    } writeLocal('primebudget_firebase_config', clean); setFirebaseConfigState(clean); setFirebaseError(''); setSyncStatus('Configuration enregistrÃ©e'); setTimeout(() => location.reload(), 350); return true; };
     const clearFirebaseConfig = () => { localStorage.removeItem('primebudget_firebase_config'); setFirebaseConfigState(EMBEDDED_FIREBASE_CONFIG); setUser(null); setTimeout(() => location.reload(), 250); };
     const ensureShareReady = () => { if (!configured)
-        throw new Error('Firebase n’est pas configuré dans ce fichier.'); if (!user)
-        throw new Error('Connecte-toi avec Google avant d’utiliser le partage.'); if (!dbRef.current)
-        throw new Error('Firestore n’est pas encore prêt. Réessaie dans quelques secondes.'); };
+        throw new Error('Firebase nâ€™est pas configurÃ© dans ce fichier.'); if (!user)
+        throw new Error('Connecte-toi avec Google avant dâ€™utiliser le partage.'); if (!dbRef.current)
+        throw new Error('Firestore nâ€™est pas encore prÃªt. RÃ©essaie dans quelques secondes.'); };
     const generateShareCode = async (monthKey, monthRows) => { ensureShareReady(); const rows = safeTx(monthRows).filter(t => keyOf(t.date) === monthKey); if (!rows.length)
-        throw new Error('Aucune transaction à partager pour le mois affiché.'); let code = generateShareCodeValue(), ref = dbRef.current.collection('primebudgetShareCodes').doc(code); for (let i = 0; i < 7; i++) {
+        throw new Error('Aucune transaction Ã  partager pour le mois affichÃ©.'); let code = generateShareCodeValue(), ref = dbRef.current.collection('primebudgetShareCodes').doc(code); for (let i = 0; i < 7; i++) {
         const snap = await ref.get();
         if (!snap.exists)
             break;
@@ -1122,12 +1214,12 @@ function useStore() {
     } const payload = { app: 'PrimeBudget', version: 1, ownerUid: user.uid, ownerEmail: user.email || '', ownerName: user.displayName || '', monthKey, monthLabel: labelMonth(monthKey), transactionCount: rows.length, totalAmount: rows.reduce((a, t) => a + Number(t.amount || 0), 0), transactions: rows.map(t => ({ ...t })), createdAt: firebase.firestore.FieldValue.serverTimestamp(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() }; await ref.set(payload); return { code, monthKey, count: rows.length }; };
     const readShareCode = async (input) => { ensureShareReady(); const code = normalizeShareCode(input); const raw = code.replace(/[^A-Z0-9]/g, ''); if (raw.length < 10)
         throw new Error('Code de partage incomplet.'); const snap = await dbRef.current.collection('primebudgetShareCodes').doc(code).get(); if (!snap.exists)
-        throw new Error('Aucun partage trouvé avec ce code.'); const data = snap.data() || {}; const monthKey = data.monthKey || keyOf(today()); const ownerUid = data.ownerUid || ''; const rows = safeTx(data.transactions).map(t => ({ ...t, id: uid(), sharedFrom: code, sharedOwnerUid: ownerUid, sharedSourceId: t.sharedSourceId || t.id || '', importedAt: today() })); if (!rows.length)
+        throw new Error('Aucun partage trouvÃ© avec ce code.'); const data = snap.data() || {}; const monthKey = data.monthKey || keyOf(today()); const ownerUid = data.ownerUid || ''; const rows = safeTx(data.transactions).map(t => ({ ...t, id: uid(), sharedFrom: code, sharedOwnerUid: ownerUid, sharedSourceId: t.sharedSourceId || t.id || '', importedAt: today() })); if (!rows.length)
         throw new Error('Ce code ne contient aucune transaction.'); return { code, monthKey, monthLabel: data.monthLabel || labelMonth(monthKey), transactions: rows, count: rows.length, ownerEmail: data.ownerEmail || '', ownerUid }; };
     const ensurePairReady = () => { if (!configured)
-        throw new Error('Firebase n’est pas configuré dans ce fichier.'); if (!user)
-        throw new Error('Connecte-toi avec Google avant de créer ou rejoindre un espace à deux.'); if (!dbRef.current)
-        throw new Error('Firestore n’est pas encore prêt. Réessaie dans quelques secondes.'); };
+        throw new Error('Firebase nâ€™est pas configurÃ© dans ce fichier.'); if (!user)
+        throw new Error('Connecte-toi avec Google avant de crÃ©er ou rejoindre un espace Ã  deux.'); if (!dbRef.current)
+        throw new Error('Firestore nâ€™est pas encore prÃªt. RÃ©essaie dans quelques secondes.'); };
     const createPairRoom = async ({ copyPersonal = true } = {}) => { ensurePairReady(); let code = generatePairCodeValue(), codeRef = dbRef.current.collection('primebudgetPairCodes').doc(code); for (let i = 0; i < 8; i++) {
         const snap = await codeRef.get();
         if (!snap.exists)
@@ -1137,9 +1229,9 @@ function useStore() {
     } const roomId = uid(); const base = copyPersonal ? loadPersonalLocal() : dataRef.current; const payload = { app: 'PrimeBudget', version: 2, type: 'pairRoom', ownerUid: user.uid, ownerEmail: user.email || '', ownerName: user.displayName || '', memberUids: [user.uid], memberEmails: user.email ? [user.email] : [], transactions: safeTx(base.transactions), budgets: safeBudgets(base.budgets), goals: safeGoals(base.goals), createdAt: firebase.firestore.FieldValue.serverTimestamp(), updatedAt: firebase.firestore.FieldValue.serverTimestamp(), updatedBy: user.email || '' }; await dbRef.current.collection('primebudgetPairRooms').doc(roomId).set(payload); await codeRef.set({ app: 'PrimeBudget', version: 2, type: 'pairCode', roomId, ownerUid: user.uid, ownerEmail: user.email || '', ownerName: user.displayName || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() }); const room = { id: roomId, code, ownerEmail: user.email || '' }; setPairRoom(room); setSpaceMode('shared'); return { code, roomId, count: payload.transactions.length }; };
     const joinPairRoom = async (input) => { ensurePairReady(); const code = normalizePairCode(input); const raw = code.replace(/[^A-Z0-9]/g, ''); if (raw.length < 11)
         throw new Error('Code de connexion incomplet.'); const codeSnap = await dbRef.current.collection('primebudgetPairCodes').doc(code).get(); if (!codeSnap.exists)
-        throw new Error('Aucune connexion trouvée avec ce code.'); const data = codeSnap.data() || {}; if (!data.roomId)
+        throw new Error('Aucune connexion trouvÃ©e avec ce code.'); const data = codeSnap.data() || {}; if (!data.roomId)
         throw new Error('Ce code ne contient pas de salon de synchronisation.'); const roomRef = dbRef.current.collection('primebudgetPairRooms').doc(data.roomId); await roomRef.update({ memberUids: firebase.firestore.FieldValue.arrayUnion(user.uid), memberEmails: user.email ? firebase.firestore.FieldValue.arrayUnion(user.email) : firebase.firestore.FieldValue.arrayUnion(user.uid), updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); const room = { id: data.roomId, code, ownerEmail: data.ownerEmail || '' }; setPairRoom(room); setSpaceMode('shared'); return { code, roomId: data.roomId, ownerEmail: data.ownerEmail || '' }; };
-    const disconnectPairRoom = () => { setPairRoom(null); setSpaceMode('shared'); setSyncStatus('Espace à deux déconnecté sur cet appareil'); };
+    const disconnectPairRoom = () => { setPairRoom(null); setSpaceMode('shared'); setSyncStatus('Espace Ã  deux dÃ©connectÃ© sur cet appareil'); };
     return { tx: liveTx(txState), setTx, removeTx, clearAllData, budgets: budgetsState, setBudgets, goals: liveGoals(goalsState), setGoals, removeGoal, remoteVersion, sync: { configured, user, status: syncStatus, error: firebaseError, lastSync, config: firebaseConfig, rules: firestoreRules, mode: spaceMode, setMode: setSpaceMode, pairRoom, signInGoogle, signOut, saveFirebaseConfig, clearFirebaseConfig, pushNow, generateShareCode, readShareCode, createPairRoom, joinPairRoom, disconnectPairRoom } };
 }
 function ChartLine({ rows, month, version }) { const ref = useRef(null); useEffect(() => { if (!ref.current)
@@ -1222,7 +1314,7 @@ function App() {
         if (installed) {
             setIsInstalled(true);
             setInstallVisible(false);
-            notify('Application déjà installée', 'PrimeBudget est déjà installé sur cet appareil.', 'success');
+            notify('Application dÃ©jÃ  installÃ©e', 'PrimeBudget est dÃ©jÃ  installÃ© sur cet appareil.', 'success');
             return;
         }
         const promptEvent = installRef.current || install;
@@ -1235,7 +1327,7 @@ function App() {
                 if (choice?.outcome === 'accepted') {
                     setIsInstalled(true);
                     setInstallVisible(false);
-                    notify('Installation lancée', 'PrimeBudget est en cours d’installation sur cet appareil.', 'success');
+                    notify('Installation lancÃ©e', 'PrimeBudget est en cours dâ€™installation sur cet appareil.', 'success');
                 }
                 else {
                     setInstallVisible(true);
@@ -1245,44 +1337,44 @@ function App() {
                 installRef.current = null;
                 setInstall(null);
                 setInstallVisible(!isStandaloneMode());
-                notify('Installation indisponible', 'Recharge la page puis réessaie. Sur iPhone ou iPad, utilise Partager puis Ajouter à l’écran d’accueil.', 'info');
+                notify('Installation indisponible', 'Recharge la page puis rÃ©essaie. Sur iPhone ou iPad, utilise Partager puis Ajouter Ã  lâ€™Ã©cran dâ€™accueil.', 'info');
             }
             return;
         }
-        notify('Installer PrimeBudget', isIosDevice() ? 'Sur iPhone ou iPad, appuie sur le bouton Partager de Safari, puis choisis Ajouter à l’écran d’accueil.' : 'Recharge la page puis appuie à nouveau sur Installer. Le navigateur proposera l’installation dès que la PWA sera disponible.', 'info');
+        notify('Installer PrimeBudget', isIosDevice() ? 'Sur iPhone ou iPad, appuie sur le bouton Partager de Safari, puis choisis Ajouter Ã  lâ€™Ã©cran dâ€™accueil.' : 'Recharge la page puis appuie Ã  nouveau sur Installer. Le navigateur proposera lâ€™installation dÃ¨s que la PWA sera disponible.', 'info');
     };
     const months = useMemo(() => { const s = [...new Set(tx.map(t => keyOf(t.date)).concat([keyOf(today())]))]; return s.sort((a, b) => b.localeCompare(a)); }, [tx]);
     useEffect(() => { if (!months.includes(month))
         setMonth(keyOf(today())); }, [months.join('|')]);
     const rows = useMemo(() => sortTxByAmountDesc(tx.filter(t => keyOf(t.date) === month)), [tx, month, remoteVersion]);
     const income = rows.filter(t => t.type === 'income').reduce((a, t) => a + +t.amount, 0), expense = rows.filter(t => t.type === 'expense').reduce((a, t) => a + +t.amount, 0), balance = income - expense;
-    const saving = rows.filter(t => t.category.name === 'Épargne').reduce((a, t) => a + +t.amount, 0);
+    const saving = rows.filter(t => t.category.name === 'Ã‰pargne').reduce((a, t) => a + +t.amount, 0);
     const burn = expense / (new Date(+month.slice(0, 4), +month.slice(5), 0).getDate());
     const filtered = rows.filter(t => (t.title + t.category.name + (t.note || '')).toLowerCase().includes(query.toLowerCase()));
     const refreshUI = () => { setRefreshKey(v => v + 1); requestAnimationFrame(() => { window.dispatchEvent(new Event('resize')); window.dispatchEvent(new CustomEvent('primebudget:updated', { detail: { at: Date.now() } })); }); };
     const sortTx = list => sortTxByAmountDesc(list);
     const needsSharedConnection = () => { if (sync.mode === 'shared' && !sync.pairRoom?.id) {
         setView('settings');
-        notify('Connexion à deux requise', 'Crée ou rejoins un code à deux avant d’ajouter, modifier ou supprimer des transactions dans cet espace.', 'danger');
+        notify('Connexion Ã  deux requise', 'CrÃ©e ou rejoins un code Ã  deux avant dâ€™ajouter, modifier ou supprimer des transactions dans cet espace.', 'danger');
         return true;
     } return false; };
     const syncAfterLocalChange = () => { if (sync.user && sync.mode === 'shared' && sync.pairRoom?.id)
-        setTimeout(() => sync.pushNow?.('Synchronisation à deux...'), 650); };
+        setTimeout(() => sync.pushNow?.('Synchronisation Ã  deux...'), 650); };
     const addTx = data => { if (needsSharedConnection())
         return; setTx(x => sortTx([data, ...x])); setMonth(keyOf(data.date)); setQuery(''); refreshUI(); syncAfterLocalChange(); };
     const updateTx = data => { if (needsSharedConnection())
         return; setTx(x => sortTx(x.map(t => t.id === data.id ? data : t))); setMonth(keyOf(data.date)); setQuery(''); refreshUI(); syncAfterLocalChange(); };
-    const del = id => { const item = tx.find(t => t.id === id); ask({ title: 'Supprimer cette transaction ?', message: `La transaction « ${item?.title || 'sélectionnée'} » sera supprimée définitivement${sync.mode === 'shared' ? ' pour les deux personnes' : ''}.`, confirmLabel: 'Supprimer', danger: true, onConfirm: () => { if (needsSharedConnection())
-            return; removeTx([id]); refreshUI(); syncAfterLocalChange(); notify('Transaction supprimée', 'La liste a été mise à jour.', 'success'); } }); };
+    const del = id => { const item = tx.find(t => t.id === id); ask({ title: 'Supprimer cette transaction ?', message: `La transaction Â« ${item?.title || 'sÃ©lectionnÃ©e'} Â» sera supprimÃ©e dÃ©finitivement${sync.mode === 'shared' ? ' pour les deux personnes' : ''}.`, confirmLabel: 'Supprimer', danger: true, onConfirm: () => { if (needsSharedConnection())
+            return; removeTx([id]); refreshUI(); syncAfterLocalChange(); notify('Transaction supprimÃ©e', 'La liste a Ã©tÃ© mise Ã  jour.', 'success'); } }); };
     const delMany = ids => { const list = (ids || []).filter(Boolean); if (!list.length)
-        return; ask({ title: `Supprimer ${list.length} transaction(s) ?`, message: `Les transactions sélectionnées seront supprimées définitivement${sync.mode === 'shared' ? ' pour les deux personnes' : ''}.`, confirmLabel: 'Supprimer', danger: true, onConfirm: () => { if (needsSharedConnection())
-            return; removeTx(list); refreshUI(); syncAfterLocalChange(); notify('Transactions supprimées', `${list.length} transaction(s) supprimée(s).`, 'success'); } }); };
+        return; ask({ title: `Supprimer ${list.length} transaction(s) ?`, message: `Les transactions sÃ©lectionnÃ©es seront supprimÃ©es dÃ©finitivement${sync.mode === 'shared' ? ' pour les deux personnes' : ''}.`, confirmLabel: 'Supprimer', danger: true, onConfirm: () => { if (needsSharedConnection())
+            return; removeTx(list); refreshUI(); syncAfterLocalChange(); notify('Transactions supprimÃ©es', `${list.length} transaction(s) supprimÃ©e(s).`, 'success'); } }); };
     const deleteMonth = mk => { const monthRows = tx.filter(t => keyOf(t.date) === mk); if (!monthRows.length) {
         notify('Mois vide', `${labelMonth(mk)} ne contient aucune transaction.`, 'info');
         return;
-    } ask({ title: `Supprimer ${labelMonth(mk)} ?`, message: `Les ${monthRows.length} transaction(s) de ${labelMonth(mk)} seront supprimées définitivement${sync.mode === 'shared' ? ' pour les deux personnes' : ''}.`, confirmLabel: 'Supprimer le mois', danger: true, onConfirm: () => { if (needsSharedConnection())
+    } ask({ title: `Supprimer ${labelMonth(mk)} ?`, message: `Les ${monthRows.length} transaction(s) de ${labelMonth(mk)} seront supprimÃ©es dÃ©finitivement${sync.mode === 'shared' ? ' pour les deux personnes' : ''}.`, confirmLabel: 'Supprimer le mois', danger: true, onConfirm: () => { if (needsSharedConnection())
             return; removeTx(monthRows.map(t => t.id)); if (month === mk)
-            setMonth(keyOf(today())); refreshUI(); syncAfterLocalChange(); notify('Mois supprimé', `${labelMonth(mk)} a été vidé (${monthRows.length} transaction(s)).`, 'success'); } }); };
+            setMonth(keyOf(today())); refreshUI(); syncAfterLocalChange(); notify('Mois supprimÃ©', `${labelMonth(mk)} a Ã©tÃ© vidÃ© (${monthRows.length} transaction(s)).`, 'success'); } }); };
     const exportAll = () => { const a = document.createElement('a'); const label = sync.mode === 'shared' ? 'PrimeBudget-Duo' : 'PrimeBudget'; const monthRows = tx.filter(t => keyOf(t.date) === month); a.href = URL.createObjectURL(new Blob([JSON.stringify({ mode: sync.mode, pairRoom: sync.pairRoom, month, monthLabel: labelMonth(month), transactions: monthRows }, null, 2)], { type: 'application/json' })); a.download = `${label}-${month}.json`; a.click(); };
     const importAll = e => { const f = e.target.files[0]; if (!f)
         return; const r = new FileReader(); r.onload = () => { try {
@@ -1299,53 +1391,53 @@ function App() {
         }
         setMonth(keyOf(today()));
         refreshUI();
-        notify('Import réussi', 'Tes données ont été importées et l’affichage a été actualisé.', 'success');
+        notify('Import rÃ©ussi', 'Tes donnÃ©es ont Ã©tÃ© importÃ©es et lâ€™affichage a Ã©tÃ© actualisÃ©.', 'success');
     }
     catch {
-        notify('Fichier invalide', 'Le fichier sélectionné ne contient pas une sauvegarde PrimeBudget valide.', 'danger');
+        notify('Fichier invalide', 'Le fichier sÃ©lectionnÃ© ne contient pas une sauvegarde PrimeBudget valide.', 'danger');
     } }; r.readAsText(f); e.target.value = ''; };
     const monthsAfter = () => { const [y, m] = month.split('-').map(Number); const out = []; for (let i = 1; i <= 12; i++) {
         out.push(keyOf(new Date(y, m - 1 + i, 1)));
     } tx.forEach(t => { const k = keyOf(t.date); if (k > month && !out.includes(k))
         out.push(k); }); return [...new Set(out)].sort(); };
     const doDuplicate = (target, replace = false) => { if (!target || target <= month) {
-        notify('Mois invalide', 'Choisis un mois situé après le mois actuellement affiché.', 'danger');
+        notify('Mois invalide', 'Choisis un mois situÃ© aprÃ¨s le mois actuellement affichÃ©.', 'danger');
         return;
     } const sourceRows = tx.filter(t => keyOf(t.date) === month); if (!sourceRows.length) {
-        notify('Rien à dupliquer', `${labelMonth(month)} ne contient aucune transaction.`, 'info');
+        notify('Rien Ã  dupliquer', `${labelMonth(month)} ne contient aucune transaction.`, 'info');
         return;
     } const existingClones = tx.filter(t => keyOf(t.date) === target && t._dup); if (existingClones.length && !replace) {
-        ask({ title: 'Mois déjà dupliqué', message: `${labelMonth(target)} contient déjà une duplication (${existingClones.length} transaction(s)). Veux-tu la remplacer par une duplication de ${labelMonth(month)} ?`, confirmLabel: 'Remplacer', danger: true, onConfirm: () => doDuplicate(target, true) });
+        ask({ title: 'Mois dÃ©jÃ  dupliquÃ©', message: `${labelMonth(target)} contient dÃ©jÃ  une duplication (${existingClones.length} transaction(s)). Veux-tu la remplacer par une duplication de ${labelMonth(month)} ?`, confirmLabel: 'Remplacer', danger: true, onConfirm: () => doDuplicate(target, true) });
         return;
     } const removedIds = replace ? existingClones.map(t => t.id) : []; const remainKeys = new Set(tx.filter(t => keyOf(t.date) === target && !removedIds.includes(t.id)).map(duplicateTxKey)); const clones = []; const ckeys = new Set(); sourceRows.forEach(t => { const day = String(new Date(t.date).getDate()).padStart(2, '0'); const c = { ...t, id: uid(), date: `${target}-${day}`, _dup: true, dupOf: month, dupAt: Date.now() }; const key = duplicateTxKey(c); if (remainKeys.has(key) || ckeys.has(key))
         return; ckeys.add(key); clones.push(c); }); if (needsSharedConnection())
         return; if (removedIds.length)
         removeTx(removedIds); if (!clones.length) {
-        notify('Aucune nouvelle transaction', `${labelMonth(target)} contient déjà ces transactions.`, 'info');
+        notify('Aucune nouvelle transaction', `${labelMonth(target)} contient dÃ©jÃ  ces transactions.`, 'info');
         return;
-    } setTx(x => sortTx([...clones, ...x])); setMonth(target); refreshUI(); syncAfterLocalChange(); notify('Mois dupliqué', `${clones.length} transaction(s) copiée(s) de ${labelMonth(month)} vers ${labelMonth(target)}${sync.mode === 'shared' ? ' (visible par les deux personnes)' : ''}.`, 'success'); };
+    } setTx(x => sortTx([...clones, ...x])); setMonth(target); refreshUI(); syncAfterLocalChange(); notify('Mois dupliquÃ©', `${clones.length} transaction(s) copiÃ©e(s) de ${labelMonth(month)} vers ${labelMonth(target)}${sync.mode === 'shared' ? ' (visible par les deux personnes)' : ''}.`, 'success'); };
     const openDuplicate = () => { const sourceRows = tx.filter(t => keyOf(t.date) === month); if (!sourceRows.length) {
-        notify('Rien à dupliquer', `${labelMonth(month)} ne contient aucune transaction à dupliquer.`, 'info');
+        notify('Rien Ã  dupliquer', `${labelMonth(month)} ne contient aucune transaction Ã  dupliquer.`, 'info');
         return;
     } setModal({ type: 'duplicate' }); };
-    const clearAll = () => ask({ title: sync.mode === 'shared' ? 'Réinitialiser l’espace à deux ?' : 'Réinitialiser PrimeBudget ?', message: sync.mode === 'shared' ? 'Toutes les transactions de cet espace partagé seront supprimées pour les deux personnes connectées.' : 'Toutes les transactions, budgets et objectifs enregistrés sur ce compte seront supprimés de cette application.', confirmLabel: 'Réinitialiser', danger: true, onConfirm: () => { if (needsSharedConnection())
-            return; clearAllData(); setMonth(keyOf(today())); refreshUI(); syncAfterLocalChange(); notify('Application réinitialisée', 'PrimeBudget est prêt pour un nouveau suivi.', 'success'); } });
+    const clearAll = () => ask({ title: sync.mode === 'shared' ? 'RÃ©initialiser lâ€™espace Ã  deux ?' : 'RÃ©initialiser PrimeBudget ?', message: sync.mode === 'shared' ? 'Toutes les transactions de cet espace partagÃ© seront supprimÃ©es pour les deux personnes connectÃ©es.' : 'Toutes les transactions, budgets et objectifs enregistrÃ©s sur ce compte seront supprimÃ©s de cette application.', confirmLabel: 'RÃ©initialiser', danger: true, onConfirm: () => { if (needsSharedConnection())
+            return; clearAllData(); setMonth(keyOf(today())); refreshUI(); syncAfterLocalChange(); notify('Application rÃ©initialisÃ©e', 'PrimeBudget est prÃªt pour un nouveau suivi.', 'success'); } });
     const generateShare = async () => { try {
         const result = await sync.generateShareCode(month, rows);
         setShareCode(result.code);
         await copyText(result.code);
-        notify('Code de partage généré', `Le code ${result.code} a été enregistré dans Firebase et copié. Il partage ${result.count} transaction(s) du mois ${labelMonth(result.monthKey)}.`, 'success');
+        notify('Code de partage gÃ©nÃ©rÃ©', `Le code ${result.code} a Ã©tÃ© enregistrÃ© dans Firebase et copiÃ©. Il partage ${result.count} transaction(s) du mois ${labelMonth(result.monthKey)}.`, 'success');
         return result;
     }
     catch (err) {
-        notify('Partage impossible', err?.message || 'Impossible de générer le code de partage.', 'danger');
+        notify('Partage impossible', err?.message || 'Impossible de gÃ©nÃ©rer le code de partage.', 'danger');
         throw err;
     } };
     const importShare = async (code) => { try {
         const shared = await sync.readShareCode(code);
         const checked = uniqueSharedTransactions(tx, shared.transactions);
         if (!checked.unique.length) {
-            notify('Aucune nouvelle transaction', `Ce code contient ${checked.total} transaction(s), mais elles existent déjà dans ton compte. Aucun doublon n’a été importé.`, 'success');
+            notify('Aucune nouvelle transaction', `Ce code contient ${checked.total} transaction(s), mais elles existent dÃ©jÃ  dans ton compte. Aucun doublon nâ€™a Ã©tÃ© importÃ©.`, 'success');
             return { ...shared, imported: 0, skipped: checked.skipped };
         }
         if (needsSharedConnection())
@@ -1355,27 +1447,27 @@ function App() {
         setQuery('');
         refreshUI();
         syncAfterLocalChange();
-        const skippedText = checked.skipped ? ` ${checked.skipped} doublon(s) ignoré(s).` : '';
-        notify('Mois partagé importé', `${checked.unique.length} transaction(s) copiée(s) dans ${labelMonth(shared.monthKey)} sur ton compte Google.${skippedText}`, 'success');
+        const skippedText = checked.skipped ? ` ${checked.skipped} doublon(s) ignorÃ©(s).` : '';
+        notify('Mois partagÃ© importÃ©', `${checked.unique.length} transaction(s) copiÃ©e(s) dans ${labelMonth(shared.monthKey)} sur ton compte Google.${skippedText}`, 'success');
         return { ...shared, imported: checked.unique.length, skipped: checked.skipped };
     }
     catch (err) {
         notify('Import du partage impossible', err?.message || 'Le code de partage est invalide ou inaccessible.', 'danger');
         throw err;
     } };
-    const baseTitle = { home: 'Vue globale', transactions: 'Transactions', settings: 'Réglages' }[view] || 'Vue globale';
-    const title = sync.mode === 'shared' ? `${baseTitle} à deux` : baseTitle;
+    const baseTitle = { home: 'Vue globale', transactions: 'Transactions', budgets: 'Budgets', goals: 'Objectifs', settings: 'RÃ©glages' }[view] || 'Vue globale';
+    const title = sync.mode === 'shared' ? `${baseTitle} Ã  deux` : baseTitle;
     const sharedNoRoom = sync.mode === 'shared' && !sync.pairRoom?.id;
     const syncingNow = syncIsRunning(sync.status);
     const syncDotClass = `dot ${sync.user ? 'online' : sync.configured ? 'warn' : ''} ${syncingNow ? 'syncing' : ''}`;
     const syncStatusText = syncingNow ? '' : sync.status;
-    const syncLastText = !syncingNow && sync.lastSync ? ` • ${sync.lastSync.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}` : '';
+    const syncLastText = !syncingNow && sync.lastSync ? ` â€¢ ${sync.lastSync.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}` : '';
     return React.createElement("div", { className: "app" },
         React.createElement("aside", { className: "sidebar" },
             React.createElement(Brand, { mode: sync.mode, onSwitch: switchMode }),
             React.createElement(Nav, { view: view, setView: setView }),
             React.createElement("div", { className: "sideCard" },
-                React.createElement("b", null, sync.mode === 'shared' ? 'Espace à deux' : 'Cloud'),
+                React.createElement("b", null, sync.mode === 'shared' ? 'Espace Ã  deux' : 'Cloud'),
                 React.createElement("div", { className: "syncLine" },
                     React.createElement("i", { className: syncDotClass }),
                     syncStatusText),
@@ -1403,9 +1495,10 @@ function App() {
                     React.createElement("button", { className: "btn danger iconBtn", onClick: () => deleteMonth(month), title: `Supprimer toutes les transactions de ${labelMonth(month)}` },
                         React.createElement("ion-icon", { name: "trash-outline" }),
                         React.createElement("span", { className: "btnText" }, "Supprimer le mois")),
-                    React.createElement("button", { className: `btn modeBtn ${sync.mode === 'shared' ? 'shared' : ''}`, onClick: switchMode, title: sync.mode === 'shared' ? 'Retour au budget personnel' : 'Ouvrir le budget à deux' },
+                    React.createElement("button", { className: `btn modeBtn ${sync.mode === 'shared' ? 'shared' : ''}`, onClick: switchMode, title: sync.mode === 'shared' ? 'Retour au budget personnel' : 'Ouvrir le budget Ã  deux' },
                         React.createElement("ion-icon", { name: sync.mode === 'shared' ? 'person-outline' : 'people-outline' }),
-                        React.createElement("span", { className: "btnText" }, sync.mode === 'shared' ? 'Personnel' : 'À deux')),
+                        React.createElement("span", { className: "btnText" }, sync.mode === 'shared' ? 'Personnel' : 'Ã€ deux')),
+                    React.createElement(AuthBar, { sync: sync, notify: notify }),
                     view === 'transactions' && React.createElement("button", { className: "btn primary hideMobile", onClick: () => setModal({ type: 'tx' }) },
                         React.createElement("ion-icon", { name: "add-outline" }),
                         "Transaction"))),
@@ -1414,18 +1507,22 @@ function App() {
                     React.createElement("h3", null,
                         React.createElement("ion-icon", { name: "people-outline" }),
                         " Espace budget \u00E0 deux"),
-                    React.createElement("p", null, sync.pairRoom?.id ? 'Toutes les modifications sont synchronisées avec la personne connectée à ce code.' : 'Crée ton code ou entre celui de l’autre personne dans les réglages pour synchroniser les mêmes données.')),
+                    React.createElement("p", null, sync.pairRoom?.id ? 'Toutes les modifications sont synchronisÃ©es avec la personne connectÃ©e Ã  ce code.' : 'CrÃ©e ton code ou entre celui de lâ€™autre personne dans les rÃ©glages pour synchroniser les mÃªmes donnÃ©es.')),
                 React.createElement("span", { className: "modeBadge shared" },
                     React.createElement("ion-icon", { name: "people-outline" }),
-                    sync.pairRoom?.code || 'Non connecté')),
+                    sync.pairRoom?.code || 'Non connectÃ©')),
             view === 'home' && React.createElement("div", { className: "kpis grid" },
-                React.createElement(Kpi, { label: "Solde", value: money(balance), icon: "wallet-outline", cls: balance >= 0 ? 'green' : 'red', sub: balance >= 0 ? 'Mois positif' : 'À surveiller' }),
+                React.createElement(Kpi, { label: "Solde", value: money(balance), icon: "wallet-outline", cls: balance >= 0 ? 'green' : 'red', sub: balance >= 0 ? 'Mois positif' : 'Ã€ surveiller' }),
                 React.createElement(Kpi, { label: "Revenus", value: money(income), icon: "trending-up-outline", cls: "green", sub: "Entr\u00E9es du mois" }),
                 React.createElement(Kpi, { label: "D\u00E9penses", value: money(expense), icon: "trending-down-outline", cls: "red", sub: `${money(burn)} / jour` }),
                 React.createElement(Kpi, { label: "\u00C9pargne", value: money(saving), icon: "leaf-outline", cls: saving > 0 ? 'green' : 'gold', sub: "" })),
             view === 'home' && React.createElement(Home, { rows: rows, month: month, refreshKey: refreshKey + remoteVersion, setModal: setModal, duplicate: openDuplicate }),
             " ",
             view === 'transactions' && React.createElement(Transactions, { rows: filtered, query: query, setQuery: setQuery, setModal: setModal, del: del, delMany: delMany }),
+            " ",
+            view === 'budgets' && React.createElement(Budgets, { rows: rows, budgets: budgets, setBudgets: setBudgets }),
+            " ",
+            view === 'goals' && React.createElement(Goals, { goals: goals, setGoals: setGoals, removeGoal: removeGoal }),
             " ",
             view === 'settings' && React.createElement(Settings, { duplicate: openDuplicate, exportAll: exportAll, importAll: importAll, clear: clearAll, sync: sync, month: month, rows: rows, shareCode: shareCode, setShareCode: setShareCode, generateShare: generateShare, importShare: importShare, notify: notify }),
             " "),
@@ -1439,10 +1536,10 @@ function App() {
 function AuthBar({ sync, notify }) {
     const connected = !!sync.user;
     const handleClick = () => { if (!sync.configured) {
-        notify?.('Firebase indisponible', 'La configuration Firebase n’est pas intégrée dans ce fichier HTML.', 'danger');
+        notify?.('Firebase indisponible', 'La configuration Firebase nâ€™est pas intÃ©grÃ©e dans ce fichier HTML.', 'danger');
         return;
     } connected ? sync.signOut() : sync.signInGoogle(); };
-    return React.createElement("button", { className: `btn googleBtn ${connected ? 'connected' : 'primary'}`, onClick: handleClick, title: connected ? `Connecté : ${sync.user.email}` : 'Se connecter avec Google' },
+    return React.createElement("button", { className: `btn googleBtn ${connected ? 'connected' : 'primary'}`, onClick: handleClick, title: connected ? `ConnectÃ© : ${sync.user.email}` : 'Se connecter avec Google' },
         React.createElement("ion-icon", { name: "logo-google" }),
         React.createElement("span", null, "Google"),
         connected && React.createElement("i", { className: "googleDot" }));
@@ -1452,19 +1549,16 @@ function Brand({ mode = 'personal', onSwitch }) { const shared = mode === 'share
         React.createElement("img", { src: APP_LOGO, alt: "Logo PrimeBudget" }),
         React.createElement("div", null,
             React.createElement("h1", null, shared ? 'PrimeBudget Duo' : 'PrimeBudget'),
-            React.createElement("p", null, shared ? 'Budget à deux' : 'Budget intelligent'))),
-    React.createElement("button", { className: `brandModeBtn ${shared ? 'shared' : ''}`, onClick: onSwitch, title: shared ? 'Retour au budget personnel' : 'Ouvrir le budget à deux' },
+            React.createElement("p", null, shared ? 'Budget Ã  deux' : 'Budget intelligent'))),
+    React.createElement("button", { className: `brandModeBtn ${shared ? 'shared' : ''}`, onClick: onSwitch, title: shared ? 'Retour au budget personnel' : 'Ouvrir le budget Ã  deux' },
         React.createElement("ion-icon", { name: shared ? 'person-outline' : 'people-outline' }))); }
-function Nav({ view, setView }) { return React.createElement("nav", { className: "nav" }, [['home', 'analytics-outline', 'Tableau de bord'], ['transactions', 'swap-horizontal-outline', 'Transactions'], ['settings', 'settings-outline', 'Réglages']].map(i => React.createElement("button", { key: i[0], onClick: () => setView(i[0]), className: view === i[0] ? 'active' : '' },
+function Nav({ view, setView }) { return React.createElement("nav", { className: "nav" }, [['home', 'analytics-outline', 'Tableau de bord'], ['transactions', 'swap-horizontal-outline', 'Transactions'], ['budgets', 'pie-chart-outline', 'Budgets'], ['goals', 'flag-outline', 'Objectifs'], ['settings', 'settings-outline', 'RÃ©glages']].map(i => React.createElement("button", { key: i[0], onClick: () => setView(i[0]), className: view === i[0] ? 'active' : '' },
     React.createElement("ion-icon", { name: i[1] }),
     i[2]))); }
-function Bottom(p) { const shared = p.mode === 'shared'; const items = [['home', 'analytics-outline', 'Accueil'], ['transactions', 'list-outline', 'Lignes'], ['settings', 'settings-outline', 'Plus']]; return React.createElement("div", { className: "bottomNav hasMode" },
+function Bottom(p) { const items = [['home', 'analytics-outline', 'Accueil'], ['transactions', 'list-outline', 'Lignes'], ['budgets', 'pie-chart-outline', 'Budget'], ['goals', 'flag-outline', 'Buts'], ['settings', 'settings-outline', 'Plus']]; return React.createElement("div", { className: "bottomNav" },
     items.map(i => React.createElement("button", { key: i[0], className: p.view === i[0] ? 'active' : '', onClick: () => p.setView(i[0]) },
         React.createElement("ion-icon", { name: i[1] }),
-        i[2])),
-    React.createElement("button", { className: shared ? 'active' : '', onClick: p.onSwitch },
-        React.createElement("ion-icon", { name: shared ? 'person-outline' : 'people-outline' }),
-        shared ? 'Perso' : 'À deux')); }
+        i[2]))); }
 function Kpi({ label, value, icon, cls, sub }) { return React.createElement("div", { className: "card kpi" },
     React.createElement("ion-icon", { name: icon }),
     React.createElement("small", null, label),
@@ -1516,7 +1610,7 @@ function Transactions({ rows, query, setQuery, setModal, del, delMany }) {
                     "S\u00E9lectionner"),
                 selectMode && React.createElement("button", { className: "btn", onClick: toggleAll },
                     React.createElement("ion-icon", { name: allSelected ? 'remove-circle-outline' : 'checkmark-done-outline' }),
-                    allSelected ? 'Tout désélectionner' : 'Tout sélectionner'),
+                    allSelected ? 'Tout dÃ©sÃ©lectionner' : 'Tout sÃ©lectionner'),
                 selectMode && React.createElement("button", { className: "btn danger", disabled: !selCount, onClick: confirmDelete },
                     React.createElement("ion-icon", { name: "trash-outline" }),
                     "Supprimer (",
@@ -1552,7 +1646,7 @@ function Transactions({ rows, query, setQuery, setModal, del, delMany }) {
                                     React.createElement("ion-icon", { name: t.category.icon, style: { color: t.category.color } }),
                                     t.category.name)),
                             React.createElement("td", null, new Date(t.date).toLocaleDateString('fr-FR')),
-                            React.createElement("td", null, t.type === 'income' ? 'Revenu' : 'Dépense'),
+                            React.createElement("td", null, t.type === 'income' ? 'Revenu' : 'DÃ©pense'),
                             React.createElement("td", null,
                                 React.createElement(AmountBlock, { tx: t })));
                     } return React.createElement(LongPressRow, { as: "tr", className: paid ? 'paidTx' : '', key: t.id, tx: t, onDelete: del },
@@ -1565,7 +1659,7 @@ function Transactions({ rows, query, setQuery, setModal, del, delMany }) {
                                 React.createElement("ion-icon", { name: t.category.icon, style: { color: t.category.color } }),
                                 t.category.name)),
                         React.createElement("td", null, new Date(t.date).toLocaleDateString('fr-FR')),
-                        React.createElement("td", null, t.type === 'income' ? 'Revenu' : 'Dépense'),
+                        React.createElement("td", null, t.type === 'income' ? 'Revenu' : 'DÃ©pense'),
                         React.createElement("td", null,
                             React.createElement(AmountBlock, { tx: t })),
                         React.createElement("td", { className: `txActionsCell ${paid ? 'hasPaidBadge' : ''}` },
@@ -1624,11 +1718,11 @@ function Budgets({ rows, budgets, setBudgets }) { const exp = rows.filter(t => t
     React.createElement("div", { className: "amount" },
         money(s),
         " / ",
-        b ? money(b) : 'non défini'),
+        b ? money(b) : 'non dÃ©fini'),
     React.createElement("div", { className: "progress", style: { margin: '12px 0' } },
         React.createElement("i", { style: { width: p + '%', background: p > 100 ? 'var(--red)' : 'linear-gradient(90deg,var(--green),var(--gold))' } })),
     React.createElement("input", { type: "number", placeholder: "Budget mensuel", value: budgets[c.name] || '', onChange: e => setBudgets({ ...budgets, [c.name]: e.target.value }) })); })); }
-function Goals({ goals, setGoals }) { const [name, setName] = useState(''), [target, setTarget] = useState(''), [saved, setSaved] = useState(''); const add = () => { if (!name || !target)
+function Goals({ goals, setGoals, removeGoal }) { const [name, setName] = useState(''), [target, setTarget] = useState(''), [saved, setSaved] = useState(''); const add = () => { if (!name || !target)
     return; setGoals([...goals, { id: uid(), name, target: +target, saved: +saved || 0 }]); setName(''); setTarget(''); setSaved(''); }; return React.createElement("div", { className: "grid" },
     React.createElement("div", { className: "card" },
         React.createElement("h3", { style: { marginTop: 0 } }, "Nouvel objectif"),
@@ -1640,7 +1734,7 @@ function Goals({ goals, setGoals }) { const [name, setName] = useState(''), [tar
     React.createElement("div", { className: "grid", style: { gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))' } }, goals.map(g => { const p = Math.min(100, g.saved / g.target * 100); return React.createElement("div", { className: "card", key: g.id },
         React.createElement("div", { className: "sectionTitle" },
             React.createElement("h3", null, g.name),
-            React.createElement("button", { className: "btn danger", onClick: () => setGoals(goals.filter(x => x.id !== g.id)) }, "Supprimer")),
+            React.createElement("button", { className: "btn danger", onClick: () => removeGoal ? removeGoal([g.id]) : setGoals(goals.filter(x => x.id !== g.id)) }, "Supprimer")),
         React.createElement("div", { className: "amount gold" },
             money(g.saved),
             " / ",
@@ -1652,17 +1746,17 @@ function PairConnectionPanel({ sync, notify }) {
     const [pairInput, setPairInput] = useState(''), [busy, setBusy] = useState(false);
     const connected = !!sync.user;
     const room = sync.pairRoom;
-    const permissionHelp = 'Firebase refuse la création du code. Mets à jour les règles Firestore : Firebase Console → Firestore Database → Rules, colle les règles PrimeBudget, puis clique sur Publier. Recharge ensuite le site.';
+    const permissionHelp = 'Firebase refuse la crÃ©ation du code. Mets Ã  jour les rÃ¨gles Firestore : Firebase Console -> Firestore Database -> Rules, colle les rÃ¨gles PrimeBudget, puis clique sur Publier. Recharge ensuite le site.';
     const errorText = err => err?.code === 'permission-denied' || String(err?.message || '').toLowerCase().includes('permission') ? permissionHelp : (err?.message || 'Impossible de continuer.');
-    const copyRules = async () => { const ok = await copyText(sync.rules || firestoreRules); notify(ok ? 'Règles Firestore copiées' : 'Copie impossible', ok ? 'Colle ces règles dans Firebase Console → Firestore Database → Rules, puis clique sur Publier.' : 'Ton navigateur bloque la copie automatique. Va dans Réglages Firebase et copie les règles manuellement.', ok ? 'success' : 'danger'); };
+    const copyRules = async () => { const ok = await copyText(sync.rules || firestoreRules); notify(ok ? 'RÃ¨gles Firestore copiÃ©es' : 'Copie impossible', ok ? 'Colle ces rÃ¨gles dans Firebase Console -> Firestore Database -> Rules, puis clique sur Publier.' : 'Ton navigateur bloque la copie automatique. Va dans RÃ©glages Firebase et copie les rÃ¨gles manuellement.', ok ? 'success' : 'danger'); };
     const createPair = async () => { if (busy)
         return; setBusy(true); try {
         const result = await sync.createPairRoom({ copyPersonal: true });
         await copyText(result.code);
-        notify('Code à deux créé', `Le code ${result.code} a été copié. Donne-le à l’autre personne : elle verra les mêmes données et chaque modification sera synchronisée.`, 'success');
+        notify('Code Ã  deux crÃ©Ã©', `Le code ${result.code} a Ã©tÃ© copiÃ©. Donne-le Ã  lâ€™autre personne : elle verra les mÃªmes donnÃ©es et chaque modification sera synchronisÃ©e.`, 'success');
     }
     catch (err) {
-        notify('Connexion à deux impossible', errorText(err), 'danger');
+        notify('Connexion Ã  deux impossible', errorText(err), 'danger');
     }
     finally {
         setBusy(false);
@@ -1671,7 +1765,7 @@ function PairConnectionPanel({ sync, notify }) {
         return; setBusy(true); try {
         const result = await sync.joinPairRoom(pairInput);
         setPairInput('');
-        notify('Espace à deux connecté', `Tu es connecté au code ${result.code}. Les données vont maintenant se mettre à jour des deux côtés.`, 'success');
+        notify('Espace Ã  deux connectÃ©', `Tu es connectÃ© au code ${result.code}. Les donnÃ©es vont maintenant se mettre Ã  jour des deux cÃ´tÃ©s.`, 'success');
     }
     catch (err) {
         notify('Code de connexion invalide', errorText(err), 'danger');
@@ -1680,8 +1774,8 @@ function PairConnectionPanel({ sync, notify }) {
         setBusy(false);
     } };
     const copyPair = async () => { if (!room?.code)
-        return; const ok = await copyText(room.code); notify(ok ? 'Code copié' : 'Copie impossible', ok ? 'Envoie ce code à la personne à connecter.' : 'Ton navigateur bloque la copie automatique.', ok ? 'success' : 'danger'); };
-    const disconnect = () => { sync.disconnectPairRoom(); notify('Espace à deux déconnecté', 'Cet appareil n’est plus relié à ce code. Tu peux en créer ou rejoindre un autre.', 'success'); };
+        return; const ok = await copyText(room.code); notify(ok ? 'Code copiÃ©' : 'Copie impossible', ok ? 'Envoie ce code Ã  la personne Ã  connecter.' : 'Ton navigateur bloque la copie automatique.', ok ? 'success' : 'danger'); };
+    const disconnect = () => { sync.disconnectPairRoom(); notify('Espace Ã  deux dÃ©connectÃ©', 'Cet appareil nâ€™est plus reliÃ© Ã  ce code. Tu peux en crÃ©er ou rejoindre un autre.', 'success'); };
     return React.createElement("div", { className: "card pairPanel" },
         React.createElement("div", { className: "shareHeader" },
             React.createElement("div", null,
@@ -1689,14 +1783,14 @@ function PairConnectionPanel({ sync, notify }) {
                 React.createElement("p", { className: "mini", style: { margin: '6px 0 0' } }, "Ce mode est un deuxi\u00E8me PrimeBudget parall\u00E8le. Le budget personnel reste s\u00E9par\u00E9, et ici les deux personnes voient les m\u00EAmes donn\u00E9es en direct.")),
             React.createElement("span", { className: `syncBadge ${room?.id ? 'shared' : ''}` },
                 React.createElement("ion-icon", { name: room?.id ? 'people-outline' : 'person-add-outline' }),
-                room?.id ? 'Connecté à deux' : 'Non connecté')),
+                room?.id ? 'ConnectÃ© Ã  deux' : 'Non connectÃ©')),
         React.createElement("div", { className: "pairStatus" },
             React.createElement("div", { className: "pairBox" },
                 React.createElement("b", null, "Compte Google"),
                 React.createElement("span", null, connected ? sync.user.email : 'Connexion Google obligatoire pour synchroniser.')),
             React.createElement("div", { className: "pairBox" },
                 React.createElement("b", null, "Donn\u00E9es partag\u00E9es"),
-                React.createElement("span", null, room?.id ? 'Chaque ajout, modification ou suppression se met à jour chez les deux personnes.' : 'Crée un code pour partager tes données personnelles dans cet espace, ou entre le code reçu.'))),
+                React.createElement("span", null, room?.id ? 'Chaque ajout, modification ou suppression se met Ã  jour chez les deux personnes.' : 'CrÃ©e un code pour partager tes donnÃ©es personnelles dans cet espace, ou entre le code reÃ§u.'))),
         room?.code && React.createElement("div", { className: "shareCodeRow" },
             React.createElement("div", { className: "shareCodeDisplay" }, room.code),
             React.createElement("button", { className: "btn", onClick: copyPair },
@@ -1705,7 +1799,7 @@ function PairConnectionPanel({ sync, notify }) {
         React.createElement("div", { className: "grid", style: { gridTemplateColumns: 'repeat(auto-fit,minmax(240px,1fr))' } },
             React.createElement("button", { className: "btn primary", onClick: createPair, disabled: busy || !connected },
                 React.createElement("ion-icon", { name: "people-outline" }),
-                room?.id ? 'Créer un nouveau code' : 'Créer mon code à deux'),
+                room?.id ? 'CrÃ©er un nouveau code' : 'CrÃ©er mon code Ã  deux'),
             React.createElement("button", { className: "btn danger", onClick: disconnect, disabled: !room?.id },
                 React.createElement("ion-icon", { name: "unlink-outline" }),
                 "D\u00E9connecter cet appareil")),
@@ -1718,7 +1812,7 @@ function PairConnectionPanel({ sync, notify }) {
                     "Connecter"))));
 }
 function Settings({ duplicate, exportAll, importAll, clear, sync, month, rows, shareCode, setShareCode, generateShare, importShare, notify }) { const [shareInput, setShareInput] = useState(''), [busy, setBusy] = useState(false); const connected = !!sync.user; const monthLabel = labelMonth(month); const copyCode = async () => { if (!shareCode)
-    return; const ok = await copyText(shareCode); notify(ok ? 'Code copié' : 'Copie impossible', ok ? 'Le code de partage est prêt à être envoyé.' : 'Ton navigateur bloque la copie automatique. Sélectionne le code manuellement.', ok ? 'success' : 'danger'); }; const copyRules = async () => { const ok = await copyText(sync.rules || firestoreRules); notify(ok ? 'Règles Firestore copiées' : 'Copie impossible', ok ? 'Colle ces règles dans Firebase Console → Firestore Database → Rules.' : 'Ton navigateur bloque la copie automatique.', ok ? 'success' : 'danger'); }; const handleGenerate = async () => { if (busy)
+    return; const ok = await copyText(shareCode); notify(ok ? 'Code copiÃ©' : 'Copie impossible', ok ? 'Le code de partage est prÃªt Ã  Ãªtre envoyÃ©.' : 'Ton navigateur bloque la copie automatique. SÃ©lectionne le code manuellement.', ok ? 'success' : 'danger'); }; const copyRules = async () => { const ok = await copyText(sync.rules || firestoreRules); notify(ok ? 'RÃ¨gles Firestore copiÃ©es' : 'Copie impossible', ok ? 'Colle ces rÃ¨gles dans Firebase Console -> Firestore Database -> Rules.' : 'Ton navigateur bloque la copie automatique.', ok ? 'success' : 'danger'); }; const handleGenerate = async () => { if (busy)
     return; setBusy(true); try {
     await generateShare();
 }
@@ -1760,7 +1854,7 @@ finally {
                 React.createElement("p", { className: "mini", style: { margin: '6px 0 0' } }, "G\u00E9n\u00E8re un code pour copier le mois affich\u00E9 chez une autre personne connect\u00E9e avec Google.")),
             React.createElement("span", { className: "syncBadge" },
                 React.createElement("ion-icon", { name: connected ? 'cloud-done-outline' : 'cloud-offline-outline' }),
-                connected ? 'Connecté' : 'Connexion Google requise')),
+                connected ? 'ConnectÃ©' : 'Connexion Google requise')),
         React.createElement("div", { className: "shareSteps" },
             React.createElement("div", { className: "shareStep" },
                 React.createElement("b", null, "Mois partag\u00E9"),
@@ -1774,7 +1868,7 @@ finally {
                 React.createElement("span", null, "Le code est enregistr\u00E9 dans Firestore. Sans ce code, personne ne peut r\u00E9cup\u00E9rer le partage. Les doublons sont ignor\u00E9s automatiquement \u00E0 l\u2019import."))),
         React.createElement("button", { className: "btn primary", onClick: handleGenerate, disabled: busy || !connected },
             React.createElement("ion-icon", { name: "share-social-outline" }),
-            busy ? 'Traitement...' : 'Générer le code du mois affiché'),
+            busy ? 'Traitement...' : 'GÃ©nÃ©rer le code du mois affichÃ©'),
         shareCode && React.createElement("div", { className: "shareCodeRow" },
             React.createElement("div", { className: "shareCodeDisplay" }, shareCode),
             React.createElement("button", { className: "btn", onClick: copyCode },
@@ -1890,7 +1984,7 @@ function TxModal({ modal, selectedMonth, close, save }) {
         if (savedUses.length)
             return savedUses;
         const legacy = clampNumber(e?.paidAmount, 0, total);
-        return legacy > 0 ? [{ id: uid(), label: 'Paiement déjà ajouté', amount: legacy, date: e?.date || defaultTxDate }] : [];
+        return legacy > 0 ? [{ id: uid(), label: 'Paiement dÃ©jÃ  ajoutÃ©', amount: legacy, date: e?.date || defaultTxDate }] : [];
     };
     const [type, setType] = useState(e?.type || 'expense'), [cat, setCat] = useState(e?.category?.name || 'Alimentation'), [amount, setAmount] = useState(e?.amount ?? ''), [paymentUses, setPaymentUses] = useState(initialUses), [isPaid, setIsPaid] = useState(isEdit ? txIsPaid(e || {}) : false), [payEditor, setPayEditor] = useState(null), [showHistory, setShowHistory] = useState(false);
     const forceUnpaidRef = useRef(false);
@@ -1951,7 +2045,7 @@ function TxModal({ modal, selectedMonth, close, save }) {
                     showPaymentControls && React.createElement("div", { className: "field" },
                         React.createElement("label", null, "Statut"),
                         React.createElement("button", { type: "button", className: isPaid ? 'paidToggle active' : 'paidToggle', onClick: togglePaidStatus },
-                            React.createElement("span", null, isPaid ? 'Payé' : 'Non payé'),
+                            React.createElement("span", null, isPaid ? 'PayÃ©' : 'Non payÃ©'),
                             React.createElement("ion-icon", { name: isPaid ? 'checkmark-circle-outline' : 'ellipse-outline' })))),
                 showPaymentControls && React.createElement("div", { className: "paymentSection" },
                     React.createElement("div", { className: "paymentSectionHead" },
