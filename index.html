@@ -2098,7 +2098,6 @@ function AppDialog({ dialog, close }) { const icon = dialog.kind === 'danger' ? 
         dialog.message && React.createElement("p", { className: "dialogText" }, dialog.message),
         React.createElement("div", { className: "dialogActions" }, (dialog.actions || []).map((action, i) => React.createElement("button", { key: i, className: `btn ${action.className || ''}`, onClick: action.onClick }, action.label))))); }
 ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App, null));
-
 }
 </script>
 </body>
