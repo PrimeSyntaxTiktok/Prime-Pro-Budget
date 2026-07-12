@@ -2100,5 +2100,74 @@ function AppDialog({ dialog, close }) { const icon = dialog.kind === 'danger' ? 
 ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App, null));
 }
 </script>
+<style id="primebudget-primepaie-final-redesign">
+:root{
+  --bg:#07111f;--bg2:#0a1728;--panel:#0d1b2e;--panel2:#11243b;--panel3:#172d48;
+  --text:#f7faff;--muted:#9fb0c7;--soft:#6f829d;--line:rgba(145,174,214,.18);--line2:rgba(145,174,214,.10);
+  --gold:#65b7ff;--gold2:#2f8ee9;--goldsoft:#b8dcff;--green:#41d9a3;--red:#ff6d83;--blue:#65b7ff;--purple:#9d91ff;
+  --glass:linear-gradient(180deg,rgba(17,36,59,.94),rgba(10,23,40,.94));
+  --glass-strong:linear-gradient(180deg,rgba(25,50,80,.98),rgba(13,29,49,.98));
+  --gold-grad:linear-gradient(135deg,#b9e0ff,#69baff 52%,#318fe8);
+  --accent:var(--gold-grad);--surface:var(--glass);--surface-soft:var(--glass-strong);
+  --shadow:0 20px 54px rgba(0,0,0,.34);--shadow-sm:0 10px 28px rgba(0,0,0,.27);
+  --glow-gold:0 12px 34px rgba(48,143,232,.24);--radius:18px;--radius-sm:13px;
+}
+html,body,#root{width:100%;max-width:100%;overflow:hidden}
+body{background:#07111f!important;color:var(--text)}
+body:before{background:radial-gradient(circle at 8% 0%,rgba(67,153,237,.18),transparent 30%),radial-gradient(circle at 100% 100%,rgba(44,101,167,.14),transparent 38%),linear-gradient(180deg,#0a1728,#07111f 48%,#050d18)!important;filter:none!important;animation:none!important}
+body:after{opacity:.22!important;background-size:52px 52px!important;background-image:linear-gradient(to right,rgba(144,178,220,.07) 1px,transparent 1px),linear-gradient(to bottom,rgba(144,178,220,.055) 1px,transparent 1px)!important}
+.app{grid-template-columns:286px minmax(0,1fr)!important}
+.sidebar{padding:22px 17px!important;background:linear-gradient(180deg,rgba(9,23,40,.98),rgba(6,16,29,.98))!important;border-right:1px solid rgba(127,171,222,.18)!important;box-shadow:16px 0 46px rgba(0,0,0,.17)}
+.brandWrap{padding:5px 3px 17px!important;border-bottom:1px solid rgba(142,176,219,.14)!important}
+.brand img{width:48px!important;height:48px!important;border-radius:15px!important;box-shadow:0 0 0 1px rgba(101,183,255,.45),0 12px 28px rgba(0,0,0,.35)!important}
+.brand h1{font-size:21px!important}.brand p{color:#8fa4bf!important}
+.nav{gap:7px!important;margin-top:3px!important}.nav button{min-height:48px!important;border-radius:13px!important;padding:0 13px!important}.nav button.active{background:linear-gradient(90deg,rgba(79,160,239,.24),rgba(74,136,202,.08))!important;box-shadow:inset 0 0 0 1px rgba(101,183,255,.22)!important}.nav button:before{background:linear-gradient(#a8d7ff,#4da9ff)!important}.nav ion-icon{color:#76c0ff!important}
+.sideCard{border-radius:16px!important;background:linear-gradient(180deg,rgba(18,40,66,.92),rgba(10,25,43,.94))!important;border-color:rgba(132,174,224,.18)!important}
+.content{padding:25px 27px 108px!important}.topbar{background:linear-gradient(180deg,rgba(7,17,31,.98) 0%,rgba(7,17,31,.91) 72%,rgba(7,17,31,0) 100%)!important;padding-bottom:17px!important}.title h2{font-size:31px!important}.title .syncLine{color:#8fa4bf!important}
+input,select,textarea{background:#0b1a2c!important;border-color:rgba(137,176,224,.19)!important;border-radius:13px!important}input:focus,select:focus,textarea:focus{border-color:rgba(101,183,255,.72)!important;background:#0e2036!important;box-shadow:0 0 0 3px rgba(101,183,255,.14)!important}
+.btn{border-radius:13px!important;background:#10233a!important;border-color:rgba(140,177,222,.18)!important}.btn:hover{background:#17304e!important;border-color:rgba(159,196,239,.28)!important}.btn.primary{background:var(--gold-grad)!important;color:#06101d!important;box-shadow:0 12px 28px rgba(49,143,232,.23)!important}.btn.danger{background:rgba(255,109,131,.11)!important;border-color:rgba(255,109,131,.29)!important;color:#ffdce2!important}.btn.ghost{background:rgba(118,161,211,.09)!important}
+.card{border-radius:18px!important;background:linear-gradient(180deg,rgba(15,34,57,.96),rgba(9,23,40,.97))!important;border-color:rgba(137,176,224,.16)!important;box-shadow:0 18px 46px rgba(0,0,0,.28)!important}.card:hover{border-color:rgba(129,185,239,.27)!important}.kpi{min-height:130px!important}.kpi:after{background:linear-gradient(90deg,#6fc0ff,#447fbe,transparent)!important}.kpi ion-icon{color:#8bcbff!important;background:rgba(96,172,241,.09)!important;border-color:rgba(123,186,242,.16)!important;border-radius:12px!important}
+.tx,.paymentUseRow,.paymentHistoryRow,.shareStep,.pairBox,.paymentBox{border-radius:14px!important;background:rgba(104,155,211,.055)!important;border-color:rgba(137,176,224,.13)!important}.tableWrap{border-radius:16px!important;border-color:rgba(137,176,224,.16)!important}.pill,.modeBadge,.syncBadge{border-radius:10px!important;background:rgba(105,165,224,.08)!important;border-color:rgba(137,176,224,.16)!important}
+.modal{background:rgba(3,9,17,.72)!important}.modalBox{border-radius:22px!important;background:linear-gradient(180deg,#10233a,#081727)!important;border-color:rgba(140,184,232,.22)!important}.catBtn{border-radius:13px!important;background:rgba(102,160,219,.055)!important}.catBtn.active{background:rgba(71,158,241,.18)!important;border-color:rgba(101,183,255,.52)!important}
+.progress i{background:linear-gradient(90deg,#41d9a3,#65b7ff)!important}.sharedNotice{background:linear-gradient(90deg,rgba(75,151,226,.16),rgba(12,29,49,.96))!important}.modeBtn.shared,.brandModeBtn.shared{background:rgba(65,217,163,.12)!important;border-color:rgba(65,217,163,.3)!important}
+.fab{border-radius:18px!important;background:var(--gold-grad)!important;color:#06101d!important;box-shadow:0 18px 42px rgba(49,143,232,.34)!important}
+@media(max-width:1180px){.app{grid-template-columns:250px minmax(0,1fr)!important}}
+@media(max-width:860px){
+  :root{--mobile-nav-h:72px;--mobile-nav-side:10px}
+  html,body,#root{max-width:100vw!important;overflow-x:hidden!important}
+  .app{display:block!important;height:100dvh!important}.sidebar{display:none!important}
+  .content{height:100dvh!important;padding:calc(14px + env(safe-area-inset-top)) 12px calc(var(--mobile-nav-h) + 38px + env(safe-area-inset-bottom))!important;overflow-x:hidden!important}
+  .topbar{position:relative!important;top:auto!important;margin:0 0 14px!important;padding:0 0 12px!important;background:transparent!important;backdrop-filter:none!important;display:block!important}
+  .title{padding:3px 2px 12px!important}.title h2{font-size:28px!important;line-height:1.08!important}.title .syncLine{font-size:12px!important}
+  .toolbar{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important;width:100%!important}.toolbar select{grid-column:1/-1!important;min-height:48px!important}.toolbar .btn{min-width:0!important;width:100%!important;min-height:46px!important;padding:0 8px!important}.toolbar .btnText,.toolbar .googleBtn span{display:none!important}.toolbar ion-icon{font-size:20px!important}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}.kpi{min-height:112px!important;padding:15px!important}.kpi strong{font-size:22px!important}.kpi span{font-size:12px!important}
+  .mainGrid{grid-template-columns:1fr!important}.card{border-radius:16px!important;padding:15px!important}.chartBox{height:252px!important}
+  .bottomNav{position:fixed!important;left:50%!important;right:auto!important;bottom:calc(10px + env(safe-area-inset-bottom))!important;transform:translateX(-50%) translateZ(0)!important;width:calc(100dvw - 20px)!important;max-width:calc(100dvw - 20px)!important;height:var(--mobile-nav-h)!important;min-height:var(--mobile-nav-h)!important;display:flex!important;align-items:stretch!important;gap:3px!important;padding:6px!important;margin:0!important;overflow:hidden!important;border-radius:20px!important;border:1px solid rgba(133,177,226,.28)!important;background:rgba(9,27,48,.94)!important;box-shadow:0 18px 48px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.06)!important;backdrop-filter:blur(22px) saturate(1.15)!important;-webkit-backdrop-filter:blur(22px) saturate(1.15)!important;z-index:2147483000!important}
+  .bottomNav button{flex:1 1 0!important;width:0!important;min-width:0!important;max-width:none!important;height:100%!important;min-height:0!important;padding:4px 1px!important;margin:0!important;border-radius:14px!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:3px!important;font-size:9px!important;line-height:1!important;white-space:nowrap!important;overflow:hidden!important}.bottomNav button.active{background:linear-gradient(180deg,rgba(101,183,255,.25),rgba(69,135,199,.17))!important;box-shadow:inset 0 0 0 1px rgba(128,197,255,.18)!important}.bottomNav ion-icon{font-size:19px!important;color:#7ec5ff!important;flex:0 0 auto!important}
+  .fab{right:15px!important;bottom:calc(var(--mobile-nav-h) + 24px + env(safe-area-inset-bottom))!important;width:58px!important;height:58px!important}
+  .modal{padding:0!important;align-items:end!important}.modalBox{width:100%!important;max-height:92dvh!important;border-radius:24px 24px 0 0!important;padding:18px!important}
+}
+@media(max-width:560px){
+  .content{padding-left:10px!important;padding-right:10px!important}.title h2{font-size:26px!important}.kpis{grid-template-columns:1fr 1fr!important}.kpi{min-height:106px!important}.kpi strong{font-size:20px!important}.kpi small{font-size:10px!important}.kpi ion-icon{width:32px!important;height:32px!important;padding:6px!important}
+  .sectionTitle{flex-direction:row!important;align-items:center!important}.sectionTitle h3{font-size:16px!important}.sectionTitle .btn{width:auto!important}
+  .bottomNav{width:calc(100dvw - 16px)!important;max-width:calc(100dvw - 16px)!important}.bottomNav button{font-size:8.5px!important}.bottomNav ion-icon{font-size:18px!important}
+}
+@media(max-width:390px){.bottomNav button{font-size:7.5px!important}.bottomNav ion-icon{font-size:17px!important}.toolbar{gap:6px!important}.toolbar .btn{padding:0 5px!important}.kpi strong{font-size:18px!important}}
+</style>
+<script id="primebudget-mobile-nav-guard">
+(function(){
+  function lockNav(){
+    var nav=document.querySelector('.bottomNav');
+    if(!nav||!window.matchMedia('(max-width:860px)').matches)return;
+    var w=Math.max(280,window.innerWidth-20);
+    nav.style.setProperty('position','fixed','important');nav.style.setProperty('left','50%','important');nav.style.setProperty('right','auto','important');nav.style.setProperty('width',w+'px','important');nav.style.setProperty('max-width',w+'px','important');nav.style.setProperty('transform','translateX(-50%) translateZ(0)','important');nav.style.setProperty('display','flex','important');nav.style.setProperty('overflow','hidden','important');
+    Array.prototype.forEach.call(nav.children,function(b){b.style.setProperty('flex','1 1 0','important');b.style.setProperty('width','0','important');b.style.setProperty('min-width','0','important');});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',lockNav,{once:true});else lockNav();
+  window.addEventListener('resize',lockNav,{passive:true});window.addEventListener('orientationchange',function(){setTimeout(lockNav,100)},{passive:true});if(window.visualViewport)window.visualViewport.addEventListener('resize',lockNav,{passive:true});
+  new MutationObserver(lockNav).observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
+
 </body>
 </html>
