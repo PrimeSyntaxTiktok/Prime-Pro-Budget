@@ -919,9 +919,35 @@ const cats = [
     ['Aides', 'heart-circle-outline', '#4ade80'],
     ['Revenus locatifs', 'business-outline', '#06b6d4'],
     ['Intérêts', 'trending-up-outline', '#84cc16'],
+    ['Rendu', 'arrow-undo-circle-outline', '#5eead4'],
     ['Revenus', 'cash-outline', '#2ee59d'],
     ['Alimentation', 'cart-outline', '#6ba8ff'],
     ['Restaurants', 'restaurant-outline', '#f5a524'],
+    ['Tabac', 'flame-outline', '#a16207'],
+    ['Boissons', 'cafe-outline', '#f97316'],
+    ['Hygiène', 'water-outline', '#22d3ee'],
+    ['Pharmacie', 'medical-outline', '#65a30d'],
+    ['Dentaire', 'fitness-outline', '#14b8a6'],
+    ['Optique', 'glasses-outline', '#0ea5e9'],
+    ['Sport', 'barbell-outline', '#06b6d4'],
+    ['Culture', 'book-outline', '#8b5cf6'],
+    ['Sorties', 'ticket-outline', '#f59e0b'],
+    ['Jeux vidéo', 'game-controller-outline', '#6366f1'],
+    ['Streaming', 'play-circle-outline', '#a855f7'],
+    ['Carburant', 'speedometer-outline', '#dc2626'],
+    ['Parking & péages', 'map-outline', '#ef4444'],
+    ['Entretien voiture', 'construct-outline', '#f43f5e'],
+    ['Réparations', 'hammer-outline', '#fb7185'],
+    ['Travaux', 'build-outline', '#c084fc'],
+    ['Électroménager', 'hardware-chip-outline', '#7c3aed'],
+    ['Informatique', 'laptop-outline', '#3b82f6'],
+    ['Frais de garde', 'people-outline', '#ec4899'],
+    ['Pension', 'person-outline', '#db2777'],
+    ['Dons', 'heart-outline', '#e11d48'],
+    ['Frais postaux', 'mail-outline', '#64748b'],
+    ['Déménagement', 'cube-outline', '#9333ea'],
+    ['Jardin', 'flower-outline', '#16a34a'],
+    ['Sécurité', 'lock-closed-outline', '#475569'],
     ['Logement', 'home-outline', '#a78bfa'],
     ['Charges', 'receipt-outline', '#8b5cf6'],
     ['Énergie', 'flash-outline', '#f5c84b'],
@@ -955,15 +981,37 @@ const cats = [
     ['Imprévus', 'warning-outline', '#ef4444'],
     ['Autre', 'ellipsis-horizontal-circle-outline', '#9ca3af']
 ].map(([name, icon, color]) => ({ name, icon, color }));
+const incomeCategoryNames = new Set(['Salaire', 'Prime', 'Remboursement', 'Vente', 'Freelance', 'Aides', 'Revenus locatifs', 'Intérêts', 'Rendu', 'Revenus']);
+const incomeCategories = cats.filter(c => incomeCategoryNames.has(c.name));
+const expenseCategories = cats.filter(c => !incomeCategoryNames.has(c.name));
+const defaultExpenseCategory = expenseCategories.find(c => c.name === 'Alimentation') || expenseCategories[0] || cats[0];
+const defaultIncomeCategory = incomeCategories.find(c => c.name === 'Revenus') || incomeCategories[0] || cats[0];
 const smartCategoryRules = [
-    ['Salaire', /salaire|paie|paye|paye?e?|mensualite employeur|bulletin/],
-    ['Prime', /prime|bonus|13e mois|treizieme mois|gratification/],
-    ['Remboursement', /remboursement|avoir|retour remboursement|secu|mutuelle remboursement/],
-    ['Vente', /vente|vinted|leboncoin|marketplace|revente/],
-    ['Freelance', /freelance|mission|prestation|client|facture client/],
-    ['Aides', /caf|apl|rsa|prime d activite|allocation|aide/],
-    ['Revenus locatifs', /loyer recu|revenu locatif|location recue|airbnb/],
-    ['Intérêts', /interet|dividende|coupon|livret/],
+    ['Tabac', /tabac|cigarette|cigarettes|cigare|cigarillo|bureau de tabac|buraliste/],
+    ['Boissons', /boisson|soda|cafe en grain|capsule cafe|the|jus|eau minerale/],
+    ['Hygiène', /hygiene|savon|shampoing|dentifrice|gel douche|deodorant|rasoir/],
+    ['Pharmacie', /pharmacie|medicament|parapharmacie|ordonnance/],
+    ['Dentaire', /dentiste|dentaire|orthodont|couronne dentaire/],
+    ['Optique', /opticien|lunettes|lentilles|optique/],
+    ['Sport', /sport|fitness|musculation|salle de sport|decathlon|basic fit|fitness park/],
+    ['Culture', /livre|librairie|musee|theatre|culture|bd|manga/],
+    ['Sorties', /sortie|bowling|escape game|discotheque|boite de nuit|parc attraction/],
+    ['Jeux vidéo', /jeu video|gaming|steam|playstation|xbox|nintendo|epic games/],
+    ['Streaming', /netflix|spotify|prime video|disney|canal|youtube premium|deezer|apple music/],
+    ['Carburant', /essence|gasoil|diesel|carburant|station service|totalenergies|esso|bp/],
+    ['Parking & péages', /parking|peage|autoroute|telepeage|indigo parking/],
+    ['Entretien voiture', /vidange|pneu|garage|controle technique|entretien voiture|revision auto/],
+    ['Réparations', /reparation|depannage|reparateur|piece detachee/],
+    ['Travaux', /travaux|renovation|peinture murale|plomberie|electricien|macon/],
+    ['Électroménager', /electromenager|refrigerateur|frigo|lave linge|lave vaisselle|four|micro onde/],
+    ['Informatique', /ordinateur|pc|laptop|clavier|souris|ecran|informatique|ssd|disque dur/],
+    ['Frais de garde', /creche|nounou|garderie|assistante maternelle|frais de garde/],
+    ['Pension', /pension alimentaire|pension/],
+    ['Dons', /don|association|charite|fondation/],
+    ['Frais postaux', /poste|la poste|colissimo|chronopost|timbre|frais postal/],
+    ['Déménagement', /demenagement|demenageur|location camion|carton demenagement/],
+    ['Jardin', /jardin|jardinage|plante|terreau|tondeuse/],
+    ['Sécurité', /alarme|securite|serrure|serrurier|camera surveillance/],
     ['Alimentation', /course|supermarch|carrefour|auchan|leclerc|lidl|aldi|intermarch|aliment|epicer|boucher|boulanger/],
     ['Restaurants', /restaurant|resto|mcdo|burger|kfc|pizza|sushi|uber eats|deliveroo|cafe|bar/],
     ['Logement', /loyer|logement|appartement|maison|copro|syndic|assurance habitation/],
@@ -1005,7 +1053,8 @@ const incomeCategoryRules = [
     ['Freelance', /freelance|mission|prestation|client|facture client/],
     ['Aides', /caf|apl|rsa|prime d activite|allocation|aide/],
     ['Revenus locatifs', /loyer recu|revenu locatif|location recue|airbnb/],
-    ['Intérêts', /interet|dividende|coupon|livret/]
+    ['Intérêts', /interet|dividende|coupon|livret/],
+    ['Rendu', /rendu|monnaie rendue|rendu monnaie|reste rendu/]
 ];
 const suggestCategoryFromTitle = (value, type = 'expense') => {
     const normalized = cleanTextKey(value);
@@ -1105,7 +1154,7 @@ const sortTxByAmountDesc = list => [...list].sort((a, b) => {
         return dateDiff;
     return String(a.title || '').localeCompare(String(b.title || ''), 'fr');
 });
-const safeTx = list => sortTxByAmountDesc(cleanInitialTx(Array.isArray(list) ? list : []).map(t => ({ ...t, category: t.category && t.category.name ? t.category : cats.find(c => c.name === t.category) || cats[18] })));
+const safeTx = list => sortTxByAmountDesc(cleanInitialTx(Array.isArray(list) ? list : []).map(t => ({ ...t, category: t.category && t.category.name ? t.category : cats.find(c => c.name === t.category) || cats.find(c => c.name === 'Autre') || defaultExpenseCategory })));
 const safeBudgets = obj => obj && typeof obj === 'object' && !Array.isArray(obj) ? obj : {};
 const safeGoals = list => Array.isArray(list) ? list : [];
 const cleanTextKey = value => String(value || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ');
@@ -2213,7 +2262,7 @@ function Icon({ cat }) { return React.createElement("div", { className: "txIcon"
 function Budgets({ rows, budgets, setBudgets }) {
     const expenses = rows.filter(t => t.type === 'expense');
     const spent = name => expenses.filter(t => t.category?.name === name).reduce((a, t) => a + Number(t.amount || 0), 0);
-    const budgetCategories = cats.filter(c => c.name !== 'Revenus').map(c => ({ ...c, spent: spent(c.name), limit: Number(budgets[c.name]) || 0 }));
+    const budgetCategories = expenseCategories.map(c => ({ ...c, spent: spent(c.name), limit: Number(budgets[c.name]) || 0 }));
     const defined = budgetCategories.filter(c => c.limit > 0);
     const totalLimit = defined.reduce((a, c) => a + c.limit, 0);
     const totalTracked = defined.reduce((a, c) => a + c.spent, 0);
@@ -2575,10 +2624,10 @@ function TxModal({ modal, selectedMonth, close, save }) {
         const legacy = clampNumber(e?.paidAmount, 0, total);
         return legacy > 0 ? [{ id: uid(), label: 'Paiement déjà ajouté', amount: legacy, date: e?.date || defaultTxDate }] : [];
     };
-    const [type, setType] = useState(e?.type || 'expense'), [cat, setCat] = useState(e?.category?.name || 'Alimentation'), [title, setTitle] = useState(e?.title || ''), [amount, setAmount] = useState(e?.amount ?? ''), [paymentUses, setPaymentUses] = useState(initialUses), [isPaid, setIsPaid] = useState(isEdit ? txIsPaid(e || {}) : false), [payEditor, setPayEditor] = useState(null), [showHistory, setShowHistory] = useState(false);
+    const [type, setType] = useState(e?.type || 'expense'), [cat, setCat] = useState(e?.category?.name || defaultExpenseCategory.name), [title, setTitle] = useState(e?.title || ''), [amount, setAmount] = useState(e?.amount ?? ''), [paymentUses, setPaymentUses] = useState(initialUses), [isPaid, setIsPaid] = useState(isEdit ? txIsPaid(e || {}) : false), [payEditor, setPayEditor] = useState(null), [showHistory, setShowHistory] = useState(false);
     const forceUnpaidRef = useRef(false);
     const categoryManuallySetRef = useRef(isEdit);
-    const chosen = cats.find(c => c.name === cat) || cats[1];
+    const chosen = cats.find(c => c.name === cat) || (type === 'income' ? defaultIncomeCategory : defaultExpenseCategory);
     const smartSuggestion = suggestCategoryFromTitle(title, type);
     const showPaymentControls = isEdit && type === 'expense';
     const total = txTotal({ amount });
@@ -2598,13 +2647,13 @@ function TxModal({ modal, selectedMonth, close, save }) {
     } return next; });
     const changeType = value => { setType(value); categoryManuallySetRef.current = false; if (value === 'income') {
         forceUnpaidRef.current = true;
-        setCat('Revenus');
+        setCat(suggestCategoryFromTitle(title, value) || defaultIncomeCategory.name);
         setIsPaid(false);
         setPaymentUses([]);
         setPayEditor(null);
         setShowHistory(false);
     } if (value === 'expense')
-        setCat(suggestCategoryFromTitle(title, value) || 'Alimentation'); };
+        setCat(suggestCategoryFromTitle(title, value) || defaultExpenseCategory.name); };
     return React.createElement("div", { className: "modal", onMouseDown: ev => { if (ev.target === ev.currentTarget)
             close(); } },
         React.createElement("div", { className: "modalBox" },
@@ -2669,7 +2718,7 @@ function TxModal({ modal, selectedMonth, close, save }) {
                         React.createElement("b", { className: previewRemaining > 0 ? 'green' : 'red' }, money(previewRemaining)))),
                 React.createElement("div", { className: "field", style: { marginTop: 12 } },
                     React.createElement("label", null, "Cat\u00E9gorie"),
-                    React.createElement("div", { className: "catGrid" }, cats.filter(c => type === 'income' ? c.name === 'Revenus' : c.name !== 'Revenus').map(c => React.createElement("button", { type: "button", key: c.name, className: cat === c.name ? 'catBtn active' : 'catBtn', onClick: () => { categoryManuallySetRef.current = true; setCat(c.name); } },
+                    React.createElement("div", { className: "catGrid" }, (type === 'income' ? incomeCategories : expenseCategories).map(c => React.createElement("button", { type: "button", key: c.name, className: cat === c.name ? 'catBtn active' : 'catBtn', onClick: () => { categoryManuallySetRef.current = true; setCat(c.name); } },
                         React.createElement("ion-icon", { name: c.icon, style: { color: c.color, fontSize: 22 } }),
                         c.name)))),
                 React.createElement("div", { className: "field", style: { marginTop: 12 } },
