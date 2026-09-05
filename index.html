@@ -1819,6 +1819,7 @@ function App() {
             " ",
             view === 'settings' && React.createElement(Settings, { duplicate: openDuplicate, exportAll: exportAll, importAll: importAll, clear: clearAll, sync: sync, month: month, rows: rows, shareCode: shareCode, setShareCode: setShareCode, generateShare: generateShare, importShare: importShare, notify: notify, promptInstall: promptInstall, isInstalled: isInstalled }),
             " "),
+        React.createElement(MobileNav, { view: view, setView: setView }),
         view === 'transactions' && React.createElement("button", { className: "fab", onClick: () => setModal({ type: 'tx' }) },
             React.createElement("ion-icon", { name: "add-outline" })),
         modal?.type === 'tx' && React.createElement(TxModal, { modal: modal, selectedMonth: month, close: () => setModal(null), save: d => { modal.edit ? updateTx(d) : addTx(d); setModal(null); } }),
@@ -1847,6 +1848,28 @@ function Brand({ mode = 'personal', onSwitch }) { const shared = mode === 'share
 function Nav({ view, setView }) { return React.createElement("nav", { className: "nav", "aria-label": "Navigation principale" }, [['home', 'analytics-outline', 'Tableau de bord'], ['transactions', 'swap-horizontal-outline', 'Transactions'], ['budgets', 'pie-chart-outline', 'Budgets'], ['goals', 'flag-outline', 'Objectifs'], ['settings', 'settings-outline', 'Réglages']].map(i => React.createElement("button", { key: i[0], onClick: () => setView(i[0]), className: view === i[0] ? 'active' : '', "aria-current": view === i[0] ? 'page' : undefined },
     React.createElement("ion-icon", { name: i[1] }),
     React.createElement("span", { className: "navLabel" }, i[2])))); }
+function MobileNav({ view, setView }) {
+    const items = [
+        ['home', 'home-outline', 'Accueil'],
+        ['transactions', 'swap-horizontal-outline', 'Transactions'],
+        ['budgets', 'pie-chart-outline', 'Budget'],
+        ['goals', 'flag-outline', 'Objectifs'],
+        ['settings', 'settings-outline', 'Réglages']
+    ];
+    return React.createElement("nav", { className: "bottomNav", "aria-label": "Navigation mobile" },
+        items.map(i => React.createElement("button", {
+            key: i[0],
+            type: "button",
+            onClick: () => setView(i[0]),
+            className: view === i[0] ? 'active' : '',
+            "aria-current": view === i[0] ? 'page' : undefined,
+            "aria-label": i[2]
+        },
+            React.createElement("ion-icon", { name: i[1] }),
+            React.createElement("span", null, i[2])
+        ))
+    );
+}
 function Kpi({ label, value, icon, cls, sub }) { return React.createElement("div", { className: "card kpi" },
     React.createElement("ion-icon", { name: icon }),
     React.createElement("small", null, label),
@@ -3009,6 +3032,74 @@ th,td{padding:13px 14px!important}tbody tr:hover{background:rgba(91,169,224,.045
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
 @media(prefers-reduced-motion:no-preference){@keyframes osAurora{0%{opacity:.78;transform:scale(1)}100%{opacity:1;transform:scale(1.04) translate3d(-1%,1%,0)}}@keyframes livePulse{0%,100%{opacity:.65}50%{opacity:1;box-shadow:0 0 0 7px rgba(87,240,193,.045),0 0 18px rgba(87,240,193,.4)}}}
+</style>
+
+<style id="primefinance-mobile-bottom-navigation-final">
+/* Navigation mobile finale : 5 pages, flottante et centrée */
+.bottomNav{display:none}
+@media (max-width:860px){
+  .mobileSectionSelect{display:none!important}
+  .content{padding-bottom:calc(108px + env(safe-area-inset-bottom))!important;scroll-padding-bottom:calc(108px + env(safe-area-inset-bottom))!important}
+  .bottomNav{
+    position:fixed!important;
+    left:50%!important;
+    right:auto!important;
+    bottom:calc(10px + env(safe-area-inset-bottom))!important;
+    transform:translateX(-50%) translateZ(0)!important;
+    width:min(520px,calc(100dvw - 20px))!important;
+    max-width:calc(100dvw - 20px)!important;
+    height:72px!important;
+    min-height:72px!important;
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    align-items:stretch!important;
+    gap:4px!important;
+    padding:6px!important;
+    margin:0!important;
+    overflow:hidden!important;
+    border-radius:22px!important;
+    border:1px solid rgba(105,204,255,.24)!important;
+    background:rgba(5,22,38,.94)!important;
+    box-shadow:0 20px 58px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05)!important;
+    backdrop-filter:blur(24px) saturate(1.25)!important;
+    -webkit-backdrop-filter:blur(24px) saturate(1.25)!important;
+    z-index:2147483000!important;
+  }
+  .bottomNav button{
+    width:100%!important;
+    min-width:0!important;
+    height:100%!important;
+    min-height:0!important;
+    padding:4px 2px!important;
+    margin:0!important;
+    border-radius:15px!important;
+    background:transparent!important;
+    color:#7890aa!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:4px!important;
+    font-size:9px!important;
+    font-weight:900!important;
+    line-height:1!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+  }
+  .bottomNav button.active{
+    background:linear-gradient(180deg,rgba(97,221,255,.20),rgba(57,124,181,.09))!important;
+    color:#fff!important;
+    box-shadow:inset 0 0 0 1px rgba(97,221,255,.14)!important;
+  }
+  .bottomNav ion-icon{font-size:20px!important;color:#6dd7ff!important;flex:0 0 auto!important}
+  .bottomNav button span{display:block!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+  .fab{bottom:calc(94px + env(safe-area-inset-bottom))!important}
+}
+@media (max-width:390px){
+  .bottomNav{width:calc(100dvw - 14px)!important;max-width:calc(100dvw - 14px)!important;padding:5px!important;gap:2px!important}
+  .bottomNav button{font-size:7.5px!important;padding-left:1px!important;padding-right:1px!important}
+  .bottomNav ion-icon{font-size:18px!important}
+}
 </style>
 </body>
 </html>
