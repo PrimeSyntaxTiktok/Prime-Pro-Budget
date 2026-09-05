@@ -1533,9 +1533,15 @@ function App() {
     const closeDialog = () => setDialog(null);
     const notify = (title, message, kind = 'info') => setDialog({ kind, title, message, actions: [{ label: 'OK', className: 'primary', onClick: () => setDialog(null) }] });
     const ask = ({ title, message, confirmLabel = 'Confirmer', cancelLabel = 'Annuler', danger = false, onConfirm }) => setDialog({ kind: danger ? 'danger' : 'confirm', title, message, actions: [{ label: cancelLabel, className: 'ghost', onClick: () => setDialog(null) }, { label: confirmLabel, className: danger ? 'danger' : 'primary', onClick: () => { setDialog(null); requestAnimationFrame(() => onConfirm?.()); } }] });
-    const goShared = () => { sync.setMode('shared'); setView('settings'); setQuery(''); };
-    const goPersonal = () => { sync.setMode('personal'); setView('home'); setQuery(''); };
-    const switchMode = () => sync.mode === 'shared' ? goPersonal() : goShared();
+    const selectBudgetMode = mode => {
+        if (mode !== 'shared' && mode !== 'personal') return;
+        if (sync.mode !== mode) sync.setMode(mode);
+        setView('settings');
+        setQuery('');
+    };
+    const goShared = () => selectBudgetMode('shared');
+    const goPersonal = () => selectBudgetMode('personal');
+    const switchMode = () => selectBudgetMode(sync.mode === 'shared' ? 'personal' : 'shared');
     useEffect(() => {
         const onKey = event => {
             const target = event.target;
@@ -1756,7 +1762,7 @@ function App() {
     const syncLastText = sync.lastSync ? ` • ${sync.lastSync.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}` : '';
     return React.createElement("div", { className: "app" },
         React.createElement("aside", { className: "sidebar" },
-            React.createElement(Brand, { mode: sync.mode, onSwitch: switchMode }),
+            React.createElement(Brand, { mode: sync.mode }),
             React.createElement(Nav, { view: view, setView: setView }),
             React.createElement("div", { className: "sideCard" },
                 React.createElement("b", null, sync.mode === 'shared' ? 'Espace à deux' : 'Cloud'),
@@ -1787,14 +1793,11 @@ function App() {
                     React.createElement("button", { className: "btn danger iconBtn", onClick: () => deleteMonth(month), title: `Supprimer toutes les transactions de ${labelMonth(month)}` },
                         React.createElement("ion-icon", { name: "trash-outline" }),
                         React.createElement("span", { className: "btnText" }, "Supprimer le mois")),
-                    React.createElement("button", { className: `btn modeBtn ${sync.mode === 'shared' ? 'shared' : ''}`, onClick: switchMode, title: sync.mode === 'shared' ? 'Retour au budget personnel' : 'Ouvrir le budget à deux' },
-                        React.createElement("ion-icon", { name: sync.mode === 'shared' ? 'person-outline' : 'people-outline' }),
-                        React.createElement("span", { className: "btnText" }, sync.mode === 'shared' ? 'Personnel' : 'À deux')),
                     React.createElement(AuthBar, { sync: sync, notify: notify }),
                     view === 'transactions' && React.createElement("button", { className: "btn primary hideMobile", onClick: () => setModal({ type: 'tx' }) },
                         React.createElement("ion-icon", { name: "add-outline" }),
                         "Transaction"))),
-            sync.mode === 'shared' && React.createElement("div", { className: "sharedNotice card" },
+            view === 'settings' && sync.mode === 'shared' && React.createElement("div", { className: "sharedNotice card" },
                 React.createElement("div", null,
                     React.createElement("h3", null,
                         React.createElement("ion-icon", { name: "people-outline" }),
@@ -1817,7 +1820,7 @@ function App() {
             " ",
             view === 'goals' && React.createElement(Goals, { goals: goals, setGoals: setGoals, removeGoal: removeGoal }),
             " ",
-            view === 'settings' && React.createElement(Settings, { duplicate: openDuplicate, exportAll: exportAll, importAll: importAll, clear: clearAll, sync: sync, month: month, rows: rows, shareCode: shareCode, setShareCode: setShareCode, generateShare: generateShare, importShare: importShare, notify: notify, promptInstall: promptInstall, isInstalled: isInstalled }),
+            view === 'settings' && React.createElement(Settings, { duplicate: openDuplicate, exportAll: exportAll, importAll: importAll, clear: clearAll, sync: sync, month: month, rows: rows, shareCode: shareCode, setShareCode: setShareCode, generateShare: generateShare, importShare: importShare, notify: notify, promptInstall: promptInstall, isInstalled: isInstalled, onModeChange: selectBudgetMode }),
             " "),
         React.createElement(MobileNav, { view: view, setView: setView }),
         view === 'transactions' && React.createElement("button", { className: "fab", onClick: () => setModal({ type: 'tx' }) },
@@ -1837,14 +1840,12 @@ function AuthBar({ sync, notify }) {
         React.createElement("span", null, "Google"),
         connected && React.createElement("i", { className: "googleDot" }));
 }
-function Brand({ mode = 'personal', onSwitch }) { const shared = mode === 'shared'; return React.createElement("div", { className: "brandWrap" },
+function Brand({ mode = 'personal' }) { const shared = mode === 'shared'; return React.createElement("div", { className: "brandWrap" },
     React.createElement("div", { className: "brand" },
         React.createElement("img", { src: APP_LOGO, alt: "Logo Prime Finance" }),
         React.createElement("div", null,
             React.createElement("h1", null, shared ? 'Prime Finance Duo' : 'Prime Finance'),
-            React.createElement("p", null, shared ? 'Budget partagé' : 'Budget intelligent'))),
-    React.createElement("button", { className: `brandModeBtn ${shared ? 'shared' : ''}`, onClick: onSwitch, title: shared ? 'Retour au budget personnel' : 'Ouvrir le budget à deux' },
-        React.createElement("ion-icon", { name: shared ? 'person-outline' : 'people-outline' }))); }
+            React.createElement("p", null, shared ? 'Budget partagé' : 'Budget intelligent')))); }
 function Nav({ view, setView }) { return React.createElement("nav", { className: "nav", "aria-label": "Navigation principale" }, [['home', 'analytics-outline', 'Tableau de bord'], ['transactions', 'swap-horizontal-outline', 'Transactions'], ['budgets', 'pie-chart-outline', 'Budgets'], ['goals', 'flag-outline', 'Objectifs'], ['settings', 'settings-outline', 'Réglages']].map(i => React.createElement("button", { key: i[0], onClick: () => setView(i[0]), className: view === i[0] ? 'active' : '', "aria-current": view === i[0] ? 'page' : undefined },
     React.createElement("ion-icon", { name: i[1] }),
     React.createElement("span", { className: "navLabel" }, i[2])))); }
@@ -1958,6 +1959,7 @@ function Transactions({ rows, query, setQuery, setModal, del, delMany }) {
     const [typeFilter, setTypeFilter] = useState('all');
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [sortMode, setSortMode] = useState('date-desc');
+    const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
     const categoryOptions = useMemo(() => [...new Set(rows.map(t => t.category?.name).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr')), [rows]);
     const displayRows = useMemo(() => {
         const needle = cleanTextKey(query);
@@ -1992,10 +1994,14 @@ function Transactions({ rows, query, setQuery, setModal, del, delMany }) {
     return React.createElement("div", { className: "card transactionWorkspace" },
         React.createElement("div", { className: "sectionTitle transactionHeader" },
             React.createElement("div", null,
-                React.createElement("div", { className: "smartEyebrow" },
-                    React.createElement("ion-icon", { name: "layers-outline" }),
-                    " Registre intelligent"),
-                React.createElement("h3", null, "Toutes les transactions")),
+                React.createElement("h3", null, "Toutes les transactions"))),
+        React.createElement("button", { type: "button", className: `btn ghost mobileFilterToggle${mobileFiltersOpen ? ' open' : ''}`, onClick: () => setMobileFiltersOpen(v => !v), "aria-expanded": mobileFiltersOpen },
+            React.createElement("span", { className: "mobileFilterToggleLabel" },
+                React.createElement("ion-icon", { name: "options-outline" }),
+                "Filtres"),
+            React.createElement("span", { className: "mobileFilterToggleMeta" }, filtersActive ? 'Filtres actifs' : `${displayRows.length} résultat${displayRows.length > 1 ? 's' : ''}`),
+            React.createElement("ion-icon", { className: "mobileFilterToggleChevron", name: mobileFiltersOpen ? 'chevron-up-outline' : 'chevron-down-outline' })),
+        React.createElement("div", { className: `transactionControlsPanel${mobileFiltersOpen ? ' open' : ''}` },
             React.createElement("div", { className: "transactionActions" },
                 !selectMode && React.createElement("button", { className: "btn", onClick: () => setSelectMode(true) },
                     React.createElement("ion-icon", { name: "checkbox-outline" }),
@@ -2009,40 +2015,40 @@ function Transactions({ rows, query, setQuery, setModal, del, delMany }) {
                 selectMode && React.createElement("button", { className: "btn ghost", onClick: exitSelect }, "Terminer"),
                 !selectMode && React.createElement("button", { className: "btn primary", onClick: () => setModal({ type: 'tx' }) },
                     React.createElement("ion-icon", { name: "add-outline" }),
-                    "Ajouter"))),
-        React.createElement("div", { className: "transactionFilters" },
-            React.createElement("label", { className: "searchField" },
-                React.createElement("ion-icon", { name: "search-outline" }),
-                React.createElement("input", { className: "transactionSearch", placeholder: "Rechercher par titre, catégorie, note ou montant…", value: query, onChange: e => setQuery(e.target.value), "aria-label": "Rechercher dans les transactions" }),
-                query && React.createElement("button", { type: "button", onClick: () => setQuery(''), title: "Effacer la recherche" }, React.createElement("ion-icon", { name: "close-circle" }))),
-            React.createElement("select", { value: typeFilter, onChange: e => setTypeFilter(e.target.value), "aria-label": "Filtrer par type" },
-                React.createElement("option", { value: "all" }, "Tous les types"),
-                React.createElement("option", { value: "expense" }, "Dépenses"),
-                React.createElement("option", { value: "income" }, "Revenus")),
-            React.createElement("select", { value: categoryFilter, onChange: e => setCategoryFilter(e.target.value), "aria-label": "Filtrer par catégorie" },
-                React.createElement("option", { value: "all" }, "Toutes les catégories"),
-                categoryOptions.map(name => React.createElement("option", { key: name, value: name }, name))),
-            React.createElement("select", { value: sortMode, onChange: e => setSortMode(e.target.value), "aria-label": "Trier les transactions" },
-                React.createElement("option", { value: "date-desc" }, "Plus récentes"),
-                React.createElement("option", { value: "date-asc" }, "Plus anciennes"),
-                React.createElement("option", { value: "amount-desc" }, "Montant décroissant"),
-                React.createElement("option", { value: "amount-asc" }, "Montant croissant"),
-                React.createElement("option", { value: "title" }, "Ordre alphabétique")),
-            filtersActive && React.createElement("button", { className: "btn ghost resetFilters", onClick: resetFilters, title: "Réinitialiser les filtres" },
-                React.createElement("ion-icon", { name: "refresh-outline" }))),
-        React.createElement("div", { className: "transactionSummary" },
-            React.createElement("span", null,
-                React.createElement("b", null, displayRows.length),
-                ` résultat${displayRows.length > 1 ? 's' : ''}`),
-            React.createElement("span", { className: "green" },
-                React.createElement("ion-icon", { name: "arrow-down-outline" }),
-                money(visibleIncome)),
-            React.createElement("span", { className: "red" },
-                React.createElement("ion-icon", { name: "arrow-up-outline" }),
-                money(visibleExpense)),
-            React.createElement("span", { className: visibleIncome - visibleExpense >= 0 ? 'green' : 'red' },
-                "Net ",
-                React.createElement("b", null, money(visibleIncome - visibleExpense)))),
+                    "Ajouter")),
+            React.createElement("div", { className: "transactionFilters" },
+                React.createElement("label", { className: "searchField" },
+                    React.createElement("ion-icon", { name: "search-outline" }),
+                    React.createElement("input", { className: "transactionSearch", placeholder: "Rechercher par titre, catégorie, note ou montant…", value: query, onChange: e => setQuery(e.target.value), "aria-label": "Rechercher dans les transactions" }),
+                    query && React.createElement("button", { type: "button", onClick: () => setQuery(''), title: "Effacer la recherche" }, React.createElement("ion-icon", { name: "close-circle" }))),
+                React.createElement("select", { value: typeFilter, onChange: e => setTypeFilter(e.target.value), "aria-label": "Filtrer par type" },
+                    React.createElement("option", { value: "all" }, "Tous les types"),
+                    React.createElement("option", { value: "expense" }, "Dépenses"),
+                    React.createElement("option", { value: "income" }, "Revenus")),
+                React.createElement("select", { value: categoryFilter, onChange: e => setCategoryFilter(e.target.value), "aria-label": "Filtrer par catégorie" },
+                    React.createElement("option", { value: "all" }, "Toutes les catégories"),
+                    categoryOptions.map(name => React.createElement("option", { key: name, value: name }, name))),
+                React.createElement("select", { value: sortMode, onChange: e => setSortMode(e.target.value), "aria-label": "Trier les transactions" },
+                    React.createElement("option", { value: "date-desc" }, "Plus récentes"),
+                    React.createElement("option", { value: "date-asc" }, "Plus anciennes"),
+                    React.createElement("option", { value: "amount-desc" }, "Montant décroissant"),
+                    React.createElement("option", { value: "amount-asc" }, "Montant croissant"),
+                    React.createElement("option", { value: "title" }, "Ordre alphabétique")),
+                filtersActive && React.createElement("button", { className: "btn ghost resetFilters", onClick: resetFilters, title: "Réinitialiser les filtres" },
+                    React.createElement("ion-icon", { name: "refresh-outline" }))),
+            React.createElement("div", { className: "transactionSummary" },
+                React.createElement("span", null,
+                    React.createElement("b", null, displayRows.length),
+                    ` résultat${displayRows.length > 1 ? 's' : ''}`),
+                React.createElement("span", { className: "green" },
+                    React.createElement("ion-icon", { name: "arrow-down-outline" }),
+                    money(visibleIncome)),
+                React.createElement("span", { className: "red" },
+                    React.createElement("ion-icon", { name: "arrow-up-outline" }),
+                    money(visibleExpense)),
+                React.createElement("span", { className: visibleIncome - visibleExpense >= 0 ? 'green' : 'red' },
+                    "Net ",
+                    React.createElement("b", null, money(visibleIncome - visibleExpense))))),
         !selectMode && React.createElement("div", { className: "mobileDeleteHint" }, "Appui long pour supprimer une ligne. Le mode sélection permet les suppressions multiples."),
         selectMode && React.createElement("div", { className: "mobileDeleteHint" }, "Touche une ligne pour la cocher, puis confirme la suppression."),
         React.createElement("div", { className: "tableWrap" },
@@ -2297,7 +2303,7 @@ function PairConnectionPanel({ sync, notify }) {
                     React.createElement("ion-icon", { name: "log-in-outline" }),
                     "Connecter"))));
 }
-function Settings({ duplicate, exportAll, importAll, clear, sync, month, rows, shareCode, setShareCode, generateShare, importShare, notify, promptInstall, isInstalled }) { const [shareInput, setShareInput] = useState(''), [busy, setBusy] = useState(false); const connected = !!sync.user; const monthLabel = labelMonth(month); const copyCode = async () => { if (!shareCode)
+function Settings({ duplicate, exportAll, importAll, clear, sync, month, rows, shareCode, setShareCode, generateShare, importShare, notify, promptInstall, isInstalled, onModeChange }) { const [shareInput, setShareInput] = useState(''), [busy, setBusy] = useState(false); const connected = !!sync.user; const monthLabel = labelMonth(month); const copyCode = async () => { if (!shareCode)
     return; const ok = await copyText(shareCode); notify(ok ? 'Code copié' : 'Copie impossible', ok ? 'Le code de partage est prêt à être envoyé.' : 'Ton navigateur bloque la copie automatique. Sélectionne le code manuellement.', ok ? 'success' : 'danger'); }; const copyRules = async () => { const ok = await copyText(sync.rules || firestoreRules); notify(ok ? 'Règles Firestore copiées' : 'Copie impossible', ok ? 'Colle ces règles dans Firebase Console -> Firestore Database -> Rules.' : 'Ton navigateur bloque la copie automatique.', ok ? 'success' : 'danger'); }; const handleGenerate = async () => { if (busy)
     return; setBusy(true); try {
     await generateShare();
@@ -2314,6 +2320,19 @@ catch { }
 finally {
     setBusy(false);
 } }; return React.createElement("div", { className: "grid" },
+    React.createElement("div", { className: "card budgetModeCard" },
+        React.createElement("div", { className: "budgetModeHead" },
+            React.createElement("div", null,
+                React.createElement("h3", null, "Mode du budget"),
+                React.createElement("p", { className: "mini" }, "Choisis l’espace que tu veux utiliser. Le mode actif reste en surbrillance."))),
+        React.createElement("div", { className: "budgetModeSwitch", role: "group", "aria-label": "Choisir le mode du budget" },
+            React.createElement("button", { type: "button", className: `budgetModeBtn ${sync.mode === 'personal' ? 'active' : ''}`, onClick: () => onModeChange?.('personal'), "aria-pressed": sync.mode === 'personal' },
+                React.createElement("ion-icon", { name: "person-outline" }),
+                React.createElement("span", null, "Solo")),
+            React.createElement("button", { type: "button", className: `budgetModeBtn ${sync.mode === 'shared' ? 'active' : ''}`, onClick: () => onModeChange?.('shared'), "aria-pressed": sync.mode === 'shared' },
+                React.createElement("ion-icon", { name: "people-outline" }),
+                React.createElement("span", null, "Duo"))),
+        React.createElement("p", { className: "budgetModeHint" }, sync.mode === 'shared' ? "Mode Duo actif : les données de l’espace à deux peuvent être synchronisées avec la personne liée à ton code." : "Mode Solo actif : tu utilises ton budget personnel.")),
     React.createElement("div", { className: "card pwaInstallCard" },
         React.createElement("div", { className: "pwaInstallLead" },
             React.createElement("div", { className: "pwaInstallIcon" },
@@ -3432,5 +3451,47 @@ th,td{padding:13px 14px!important}tbody tr:hover{background:rgba(91,169,224,.045
 }
 </style>
 
+
+<style id="primefinance-solo-duo-settings-only">
+/* Le choix Solo / Duo est volontairement limité aux Réglages. */
+.budgetModeCard{display:grid;gap:14px}
+.budgetModeHead h3{margin:0;font-family:var(--font-display);font-size:19px;font-weight:800}
+.budgetModeHead .mini{margin:6px 0 0}
+.budgetModeSwitch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:6px;border:1px solid rgba(127,187,233,.16);background:rgba(3,15,26,.62);border-radius:14px}
+.budgetModeBtn{min-height:58px;border-radius:11px;border:1px solid transparent;background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:9px;font-weight:900;font-size:15px;transition:background .18s var(--ease),border-color .18s var(--ease),box-shadow .18s var(--ease),color .18s var(--ease),transform .18s var(--ease)}
+.budgetModeBtn ion-icon{font-size:21px}
+.budgetModeBtn:hover{background:rgba(255,255,255,.045);color:#fff}
+.budgetModeBtn:active{transform:scale(.985)}
+.budgetModeBtn.active{color:#f4fbff;border-color:rgba(87,205,255,.58);background:linear-gradient(135deg,rgba(66,202,255,.22),rgba(58,226,169,.14));box-shadow:0 0 0 1px rgba(87,205,255,.12),0 10px 26px rgba(0,0,0,.24)}
+.budgetModeBtn.active ion-icon{color:#62dfff}
+.budgetModeHint{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
+/* Les anciens boutons de bascule globaux ne doivent plus apparaître ailleurs. */
+.brandModeBtn,.toolbar .modeBtn{display:none!important}
+@media(max-width:700px){
+  .budgetModeCard{padding:14px!important;gap:12px!important}
+  .budgetModeHead h3{font-size:17px!important}
+  .budgetModeHead .mini{font-size:11px!important}
+  .budgetModeSwitch{gap:7px!important;padding:5px!important;border-radius:12px!important}
+  .budgetModeBtn{min-height:52px!important;border-radius:10px!important;font-size:13px!important}
+  .budgetModeBtn ion-icon{font-size:19px!important}
+  .budgetModeHint{font-size:10.5px!important}
+}
+</style>
+
+
+<style id="primefinance-mobile-transaction-filters">
+.mobileFilterToggle{display:none}
+.transactionControlsPanel{display:grid;gap:10px}
+.mobileFilterToggleLabel{display:inline-flex;align-items:center;gap:8px;font-weight:800}
+.mobileFilterToggleMeta{margin-left:auto;font-size:12px;color:#8fb1c7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mobileFilterToggleChevron{font-size:18px;flex:0 0 auto;transition:transform .2s var(--ease)}
+.mobileFilterToggle.open .mobileFilterToggleChevron{transform:rotate(180deg)}
+@media(max-width:700px){
+  .mobileFilterToggle{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;width:100%!important;min-height:48px!important;margin:0 0 10px!important;padding:0 14px!important;border-radius:14px!important;background:rgba(8,27,44,.92)!important;border:1px solid rgba(97,221,255,.18)!important;box-shadow:0 8px 24px rgba(0,0,0,.18)!important}
+  .mobileFilterToggle ion-icon{font-size:18px!important}
+  .transactionControlsPanel{display:none!important}
+  .transactionControlsPanel.open{display:grid!important;gap:8px!important;margin:0 0 10px!important;animation:fadeIn .2s var(--ease) both}
+}
+</style>
 </body>
 </html>
