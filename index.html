@@ -1067,16 +1067,81 @@ const suggestCategoryFromTitle = (value, type = 'expense') => {
 };
 const shiftMonthKey = (monthKey, delta) => { const [y, m] = String(monthKey).split('-').map(Number); return keyOf(new Date(y, m - 1 + delta, 1)); };
 const clampScore = value => Math.max(0, Math.min(100, Math.round(Number(value) || 0)));
+const fixedExpenseCategoryNames = new Set([
+    'Logement', 'Charges', 'Énergie', 'Eau', 'Internet', 'Téléphone', 'Banque',
+    'Cotisations', 'Assurances', 'Frais de garde', 'Pension', 'Abonnements',
+    'Crédit', 'Impôts', 'Épargne'
+]);
+const isFixedExpenseCategory = tx => fixedExpenseCategoryNames.has(tx?.category?.name || '');
+const sumTxAmount = list => list.reduce((a, t) => a + Number(t?.amount || 0), 0);
 const buildFinancialIntelligence = (allRows, rows, month, budgets, goals) => {
-    const income = rows.filter(t => t.type === 'income').reduce((a, t) => a + Number(t.amount || 0), 0);
+    const incomeRows = rows.filter(t => t.type === 'income');
     const expenses = rows.filter(t => t.type === 'expense');
-    const expense = expenses.reduce((a, t) => a + Number(t.amount || 0), 0);
+    const income = sumTxAmount(incomeRows);
+    const expense = sumTxAmount(expenses);
     const balance = income - expense;
     const days = daysInMonthKey(month);
     const currentMonth = month === keyOf(today());
     const elapsed = currentMonth ? Math.max(1, Math.min(days, dayFromDate(today()))) : days;
-    const projectedExpense = currentMonth ? expense / elapsed * days : expense;
+    const remainingDays = Math.max(0, days - elapsed);
+
+    /*
+      Projection prudente :
+      - une opération datée plus tard dans le mois est déjà une opération connue, elle ne doit jamais
+        être extrapolée comme si elle avait été dépensée chaque jour depuis le début du mois ;
+      - les charges fixes déjà saisies ne sont jamais multipliées par le nombre de jours ;
+      - seule la partie variable réellement passée peut servir à estimer d'éventuelles dépenses non
+        encore saisies ;
+      - pendant les 6 premiers jours, on évite toute extrapolation agressive sans historique fiable.
+    */
+    const occurredRows = currentMonth ? rows.filter(t => dayFromDate(t.date) <= elapsed) : rows;
+    const futureKnownRows = currentMonth ? rows.filter(t => dayFromDate(t.date) > elapsed) : [];
+    const occurredExpenses = occurredRows.filter(t => t.type === 'expense');
+    const futureKnownExpenses = futureKnownRows.filter(t => t.type === 'expense');
+    const occurredVariableExpense = sumTxAmount(occurredExpenses.filter(t => !isFixedExpenseCategory(t)));
+    const futureKnownVariableExpense = sumTxAmount(futureKnownExpenses.filter(t => !isFixedExpenseCategory(t)));
+
+    const previousMonthKey = shiftMonthKey(month, -1);
+    const previousMonthRows = allRows.filter(t => keyOf(t.date) === previousMonthKey);
+    const previousMonthVariableExpense = sumTxAmount(previousMonthRows.filter(t => t.type === 'expense' && !isFixedExpenseCategory(t)));
+
+    let estimatedExtraVariableExpense = 0;
+    let projectionMode = currentMonth ? 'known' : 'closed';
+    if (currentMonth && remainingDays > 0) {
+        const currentPaceRemaining = occurredVariableExpense > 0
+            ? Math.max(0, (occurredVariableExpense / elapsed * days) - occurredVariableExpense - futureKnownVariableExpense)
+            : 0;
+        const historicalRemaining = previousMonthVariableExpense > 0
+            ? Math.max(0, (previousMonthVariableExpense * remainingDays / days) - futureKnownVariableExpense)
+            : 0;
+
+        if (elapsed <= 6) {
+            /* Début de mois : historique seulement s'il existe, sinon opérations connues uniquement. */
+            estimatedExtraVariableExpense = previousMonthVariableExpense > 0 ? historicalRemaining : 0;
+            projectionMode = previousMonthVariableExpense > 0 ? 'history' : 'known';
+        } else if (previousMonthVariableExpense > 0) {
+            /* Après la première semaine : moyenne pondérée entre rythme réel et historique. */
+            estimatedExtraVariableExpense = currentPaceRemaining * 0.6 + historicalRemaining * 0.4;
+            projectionMode = 'blended';
+        } else {
+            estimatedExtraVariableExpense = currentPaceRemaining;
+            projectionMode = 'pace';
+        }
+    }
+    estimatedExtraVariableExpense = Math.max(0, Number(estimatedExtraVariableExpense || 0));
+    const projectedExpense = currentMonth ? expense + estimatedExtraVariableExpense : expense;
     const projectedBalance = income - projectedExpense;
+    const projectionLabel = !currentMonth ? 'Solde du mois' : projectionMode === 'known' ? 'Solde prévu (connu)' : 'Projection fin de mois';
+    const projectionExplanation = !currentMonth
+        ? `Le mois s’est terminé avec un solde de ${money(balance)}.`
+        : projectionMode === 'known'
+            ? `Avec les opérations déjà saisies, le mois terminerait à ${money(projectedBalance)}. Aucune multiplication artificielle des dépenses n’est appliquée en début de mois.`
+            : projectionMode === 'history'
+                ? `Estimation prudente à ${money(projectedBalance)}, basée sur les opérations connues et le rythme variable du mois précédent.`
+                : projectionMode === 'blended'
+                    ? `Estimation à ${money(projectedBalance)}, calculée à partir des opérations connues, du rythme variable actuel et de l’historique du mois précédent.`
+                    : `Estimation à ${money(projectedBalance)}, basée uniquement sur les dépenses variables réellement passées et les opérations futures déjà saisies.`;
+
     const saved = expenses.filter(t => t.category?.name === 'Épargne').reduce((a, t) => a + Number(t.amount || 0), 0);
     const savingsRate = income > 0 ? Math.max(0, saved / income * 100) : 0;
     const remainingToPay = expenses.reduce((a, t) => a + (txShowsPayment(t) ? txRemaining(t) : 0), 0);
@@ -1084,9 +1149,13 @@ const buildFinancialIntelligence = (allRows, rows, month, budgets, goals) => {
     const topCategoryEntry = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])[0] || ['Aucune', 0];
     const budgetEntries = Object.entries(safeBudgets(budgets)).map(([name, limit]) => ({ name, limit: Number(limit) || 0, spent: Number(categoryTotals[name] || 0) })).filter(x => x.limit > 0);
     const overBudgets = budgetEntries.filter(x => x.spent > x.limit).sort((a, b) => (b.spent / b.limit) - (a.spent / a.limit));
-    const previousRows = allRows.filter(t => keyOf(t.date) === shiftMonthKey(month, -1) && (!currentMonth || dayFromDate(t.date) <= elapsed));
-    const previousExpense = previousRows.filter(t => t.type === 'expense').reduce((a, t) => a + Number(t.amount || 0), 0);
-    const trend = previousExpense > 0 ? (expense - previousExpense) / previousExpense * 100 : 0;
+
+    /* Comparaison à date égale : on ignore les opérations futures du mois courant. */
+    const comparableCurrentExpense = sumTxAmount(occurredExpenses);
+    const previousComparableRows = previousMonthRows.filter(t => !currentMonth || dayFromDate(t.date) <= elapsed);
+    const previousExpense = sumTxAmount(previousComparableRows.filter(t => t.type === 'expense'));
+    const trend = previousExpense > 0 ? (comparableCurrentExpense - previousExpense) / previousExpense * 100 : 0;
+
     const recurringGroups = new Map();
     allRows.filter(t => t.type === 'expense').forEach(t => { const title = cleanTextKey(t.title); if (!title)
         return; const amountBand = Math.round(Number(t.amount || 0)); const recurringKey = `${title}|${t.category?.name || ''}|${amountBand}`; const item = recurringGroups.get(recurringKey) || { title: t.title, months: new Set(), amount: Number(t.amount || 0) }; item.months.add(keyOf(t.date)); recurringGroups.set(recurringKey, item); });
@@ -1116,7 +1185,7 @@ const buildFinancialIntelligence = (allRows, rows, month, budgets, goals) => {
     if (!rows.length)
         insights.push({ tone: 'info', icon: 'add-circle-outline', title: 'Analyse en attente', text: 'Une seule transaction suffit pour lancer les prévisions et les recommandations.' });
     if (currentMonth && rows.length)
-        insights.push({ tone: projectedBalance >= 0 ? 'positive' : 'danger', icon: projectedBalance >= 0 ? 'navigate-circle-outline' : 'warning-outline', title: 'Projection de fin de mois', text: projectedBalance >= 0 ? `Au rythme actuel, il resterait environ ${money(projectedBalance)}.` : `Au rythme actuel, le mois terminerait à ${money(projectedBalance)}.` });
+        insights.push({ tone: projectedBalance >= 0 ? 'positive' : 'danger', icon: projectedBalance >= 0 ? 'navigate-circle-outline' : 'warning-outline', title: projectionMode === 'known' ? 'Solde prévu avec les opérations connues' : 'Projection de fin de mois', text: projectionExplanation });
     if (overBudgets.length)
         insights.push({ tone: 'danger', icon: 'speedometer-outline', title: `${overBudgets.length} budget${overBudgets.length > 1 ? 's' : ''} dépassé${overBudgets.length > 1 ? 's' : ''}`, text: `${overBudgets[0].name} dépasse sa limite de ${money(overBudgets[0].spent - overBudgets[0].limit)}.` });
     else if (budgetEntries.length)
@@ -1124,12 +1193,12 @@ const buildFinancialIntelligence = (allRows, rows, month, budgets, goals) => {
     if (expense > 0 && topCategoryEntry[1] / expense >= .32)
         insights.push({ tone: 'info', icon: 'scan-outline', title: `Concentration : ${topCategoryEntry[0]}`, text: `${Math.round(topCategoryEntry[1] / expense * 100)} % des dépenses du mois sont regroupées dans cette catégorie.` });
     if (previousExpense > 0 && Math.abs(trend) >= 8)
-        insights.push({ tone: trend <= 0 ? 'positive' : 'watch', icon: trend <= 0 ? 'trending-down-outline' : 'trending-up-outline', title: trend <= 0 ? 'Dépenses en baisse' : 'Dépenses en hausse', text: `${Math.abs(Math.round(trend))} % ${trend <= 0 ? 'de moins' : 'de plus'} que le mois précédent à ce stade.` });
+        insights.push({ tone: trend <= 0 ? 'positive' : 'watch', icon: trend <= 0 ? 'trending-down-outline' : 'trending-up-outline', title: trend <= 0 ? 'Dépenses en baisse' : 'Dépenses en hausse', text: `${Math.abs(Math.round(trend))} % ${trend <= 0 ? 'de moins' : 'de plus'} que le mois précédent à la même date.` });
     if (recurring.length)
         insights.push({ tone: 'info', icon: 'repeat-outline', title: `${recurring.length} charge${recurring.length > 1 ? 's' : ''} récurrente${recurring.length > 1 ? 's' : ''} détectée${recurring.length > 1 ? 's' : ''}`, text: `${recurring[0].title} apparaît sur ${recurring[0].months.size} mois.` });
     if (goalProgress)
         insights.push({ tone: goalProgress.progress >= 100 ? 'positive' : 'info', icon: 'flag-outline', title: `Objectif « ${goalProgress.name} »`, text: `${Math.round(goalProgress.progress)} % atteint, soit ${money(goalProgress.saved)} sur ${money(goalProgress.target)}.` });
-    return { score, tone, headline, income, expense, balance, projectedExpense, projectedBalance, saved, savingsRate, remainingToPay, topCategory: topCategoryEntry[0], topCategoryAmount: topCategoryEntry[1], budgetEntries, overBudgets, recurring, insights: insights.slice(0, 5) };
+    return { score, tone, headline, income, expense, balance, projectedExpense, projectedBalance, projectionLabel, projectionMode, projectionExplanation, estimatedExtraVariableExpense, saved, savingsRate, remainingToPay, topCategory: topCategoryEntry[0], topCategoryAmount: topCategoryEntry[1], budgetEntries, overBudgets, recurring, insights: insights.slice(0, 5) };
 };
 const clampNumber = (value, min = 0, max = Infinity) => Math.min(max, Math.max(min, Number(value || 0)));
 const txTotal = t => Math.max(0, Number(t?.amount || 0));
@@ -2026,7 +2095,7 @@ function SmartPulse({ allRows, rows, month, budgets, goals, setView, setModal })
                 React.createElement("p", null, intelligence.headline)),
             React.createElement("div", { className: "pulseMetrics" },
                 React.createElement("div", null,
-                    React.createElement("span", null, "Projection fin de mois"),
+                    React.createElement("span", null, intelligence.projectionLabel),
                     React.createElement("b", { className: intelligence.projectedBalance >= 0 ? 'green' : 'red' }, money(intelligence.projectedBalance))),
                 React.createElement("div", null,
                     React.createElement("span", null, "Taux d’épargne"),
