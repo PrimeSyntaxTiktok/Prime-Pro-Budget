@@ -910,29 +910,109 @@ else
 const normalizeShareCode = code => { const raw = String(code || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); const trimmed = raw.startsWith('PB') ? raw.slice(2) : raw; return trimmed ? `PB-${trimmed.slice(0, 4)}-${trimmed.slice(4, 8)}` : ''; };
 const generatePairCodeValue = () => generateShareCodeValue().replace('PB-', 'DUO-');
 const normalizePairCode = code => { const raw = String(code || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); const trimmed = raw.startsWith('DUO') ? raw.slice(3) : raw.startsWith('PB') ? raw.slice(2) : raw; return trimmed ? `DUO-${trimmed.slice(0, 4)}-${trimmed.slice(4, 8)}` : ''; };
-const cats = [['Revenus', 'cash-outline', '#2ee59d'], ['Alimentation', 'cart-outline', '#6ba8ff'], ['Restaurants', 'restaurant-outline', '#f5a524'], ['Logement', 'home-outline', '#a78bfa'], ['Énergie', 'flash-outline', '#f5c84b'], ['Eau', 'water-outline', '#38bdf8'], ['Internet', 'wifi-outline', '#818cf8'], ['Téléphone', 'call-outline', '#e879f9'], ['Voiture', 'car-sport-outline', '#ff4d6d'], ['Transports', 'bus-outline', '#2dd4bf'], ['Shopping', 'bag-handle-outline', '#fb7185'], ['Santé', 'medkit-outline', '#84cc16'], ['Abonnements', 'card-outline', '#60a5fa'], ['Loisirs', 'game-controller-outline', '#fb923c'], ['Épargne', 'leaf-outline', '#22c55e'], ['Crédit', 'business-outline', '#94a3b8'], ['Impôts', 'document-text-outline', '#cbd5e1'], ['Imprévus', 'warning-outline', '#ef4444'], ['Autre', 'ellipsis-horizontal-circle-outline', '#9ca3af']].map(([name, icon, color]) => ({ name, icon, color }));
+const cats = [
+    ['Salaire', 'wallet-outline', '#2ee59d'],
+    ['Prime', 'ribbon-outline', '#14b8a6'],
+    ['Remboursement', 'return-up-back-outline', '#22c55e'],
+    ['Vente', 'pricetag-outline', '#10b981'],
+    ['Freelance', 'briefcase-outline', '#34d399'],
+    ['Aides', 'heart-circle-outline', '#4ade80'],
+    ['Revenus locatifs', 'business-outline', '#06b6d4'],
+    ['Intérêts', 'trending-up-outline', '#84cc16'],
+    ['Revenus', 'cash-outline', '#2ee59d'],
+    ['Alimentation', 'cart-outline', '#6ba8ff'],
+    ['Restaurants', 'restaurant-outline', '#f5a524'],
+    ['Logement', 'home-outline', '#a78bfa'],
+    ['Charges', 'receipt-outline', '#8b5cf6'],
+    ['Énergie', 'flash-outline', '#f5c84b'],
+    ['Eau', 'water-outline', '#38bdf8'],
+    ['Internet', 'wifi-outline', '#818cf8'],
+    ['Téléphone', 'call-outline', '#e879f9'],
+    ['Banque', 'card-outline', '#60a5fa'],
+    ['Cotisations', 'shield-checkmark-outline', '#0ea5e9'],
+    ['Assurances', 'shield-half-outline', '#7dd3fc'],
+    ['Voiture', 'car-sport-outline', '#ff4d6d'],
+    ['Transports', 'bus-outline', '#2dd4bf'],
+    ['École', 'school-outline', '#f59e0b'],
+    ['Enfant', 'happy-outline', '#fb7185'],
+    ['Animaux', 'paw-outline', '#f97316'],
+    ['Santé', 'medkit-outline', '#84cc16'],
+    ['Beauté', 'sparkles-outline', '#ec4899'],
+    ['Shopping', 'bag-handle-outline', '#fb7185'],
+    ['Vêtements', 'shirt-outline', '#f43f5e'],
+    ['Maison', 'bed-outline', '#c084fc'],
+    ['Abonnements', 'albums-outline', '#60a5fa'],
+    ['Loisirs', 'game-controller-outline', '#fb923c'],
+    ['Voyages', 'airplane-outline', '#38bdf8'],
+    ['Vacances', 'sunny-outline', '#fbbf24'],
+    ['Cadeaux', 'gift-outline', '#e879f9'],
+    ['Travail', 'briefcase-outline', '#94a3b8'],
+    ['Administratif', 'document-text-outline', '#cbd5e1'],
+    ['Épargne', 'leaf-outline', '#22c55e'],
+    ['Crédit', 'cash-outline', '#94a3b8'],
+    ['Impôts', 'calculator-outline', '#cbd5e1'],
+    ['Justice', 'library-outline', '#64748b'],
+    ['Imprévus', 'warning-outline', '#ef4444'],
+    ['Autre', 'ellipsis-horizontal-circle-outline', '#9ca3af']
+].map(([name, icon, color]) => ({ name, icon, color }));
 const smartCategoryRules = [
+    ['Salaire', /salaire|paie|paye|paye?e?|mensualite employeur|bulletin/],
+    ['Prime', /prime|bonus|13e mois|treizieme mois|gratification/],
+    ['Remboursement', /remboursement|avoir|retour remboursement|secu|mutuelle remboursement/],
+    ['Vente', /vente|vinted|leboncoin|marketplace|revente/],
+    ['Freelance', /freelance|mission|prestation|client|facture client/],
+    ['Aides', /caf|apl|rsa|prime d activite|allocation|aide/],
+    ['Revenus locatifs', /loyer recu|revenu locatif|location recue|airbnb/],
+    ['Intérêts', /interet|dividende|coupon|livret/],
     ['Alimentation', /course|supermarch|carrefour|auchan|leclerc|lidl|aldi|intermarch|aliment|epicer|boucher|boulanger/],
     ['Restaurants', /restaurant|resto|mcdo|burger|kfc|pizza|sushi|uber eats|deliveroo|cafe|bar/],
     ['Logement', /loyer|logement|appartement|maison|copro|syndic|assurance habitation/],
+    ['Charges', /charge|charge locative|ordure menagere|charge copro|entretien immeuble/],
     ['Énergie', /electric|edf|engie|gaz|energie|totalenergies/],
     ['Eau', /eau|veolia|suez/],
     ['Internet', /internet|fibre|box|freebox/],
     ['Téléphone', /telephone|mobile|forfait|orange|sfr|bouygues|free mobile/],
+    ['Banque', /banque|frais bancaire|carte bancaire|tenue de compte|agios|virement bancaire/],
+    ['Cotisations', /cotisation|adhesion|syndicat|urssaf|securite sociale|mutuelle obligatoire/],
+    ['Assurances', /assurance|assureur|maif|axa|macif|allianz|matmut/],
     ['Voiture', /essence|gasoil|diesel|carburant|parking|peage|garage|controle technique|assurance auto/],
     ['Transports', /train|sncf|bus|metro|tram|navigo|uber|taxi|transport/],
-    ['Shopping', /shopping|amazon|zalando|vetement|chaussure|boutique/],
+    ['École', /ecole|college|lycee|universite|cantine|fourniture scolaire|scolarite|formation/],
+    ['Enfant', /enfant|bebe|creche|nounou|garderie|poussette|couche/],
+    ['Animaux', /chien|chat|animal|veterinaire|croquette|litiere/],
     ['Santé', /pharmac|medecin|docteur|sante|mutuelle|dentiste|opticien|hopital/],
+    ['Beauté', /beaute|coiffeur|esthetique|parfum|maquillage|soin/],
+    ['Shopping', /shopping|amazon|zalando|boutique|achat/],
+    ['Vêtements', /vetement|chaussure|sneaker|pull|pantalon|robe/],
+    ['Maison', /meuble|deco|bricolage|ikea|conforama|maison du monde|linge de maison/],
     ['Abonnements', /abonnement|netflix|spotify|prime video|disney|canal|icloud|google one|youtube premium/],
-    ['Loisirs', /jeu|gaming|cinema|concert|sortie|vacance|loisir|steam|playstation|xbox/],
-    ['Épargne', /epargne|livret|placement|investissement|virement epargne/],
-    ['Crédit', /credit|pret|mensualite|remboursement/],
-    ['Impôts', /impot|taxe|tresor public|urssaf/]
+    ['Loisirs', /jeu|gaming|cinema|concert|sortie|loisir|steam|playstation|xbox/],
+    ['Voyages', /voyage|avion|train vacances|hotel|booking|airbnb voyage|sejour/],
+    ['Vacances', /vacance|camping|club med|parc attraction|excursion/],
+    ['Cadeaux', /cadeau|anniversaire|noel|fete|surprise/],
+    ['Travail', /travail|materiel pro|outillage|bureau|deplacement pro/],
+    ['Administratif', /administratif|papier|document|timbre|photocopie|demarche/],
+    ['Épargne', /epargne|placement|investissement|virement epargne/],
+    ['Crédit', /credit|pret|mensualite/],
+    ['Impôts', /impot|taxe|tresor public/],
+    ['Justice', /avocat|justice|huissier|tribunal|amende/]
+];
+const incomeCategoryRules = [
+    ['Salaire', /salaire|paie|paye|bulletin/],
+    ['Prime', /prime|bonus|13e mois|treizieme mois|gratification/],
+    ['Remboursement', /remboursement|avoir|secu|mutuelle remboursement/],
+    ['Vente', /vente|vinted|leboncoin|marketplace|revente/],
+    ['Freelance', /freelance|mission|prestation|client|facture client/],
+    ['Aides', /caf|apl|rsa|prime d activite|allocation|aide/],
+    ['Revenus locatifs', /loyer recu|revenu locatif|location recue|airbnb/],
+    ['Intérêts', /interet|dividende|coupon|livret/]
 ];
 const suggestCategoryFromTitle = (value, type = 'expense') => {
-    if (type === 'income')
-        return 'Revenus';
     const normalized = cleanTextKey(value);
+    if (type === 'income') {
+        const incomeFound = incomeCategoryRules.find(([, pattern]) => pattern.test(normalized));
+        return incomeFound?.[0] || 'Revenus';
+    }
     const found = smartCategoryRules.find(([, pattern]) => pattern.test(normalized));
     return found?.[0] || '';
 };
@@ -1958,7 +2038,6 @@ function Transactions({ rows, query, setQuery, setModal, del, delMany }) {
     const [selected, setSelected] = useState(() => new Set());
     const [typeFilter, setTypeFilter] = useState('all');
     const [categoryFilter, setCategoryFilter] = useState('all');
-    const [sortMode, setSortMode] = useState('date-desc');
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
     const categoryOptions = useMemo(() => [...new Set(rows.map(t => t.category?.name).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr')), [rows]);
     const displayRows = useMemo(() => {
@@ -1968,24 +2047,25 @@ function Transactions({ rows, query, setQuery, setModal, del, delMany }) {
             return (!needle || haystack.includes(needle)) && (typeFilter === 'all' || t.type === typeFilter) && (categoryFilter === 'all' || t.category?.name === categoryFilter);
         });
         return [...list].sort((a, b) => {
-            if (sortMode === 'date-asc')
-                return String(a.date).localeCompare(String(b.date));
-            if (sortMode === 'amount-desc')
-                return Number(b.amount || 0) - Number(a.amount || 0);
-            if (sortMode === 'amount-asc')
-                return Number(a.amount || 0) - Number(b.amount || 0);
-            if (sortMode === 'title')
-                return String(a.title || '').localeCompare(String(b.title || ''), 'fr');
-            return String(b.date).localeCompare(String(a.date)) || Number(b.amount || 0) - Number(a.amount || 0);
+            // Ordre fixe : revenus d'abord, puis dépenses.
+            // Dans chaque groupe, les montants sont toujours classés du plus grand au plus petit,
+            // indépendamment de la date renseignée lors de l'ajout.
+            const typeRank = { income: 0, expense: 1 };
+            const rankA = typeRank[a.type] ?? 2;
+            const rankB = typeRank[b.type] ?? 2;
+            if (rankA !== rankB) return rankA - rankB;
+            const amountDiff = Number(b.amount || 0) - Number(a.amount || 0);
+            if (amountDiff !== 0) return amountDiff;
+            return String(a.title || '').localeCompare(String(b.title || ''), 'fr');
         });
-    }, [rows, query, typeFilter, categoryFilter, sortMode]);
+    }, [rows, query, typeFilter, categoryFilter]);
     const visibleIds = displayRows.map(r => r.id);
     const selCount = visibleIds.filter(id => selected.has(id)).length;
     const allSelected = visibleIds.length > 0 && selCount === visibleIds.length;
     const visibleIncome = displayRows.filter(t => t.type === 'income').reduce((a, t) => a + Number(t.amount || 0), 0);
     const visibleExpense = displayRows.filter(t => t.type === 'expense').reduce((a, t) => a + Number(t.amount || 0), 0);
-    const filtersActive = !!query || typeFilter !== 'all' || categoryFilter !== 'all' || sortMode !== 'date-desc';
-    const resetFilters = () => { setQuery(''); setTypeFilter('all'); setCategoryFilter('all'); setSortMode('date-desc'); };
+    const filtersActive = !!query || typeFilter !== 'all' || categoryFilter !== 'all';
+    const resetFilters = () => { setQuery(''); setTypeFilter('all'); setCategoryFilter('all'); };
     const toggle = id => setSelected(s => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
     const toggleAll = () => setSelected(() => allSelected ? new Set() : new Set(visibleIds));
     const exitSelect = () => { setSelectMode(false); setSelected(new Set()); };
@@ -2028,12 +2108,6 @@ function Transactions({ rows, query, setQuery, setModal, del, delMany }) {
                 React.createElement("select", { value: categoryFilter, onChange: e => setCategoryFilter(e.target.value), "aria-label": "Filtrer par catégorie" },
                     React.createElement("option", { value: "all" }, "Toutes les catégories"),
                     categoryOptions.map(name => React.createElement("option", { key: name, value: name }, name))),
-                React.createElement("select", { value: sortMode, onChange: e => setSortMode(e.target.value), "aria-label": "Trier les transactions" },
-                    React.createElement("option", { value: "date-desc" }, "Plus récentes"),
-                    React.createElement("option", { value: "date-asc" }, "Plus anciennes"),
-                    React.createElement("option", { value: "amount-desc" }, "Montant décroissant"),
-                    React.createElement("option", { value: "amount-asc" }, "Montant croissant"),
-                    React.createElement("option", { value: "title" }, "Ordre alphabétique")),
                 filtersActive && React.createElement("button", { className: "btn ghost resetFilters", onClick: resetFilters, title: "Réinitialiser les filtres" },
                     React.createElement("ion-icon", { name: "refresh-outline" }))),
             React.createElement("div", { className: "transactionSummary" },
