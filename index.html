@@ -1072,7 +1072,7 @@ const fixedExpenseCategoryNames = new Set([
     'Cotisations', 'Assurances', 'Frais de garde', 'Pension', 'Abonnements',
     'Crédit', 'Impôts', 'Épargne'
 ]);
-const isFixedExpenseCategory = tx => fixedExpenseCategoryNames.has(tx?.category?.name || '');
+const isFixedExpenseCategory = tx => !!tx?.isMonthlyCharge || fixedExpenseCategoryNames.has(tx?.category?.name || '');
 const sumTxAmount = list => list.reduce((a, t) => a + Number(t?.amount || 0), 0);
 const buildFinancialIntelligence = (allRows, rows, month, budgets, goals) => {
     const incomeRows = rows.filter(t => t.type === 'income');
@@ -1156,10 +1156,9 @@ const buildFinancialIntelligence = (allRows, rows, month, budgets, goals) => {
     const previousExpense = sumTxAmount(previousComparableRows.filter(t => t.type === 'expense'));
     const trend = previousExpense > 0 ? (comparableCurrentExpense - previousExpense) / previousExpense * 100 : 0;
 
-    const recurringGroups = new Map();
-    allRows.filter(t => t.type === 'expense').forEach(t => { const title = cleanTextKey(t.title); if (!title)
-        return; const amountBand = Math.round(Number(t.amount || 0)); const recurringKey = `${title}|${t.category?.name || ''}|${amountBand}`; const item = recurringGroups.get(recurringKey) || { title: t.title, months: new Set(), amount: Number(t.amount || 0) }; item.months.add(keyOf(t.date)); recurringGroups.set(recurringKey, item); });
-    const recurring = [...recurringGroups.values()].filter(x => x.months.size >= 2).sort((a, b) => b.months.size - a.months.size);
+    /* Les charges récurrentes sont désormais celles explicitement cochées « Charge mensuelle » par l'utilisateur. */
+    const recurring = expenses.filter(t => !!t.isMonthlyCharge).sort((a, b) => Number(b.amount || 0) - Number(a.amount || 0));
+    const recurringTotal = sumTxAmount(recurring);
     const goalProgress = safeGoals(goals).filter(g => Number(g.target) > 0).map(g => ({ ...g, progress: Math.min(100, Number(g.saved || 0) / Number(g.target) * 100) })).sort((a, b) => b.progress - a.progress)[0];
     let score = rows.length ? 52 : 0;
     if (balance >= 0)
@@ -1195,10 +1194,10 @@ const buildFinancialIntelligence = (allRows, rows, month, budgets, goals) => {
     if (previousExpense > 0 && Math.abs(trend) >= 8)
         insights.push({ tone: trend <= 0 ? 'positive' : 'watch', icon: trend <= 0 ? 'trending-down-outline' : 'trending-up-outline', title: trend <= 0 ? 'Dépenses en baisse' : 'Dépenses en hausse', text: `${Math.abs(Math.round(trend))} % ${trend <= 0 ? 'de moins' : 'de plus'} que le mois précédent à la même date.` });
     if (recurring.length)
-        insights.push({ tone: 'info', icon: 'repeat-outline', title: `${recurring.length} charge${recurring.length > 1 ? 's' : ''} récurrente${recurring.length > 1 ? 's' : ''} détectée${recurring.length > 1 ? 's' : ''}`, text: `${recurring[0].title} apparaît sur ${recurring[0].months.size} mois.` });
+        insights.push({ tone: 'info', icon: 'repeat-outline', title: `${recurring.length} charge${recurring.length > 1 ? 's' : ''} mensuelle${recurring.length > 1 ? 's' : ''}`, text: `Total mensuel déclaré : ${money(recurringTotal)}${recurring[0]?.title ? ` • Principale : ${recurring[0].title}` : ''}.` });
     if (goalProgress)
         insights.push({ tone: goalProgress.progress >= 100 ? 'positive' : 'info', icon: 'flag-outline', title: `Objectif « ${goalProgress.name} »`, text: `${Math.round(goalProgress.progress)} % atteint, soit ${money(goalProgress.saved)} sur ${money(goalProgress.target)}.` });
-    return { score, tone, headline, income, expense, balance, projectedExpense, projectedBalance, projectionLabel, projectionMode, projectionExplanation, estimatedExtraVariableExpense, saved, savingsRate, remainingToPay, topCategory: topCategoryEntry[0], topCategoryAmount: topCategoryEntry[1], budgetEntries, overBudgets, recurring, insights: insights.slice(0, 5) };
+    return { score, tone, headline, income, expense, balance, projectedExpense, projectedBalance, projectionLabel, projectionMode, projectionExplanation, estimatedExtraVariableExpense, saved, savingsRate, remainingToPay, topCategory: topCategoryEntry[0], topCategoryAmount: topCategoryEntry[1], budgetEntries, overBudgets, recurring, recurringTotal, insights: insights.slice(0, 5) };
 };
 const clampNumber = (value, min = 0, max = Infinity) => Math.min(max, Math.max(min, Number(value || 0)));
 const txTotal = t => Math.max(0, Number(t?.amount || 0));
@@ -2101,9 +2100,6 @@ function SmartPulse({ allRows, rows, month, budgets, goals, setView, setModal })
                     React.createElement("span", null, "Taux d’épargne"),
                     React.createElement("b", null, `${Math.round(intelligence.savingsRate)} %`)),
                 React.createElement("div", null,
-                    React.createElement("span", null, "Reste à régler"),
-                    React.createElement("b", null, money(intelligence.remainingToPay))),
-                React.createElement("div", null,
                     React.createElement("span", null, "Charges récurrentes"),
                     React.createElement("b", null, intelligence.recurring.length))),
             React.createElement("div", { className: "smartActions" },
@@ -2693,7 +2689,7 @@ function TxModal({ modal, selectedMonth, close, save }) {
         const legacy = clampNumber(e?.paidAmount, 0, total);
         return legacy > 0 ? [{ id: uid(), label: 'Paiement déjà ajouté', amount: legacy, date: e?.date || defaultTxDate }] : [];
     };
-    const [type, setType] = useState(e?.type || 'expense'), [cat, setCat] = useState(e?.category?.name || defaultExpenseCategory.name), [title, setTitle] = useState(e?.title || ''), [amount, setAmount] = useState(e?.amount ?? ''), [paymentUses, setPaymentUses] = useState(initialUses), [isPaid, setIsPaid] = useState(isEdit ? txIsPaid(e || {}) : false), [payEditor, setPayEditor] = useState(null), [showHistory, setShowHistory] = useState(false);
+    const [type, setType] = useState(e?.type || 'expense'), [cat, setCat] = useState(e?.category?.name || defaultExpenseCategory.name), [title, setTitle] = useState(e?.title || ''), [amount, setAmount] = useState(e?.amount ?? ''), [paymentUses, setPaymentUses] = useState(initialUses), [isPaid, setIsPaid] = useState(isEdit ? txIsPaid(e || {}) : false), [isMonthlyCharge, setIsMonthlyCharge] = useState(!!e?.isMonthlyCharge), [payEditor, setPayEditor] = useState(null), [showHistory, setShowHistory] = useState(false);
     const forceUnpaidRef = useRef(false);
     const categoryManuallySetRef = useRef(isEdit);
     const chosen = cats.find(c => c.name === cat) || (type === 'income' ? defaultIncomeCategory : defaultExpenseCategory);
@@ -2718,6 +2714,7 @@ function TxModal({ modal, selectedMonth, close, save }) {
         forceUnpaidRef.current = true;
         setCat(suggestCategoryFromTitle(title, value) || defaultIncomeCategory.name);
         setIsPaid(false);
+        setIsMonthlyCharge(false);
         setPaymentUses([]);
         setPayEditor(null);
         setShowHistory(false);
@@ -2732,7 +2729,7 @@ function TxModal({ modal, selectedMonth, close, save }) {
                     " une transaction"),
                 React.createElement("button", { className: "btn danger", onClick: close },
                     React.createElement("ion-icon", { name: "close-outline" }))),
-            React.createElement("form", { onSubmit: ev => { ev.preventDefault(); const f = new FormData(ev.currentTarget); const totalAmount = Math.max(0, Number(f.get('amount') || 0)); const canEditPayment = !!e && type === 'expense'; const forceUnpaid = forceUnpaidRef.current && !isPaid; const cleanedUses = canEditPayment && !forceUnpaid ? normalizePaymentUses(paymentUses, totalAmount) : []; const rawPaid = cleanedUses.reduce((a, u) => a + Number(u.amount || 0), 0); const finalPaidStatus = canEditPayment && !forceUnpaid && (isPaid || (totalAmount > 0 && rawPaid >= totalAmount)); const finalPaid = canEditPayment && !forceUnpaid ? (finalPaidStatus ? totalAmount : clampNumber(rawPaid, 0, totalAmount)) : 0; save({ ...e, id: e?.id || uid(), title: f.get('title'), amount: totalAmount, type, category: chosen, date: dateFromMonthDay(activeMonth, f.get('day') || defaultDay), note: f.get('note'), paymentUses: forceUnpaid ? [] : cleanedUses, paidAmount: finalPaid, isPaid: finalPaidStatus }); } },
+            React.createElement("form", { onSubmit: ev => { ev.preventDefault(); const f = new FormData(ev.currentTarget); const totalAmount = Math.max(0, Number(f.get('amount') || 0)); const canEditPayment = !!e && type === 'expense'; const forceUnpaid = forceUnpaidRef.current && !isPaid; const cleanedUses = canEditPayment && !forceUnpaid ? normalizePaymentUses(paymentUses, totalAmount) : []; const rawPaid = cleanedUses.reduce((a, u) => a + Number(u.amount || 0), 0); const finalPaidStatus = canEditPayment && !forceUnpaid && (isPaid || (totalAmount > 0 && rawPaid >= totalAmount)); const finalPaid = canEditPayment && !forceUnpaid ? (finalPaidStatus ? totalAmount : clampNumber(rawPaid, 0, totalAmount)) : 0; save({ ...e, id: e?.id || uid(), title: f.get('title'), amount: totalAmount, type, category: chosen, date: dateFromMonthDay(activeMonth, f.get('day') || defaultDay), note: f.get('note'), isMonthlyCharge: type === 'expense' ? isMonthlyCharge : false, paymentUses: forceUnpaid ? [] : cleanedUses, paidAmount: finalPaid, isPaid: finalPaidStatus }); } },
                 React.createElement("div", { className: "formGrid" },
                     React.createElement("div", { className: "field" },
                         React.createElement("label", null, "Titre"),
@@ -2756,6 +2753,12 @@ function TxModal({ modal, selectedMonth, close, save }) {
                             "Jour de ",
                             selectedMonthLabel),
                         React.createElement("select", { name: "day", defaultValue: defaultDay }, selectedMonthDays.map(d => React.createElement("option", { key: d, value: d }, pad2(d))))),
+                    type === 'expense' && React.createElement("div", { className: "field monthlyChargeField" },
+                        React.createElement("label", null, "Charge mensuelle"),
+                        React.createElement("button", { type: "button", className: isMonthlyCharge ? 'paidToggle active monthlyChargeToggle' : 'paidToggle monthlyChargeToggle', onClick: () => setIsMonthlyCharge(v => !v), "aria-pressed": isMonthlyCharge },
+                            React.createElement("span", null, isMonthlyCharge ? 'Oui — récurrente' : 'Non — ponctuelle'),
+                            React.createElement("ion-icon", { name: isMonthlyCharge ? 'repeat-outline' : 'ellipse-outline' })),
+                        React.createElement("span", { className: "mini monthlyChargeHelp" }, "Si activé, cette dépense est comptée dans « Charges récurrentes » du tableau de bord.")),
                     showPaymentControls && React.createElement("div", { className: "field" },
                         React.createElement("label", null, "Statut"),
                         React.createElement("button", { type: "button", className: isPaid ? 'paidToggle active' : 'paidToggle', onClick: togglePaidStatus },
@@ -3130,7 +3133,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(97,221,255,.66)!import
 .scoreStatus{display:flex;align-items:center;gap:12px;margin:14px 0 18px}.scoreStatus p{margin:0;color:#a4b8cc;font-size:13px;line-height:1.5}
 .statusPill{flex:0 0 auto;padding:7px 9px;border-radius:7px;border:1px solid rgba(97,221,255,.2);background:rgba(97,221,255,.07);color:#a9edff;font:800 9px/1 var(--font-mono);text-transform:uppercase;letter-spacing:.08em}
 .statusPill.excellent{border-color:rgba(87,240,193,.25);background:rgba(87,240,193,.075);color:#9ff5da}.statusPill.watch{border-color:rgba(255,209,102,.25);background:rgba(255,209,102,.07);color:#ffe39b}.statusPill.critical{border-color:rgba(255,105,133,.26);background:rgba(255,105,133,.07);color:#ffc3cf}
-.pulseMetrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.pulseMetrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .pulseMetrics>div{min-height:68px;padding:11px;border:1px solid rgba(127,187,234,.11);border-radius:11px;background:rgba(78,139,192,.035)}
 .pulseMetrics span{display:block;min-height:24px;color:#6f88a4;font:700 8px/1.35 var(--font-mono);letter-spacing:.05em;text-transform:uppercase}
 .pulseMetrics b{display:block;margin-top:7px;font:800 14px/1 var(--font-display);letter-spacing:-.025em}
@@ -3683,6 +3686,18 @@ th,td{padding:13px 14px!important}tbody tr:hover{background:rgba(91,169,224,.045
   .mobileFilterToggle ion-icon{font-size:18px!important}
   .transactionControlsPanel{display:none!important}
   .transactionControlsPanel.open{display:grid!important;gap:8px!important;margin:0 0 10px!important;animation:fadeIn .2s var(--ease) both}
+}
+</style>
+
+<style id="primefinance-monthly-charge">
+.monthlyChargeField{align-self:end}
+.monthlyChargeToggle.active{background:rgba(53,212,154,.13)!important;border-color:rgba(53,212,154,.42)!important;color:#dffcf1!important}
+.monthlyChargeToggle.active ion-icon{color:var(--green)!important}
+.monthlyChargeHelp{margin:2px 0 0!important;font-size:11px!important;line-height:1.35!important}
+@media(max-width:700px){
+  .monthlyChargeField{grid-column:1/-1}
+  .monthlyChargeToggle{min-height:48px!important}
+  .monthlyChargeHelp{font-size:10.5px!important}
 }
 </style>
 </body>
