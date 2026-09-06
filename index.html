@@ -2321,7 +2321,7 @@ function TxList({ rows, setModal, del }) { return React.createElement("div", { c
             React.createElement("div", { className: "txMeta" },
                 React.createElement("span", { className: "txMetaCategory" }, t.category.name),
                 t.isMonthlyCharge && React.createElement(MonthlyChargeBadge, null),
-                React.createElement("span", { className: "txMetaDate" }, " • ", new Date(t.date).toLocaleDateString('fr-FR'))),
+                React.createElement("span", { className: "txMetaDate" }, " • ", new Date(t.date).toLocaleDateString('fr-FR')))),
         React.createElement(AmountBlock, { tx: t }),
         React.createElement("div", { className: "txActions" },
             React.createElement("button", { className: "btn", onClick: (e) => { e.stopPropagation(); setModal({ type: 'tx', edit: t }); } }, "Modifier"))); })) : React.createElement("div", { className: "empty" }, "Aucune transaction pour ce mois.")); }
