@@ -2019,8 +2019,8 @@ function App() {
             " ",
             view === 'settings' && React.createElement(Settings, { duplicate: openDuplicate, exportAll: exportAll, importAll: importAll, clear: clearAll, sync: sync, month: month, rows: rows, shareCode: shareCode, setShareCode: setShareCode, generateShare: generateShare, importShare: importShare, notify: notify, promptInstall: promptInstall, isInstalled: isInstalled, onModeChange: selectBudgetMode }),
             " "),
-        React.createElement(MobileNav, { view: view, setView: setView }),
-        view === 'transactions' && React.createElement("button", { className: "fab", onClick: () => setModal({ type: 'tx' }) },
+        modal?.type !== 'tx' && React.createElement(MobileNav, { view: view, setView: setView }),
+        view === 'transactions' && modal?.type !== 'tx' && React.createElement("button", { className: "fab", onClick: () => setModal({ type: 'tx' }) },
             React.createElement("ion-icon", { name: "add-outline" })),
         modal?.type === 'tx' && React.createElement(TxModal, { modal: modal, selectedMonth: month, close: () => setModal(null), save: d => { modal.edit ? updateTx(d) : addTx(d); setModal(null); } }),
         modal?.type === 'duplicate' && React.createElement(DuplicateModal, { month: month, monthsList: monthsAfter(), close: () => setModal(null), submit: t => { setModal(null); requestAnimationFrame(() => doDuplicate(t, false)); } }),
@@ -3707,7 +3707,8 @@ th,td{padding:13px 14px!important}tbody tr:hover{background:rgba(91,169,224,.045
 
 <style id="primefinance-hide-mobile-nav-during-transaction-modal">
 @media (max-width:860px){
-  body.tx-modal-open .bottomNav{display:none!important}
+  body.tx-modal-open .bottomNav,
+  body.tx-modal-open .fab{display:none!important}
 }
 </style>
 </body>
