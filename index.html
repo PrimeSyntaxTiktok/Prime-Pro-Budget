@@ -2136,6 +2136,7 @@ function Home({ rows, month, refreshKey, setModal, duplicate }) { return React.c
         React.createElement("div", { className: "chartBox" },
             React.createElement(ChartDonut, { rows: rows, version: refreshKey })))); }
 function PaidBadge() { return React.createElement("span", { className: "txPaidBadge" }, "Pay\u00E9"); }
+function MonthlyChargeBadge() { return React.createElement("span", { className: "monthlyTxBadge", title: "Charge mensuelle" }, React.createElement("ion-icon", { name: "repeat-outline" }), "Mensuelle"); }
 function AmountBlock({ tx }) { const show = txShowsPayment(tx); const remaining = txRemaining(tx); return React.createElement("div", { className: "txAmountBlock" },
     React.createElement("div", { className: tx.type === 'income' ? 'amount green' : 'amount red' },
         tx.type === 'income' ? '+' : '-',
@@ -2259,10 +2260,11 @@ function Transactions({ rows, query, setQuery, setModal, del, delMany }) {
                                 React.createElement("b", null, t.title),
                                 paid && React.createElement(PaidBadge, null),
                                 React.createElement("div", { className: "mini" }, t.note)),
-                            React.createElement("td", null,
+                            React.createElement("td", { className: "txCategoryCell" },
                                 React.createElement("span", { className: "pill" },
                                     React.createElement("ion-icon", { name: t.category.icon, style: { color: t.category.color } }),
-                                    t.category.name)),
+                                    t.category.name),
+                                t.isMonthlyCharge && React.createElement(MonthlyChargeBadge, null)),
                             React.createElement("td", null, new Date(t.date).toLocaleDateString('fr-FR')),
                             React.createElement("td", null, t.type === 'income' ? 'Revenu' : 'Dépense'),
                             React.createElement("td", null, React.createElement(AmountBlock, { tx: t })));
@@ -2271,10 +2273,11 @@ function Transactions({ rows, query, setQuery, setModal, del, delMany }) {
                             React.createElement("b", null, t.title),
                             paid && React.createElement(PaidBadge, null),
                             React.createElement("div", { className: "mini" }, t.note)),
-                        React.createElement("td", null,
+                        React.createElement("td", { className: "txCategoryCell" },
                             React.createElement("span", { className: "pill" },
                                 React.createElement("ion-icon", { name: t.category.icon, style: { color: t.category.color } }),
-                                t.category.name)),
+                                t.category.name),
+                            t.isMonthlyCharge && React.createElement(MonthlyChargeBadge, null)),
                         React.createElement("td", null, new Date(t.date).toLocaleDateString('fr-FR')),
                         React.createElement("td", null, t.type === 'income' ? 'Revenu' : 'Dépense'),
                         React.createElement("td", null, React.createElement(AmountBlock, { tx: t })),
@@ -2316,9 +2319,9 @@ function TxList({ rows, setModal, del }) { return React.createElement("div", { c
         React.createElement("div", null,
             React.createElement("div", { className: "txTitle" }, t.title),
             React.createElement("div", { className: "txMeta" },
-                t.category.name,
-                " \u2022 ",
-                new Date(t.date).toLocaleDateString('fr-FR'))),
+                React.createElement("span", { className: "txMetaCategory" }, t.category.name),
+                t.isMonthlyCharge && React.createElement(MonthlyChargeBadge, null),
+                React.createElement("span", { className: "txMetaDate" }, " • ", new Date(t.date).toLocaleDateString('fr-FR'))),
         React.createElement(AmountBlock, { tx: t }),
         React.createElement("div", { className: "txActions" },
             React.createElement("button", { className: "btn", onClick: (e) => { e.stopPropagation(); setModal({ type: 'tx', edit: t }); } }, "Modifier"))); })) : React.createElement("div", { className: "empty" }, "Aucune transaction pour ce mois.")); }
@@ -3709,6 +3712,22 @@ th,td{padding:13px 14px!important}tbody tr:hover{background:rgba(91,169,224,.045
 @media (max-width:860px){
   body.tx-modal-open .bottomNav,
   body.tx-modal-open .fab{display:none!important}
+}
+</style>
+
+<style id="primefinance-monthly-list-badge">
+.txCategoryCell{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.monthlyTxBadge{display:inline-flex;align-items:center;gap:4px;min-height:26px;padding:0 8px;border-radius:999px;border:1px solid rgba(53,212,154,.30);background:rgba(53,212,154,.10);color:#bff6df;font-size:10px;font-weight:900;line-height:1;white-space:nowrap;vertical-align:middle}
+.monthlyTxBadge ion-icon{font-size:13px;color:var(--green);flex:0 0 auto}
+.txMeta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.txMeta .monthlyTxBadge{min-height:20px;padding:0 6px;font-size:9px}
+.txMeta .monthlyTxBadge ion-icon{font-size:11px}
+.txMetaDate{color:var(--muted)}
+@media(max-width:700px){
+  .transactionWorkspace .txCategoryCell{display:flex!important;align-items:center!important;gap:5px!important;flex-wrap:nowrap!important;overflow:hidden!important}
+  .transactionWorkspace .txCategoryCell .pill{min-width:0!important;max-width:calc(100% - 76px)!important}
+  .transactionWorkspace .monthlyTxBadge{min-height:24px!important;height:24px!important;padding:0 6px!important;border-radius:7px!important;font-size:7.5px!important;letter-spacing:.01em!important;flex:0 0 auto!important}
+  .transactionWorkspace .monthlyTxBadge ion-icon{font-size:11px!important}
 }
 </style>
 </body>
